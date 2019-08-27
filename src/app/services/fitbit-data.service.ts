@@ -11,20 +11,32 @@ export class FitbitDataService {
   private config_expires_sec = 30 * 24 * 60 * 60; // 30 days
   // private config_api_url = "https://api.fitbit.com/1/user/-/activities/heart/date";
   // por favor mira getdata.php /private date/1d/1sec/time/00:00/23:59.json";
-  private secret = "246052c37c44576eb6dbbd7f81956fc5";
-  private clientID = "22B7Z6";
+  private secret = "3e2f3b85311ad1a16f49370ee4731be4";
+  private clientID = "22B7LQ";
 
   constructor(private http: HttpClient) {}
 
   authenticate(clientID: string) {
     window.location.href = `${this.config_oauth_url}?response_type=token&scope=${this.config_scope}&redirect_url=${this.config_redirect_uri}
-      &expires_in=${this.config_expires_sec}&client_id=${clientID}&state=test_state`;
+      &expires_in=${this.config_expires_sec}&client_id=${this.clientID}&state=test_state`;
     // window.location.href = `${this.config_oauth_url}?response_type=token&scope=${this.config_scope}
     // &expires_in=${this.config_expires_sec}&client_id=${clientID}`;
   }
 
   logout() {
     const authEncoded = btoa(`${this.clientID}:${this.secret}`);
+
+    // let headers: HttpHeaders = new HttpHeaders({
+    //   Authorization: "Bearer " + localStorage.getItem("access-token"),
+    //   "Content-type": "application/x-www-form-urlencoded; charset=utf-8"
+    // });
+    console.log(localStorage.getItem("access-token"));
+    // let params = new URLSearchParams();
+    // params.append("token", localStorage.getItem("access-token"));
+
+    // this.http.post("https://api.fitbit.com/1.1/oauth2/introspect", params.toString()).subscribe(response => {
+    //   console.log(response);
+    // });
 
     let headers: HttpHeaders = new HttpHeaders({
       Authorization: "Basic " + authEncoded,
@@ -33,7 +45,6 @@ export class FitbitDataService {
 
     let params = new URLSearchParams();
     params.append("token", localStorage.getItem("access-token"));
-
     return this.http.post("https://api.fitbit.com/oauth2/revoke", params.toString(), {
       headers: headers
     });
@@ -75,6 +86,19 @@ export class FitbitDataService {
     });
 
     return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + ".json", {
+      // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/2018-03-01/2018-04-01.json", {
+      headers
+    });
+  }
+
+  getHeartRateIntraday(from: string, to: string) {
+    let headers: HttpHeaders = new HttpHeaders({
+      Authorization: "Bearer " + localStorage.getItem("access-token")
+      // Authorization: "Bearer " + localStorage.getItem("access-token")
+      // "Content-type": "application/x-www-form-urlencoded; charset=utf-8"
+    });
+
+    return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + "2019-08-10" + "/" + "2019-08-10" + "/1min.json", {
       // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/2018-03-01/2018-04-01.json", {
       headers
     });

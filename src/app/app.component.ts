@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { parseWindowHash } from "./helper";
 import { ImplicitGrantFlowResponse } from "./models/ImplicitGrantFlowResponse";
 import { Router } from "@angular/router";
+import { FitbitDataService } from "./services/fitbit-data.service";
 
 @Component({
   selector: "app-root",
@@ -9,9 +10,16 @@ import { Router } from "@angular/router";
   styleUrls: ["./app.component.scss"]
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) {}
+  private title = "fitbit-app-proto";
+
+  constructor(private router: Router, private fitbitDataService: FitbitDataService) {}
 
   ngOnInit(): void {
+    if (this.isAuthenticated) {
+      this.router.navigate(["dashboard"]);
+      return;
+    }
+
     if (window.location.hash !== "") {
       if (window.location.search.includes("error") || window.location.search.includes("error_description")) {
         console.log("if");
@@ -29,5 +37,8 @@ export class AppComponent implements OnInit {
       }
     }
   }
-  title = "fitbit-app-proto";
+
+  get isAuthenticated() {
+    return this.fitbitDataService.isAuthenticated();
+  }
 }

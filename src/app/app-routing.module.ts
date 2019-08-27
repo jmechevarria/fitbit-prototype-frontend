@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { FitbitClientIDFormComponent } from './fitbit-client-idform/fitbit-client-idform.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { NgModule } from "@angular/core";
+import { Routes, RouterModule } from "@angular/router";
+import { FitbitClientIDFormComponent } from "./components/fitbit-client-idform/fitbit-client-idform.component";
+import { DashboardComponent } from "./components/dashboard/dashboard.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: FitbitClientIDFormComponent
   },
   {
-    path: 'dashboard',
+    path: "dashboard",
     component: DashboardComponent
   }
 ];
@@ -18,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

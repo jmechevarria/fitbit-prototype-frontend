@@ -1,8 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { Placeholder } from "@angular/compiler/src/i18n/i18n_ast";
-// import { HttpClient } from 'selenium-webdriver/http';
-import { HttpClient } from "@angular/common/http";
-import { FitbitDataService } from "../services/fitbit-data.service";
+// import { Placeholder } from "@angular/compiler/src/i18n/i18n_ast";
+// import { HttpClient } from "@angular/common/http";
+import { FitbitDataService } from "../../services/fitbit-data.service";
 
 @Component({
   selector: "app-fitbit-client-idform",
@@ -10,7 +9,7 @@ import { FitbitDataService } from "../services/fitbit-data.service";
   styleUrls: ["./fitbit-client-idform.component.scss"]
 })
 export class FitbitClientIDFormComponent implements OnInit {
-  clientID: string;
+  clientID: string = "22B7Z6";
 
   constructor(private fitbitDataService: FitbitDataService) {}
 
