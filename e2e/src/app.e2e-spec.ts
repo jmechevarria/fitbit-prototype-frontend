@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to fitbit-app-proto!');
+    expect(page.getTitleText()).toEqual('fitbit-app-frontend app is running!');
   });
 
   afterEach(async () => {

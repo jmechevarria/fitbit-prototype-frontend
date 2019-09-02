@@ -15,7 +15,13 @@ export class DashboardComponent implements OnInit {
   heartRateTimeSeries: any; //'activities-heart' => array of days
   latestHeartRateData: any;
 
-  timeSpans: any = [{ "1d": "1 day" }, { "7d": "7 days" }, { "30d": "30 days" }, { "1w": "1 week" }, { "1m": "1 month" }];
+  timeSpans: any = [
+    { "1d": "1 day" },
+    { "7d": "7 days" },
+    { "30d": "30 days" },
+    { "1w": "1 week" },
+    { "1m": "1 month" }
+  ];
 
   selectedTimeSpan: any = "30d";
   selectedRangeFrom: any = "";
@@ -27,22 +33,28 @@ export class DashboardComponent implements OnInit {
 
   // heartRateData: any; //'activities-heart' => array of days
 
-  constructor(private fitbitDataService: FitbitDataService, private router: Router, private htmlService: HtmlService, private datePipe: DatePipe) {}
+  constructor(
+    private fitbitDataService: FitbitDataService,
+    private router: Router,
+    private htmlService: HtmlService, //used in template
+    private datePipe: DatePipe
+  ) {}
 
   ngOnInit() {
-    if (this.isAuthenticated) {
-      this.fitbitDataService.getUserProfile().subscribe(response => {
-        this.user = response;
-        console.log(this.user);
-      });
+    // if (this.isAuthenticated) {
+    this.fitbitDataService.getUserProfile().subscribe(response => {
+      this.user = response;
+      console.log(this.user);
+    });
 
-      this.getLastHeartRateTimeSeries();
-      this.getHeartRateTimeSeriesIntraday(new Date());
+    this.setLastHeartRateTimeSeries();
+    this.setHeartRateTimeSeriesIntraday(new Date());
 
-      // this.getHeartRateTimeSeries("2019-08-20", "2019-08-24");
-    } else this.router.navigate([""]);
+    // this.getHeartRateTimeSeries("2019-08-20", "2019-08-24");
+    // }
+    // else this.router.navigate([""]);
   }
-  getHeartRateTimeSeriesIntraday(date: Date) {
+  setHeartRateTimeSeriesIntraday(date: Date) {
     this.fitbitDataService
       .getHeartRateIntraday(this.datePipe.transform(date, "yyyy-MM-dd"), this.datePipe.transform(date, "yyyy-MM-dd"))
       .subscribe(response => {
@@ -61,53 +73,55 @@ export class DashboardComponent implements OnInit {
    *
    * @param date A Date object
    */
-  private getLastHeartRateTimeSeries(date?: Date) {
+  private setLastHeartRateTimeSeries(date?: Date) {
     if (date === undefined) {
       date = new Date();
     }
 
-    this.fitbitDataService.getHeartRateTimeSeries(this.datePipe.transform(date, "yyyy-MM-dd"), "1m").subscribe(response => {
-      this.latestHeartRateData = undefined;
-      this.heartRateTimeSeries = response["activities-heart"];
-      console.log(this.heartRateTimeSeries);
-      this.heartRateTimeSeries.reverse().some(day => {
-        console.log(day);
-        let found = false;
-        console.log(found);
-        day.value.heartRateZones.some(heartRateZone => {
-          if (heartRateZone.minutes !== undefined) {
-            this.latestHeartRateData = day;
-            console.log(heartRateZone);
-            found = true;
-            return true;
-          }
+    this.fitbitDataService
+      .getHeartRateTimeSeries(this.datePipe.transform(date, "yyyy-MM-dd"), "1m")
+      .subscribe(response => {
+        this.latestHeartRateData = undefined;
+        this.heartRateTimeSeries = response["activities-heart"];
+        console.log(this.heartRateTimeSeries);
+        this.heartRateTimeSeries.reverse().some(day => {
+          console.log(day);
+          let found = false;
+          console.log(found);
+          day.value.heartRateZones.some(heartRateZone => {
+            if (heartRateZone.minutes !== undefined) {
+              this.latestHeartRateData = day;
+              console.log(heartRateZone);
+              found = true;
+              return true;
+            }
+          });
+          return found;
         });
-        return found;
+
+        console.log(this.latestHeartRateData);
+
+        if (this.latestHeartRateData === undefined) {
+          date.setDate(date.getDate() - 1);
+          this.setLastHeartRateTimeSeries(date);
+        }
+
+        // if (
+        //   !this.heartRateTimeSeries[0].value.heartRateZones.some(element => {
+        //     return element.minutes !== undefined;
+        //   }) &&
+        //   Date.now() - date.getTime() < 1000 * 60 * 60 * 24 * 365 //~milliseconds in a year
+        // ) {
+        //   //if no records were found for 'date', we look in the day before,
+        //   //recursively until some records are found or this shit blows up
+        //   date.setDate(date.getDate() - 1);
+        //   this.getLastHeartRateTimeSeries(date);
+        // }
       });
-
-      console.log(this.latestHeartRateData);
-
-      if (this.latestHeartRateData === undefined) {
-        date.setDate(date.getDate() - 1);
-        this.getLastHeartRateTimeSeries(date);
-      }
-
-      // if (
-      //   !this.heartRateTimeSeries[0].value.heartRateZones.some(element => {
-      //     return element.minutes !== undefined;
-      //   }) &&
-      //   Date.now() - date.getTime() < 1000 * 60 * 60 * 24 * 365 //~milliseconds in a year
-      // ) {
-      //   //if no records were found for 'date', we look in the day before,
-      //   //recursively until some records are found or this shit blows up
-      //   date.setDate(date.getDate() - 1);
-      //   this.getLastHeartRateTimeSeries(date);
-      // }
-    });
   }
 
   get isAuthenticated() {
-    return this.fitbitDataService.isAuthenticated();
+    return this.fitbitDataService.appHasAccess();
   }
 
   logout() {

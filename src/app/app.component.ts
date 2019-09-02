@@ -3,6 +3,8 @@ import { parseWindowHash } from "./helper";
 import { ImplicitGrantFlowResponse } from "./models/ImplicitGrantFlowResponse";
 import { Router } from "@angular/router";
 import { FitbitDataService } from "./services/fitbit-data.service";
+import { User } from "./models/user";
+import { AuthenticationService } from "./services/authentication.service";
 
 @Component({
   selector: "app-root",
@@ -11,14 +13,22 @@ import { FitbitDataService } from "./services/fitbit-data.service";
 })
 export class AppComponent implements OnInit {
   private title = "fitbit-app-proto";
+  currentUser: User;
 
-  constructor(private router: Router, private fitbitDataService: FitbitDataService) {}
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private fitbitDataService: FitbitDataService
+  ) {
+    this.authenticationService.currentUser.subscribe(x => (this.currentUser = x));
+  }
 
   ngOnInit(): void {
-    if (this.isAuthenticated) {
-      this.router.navigate(["dashboard"]);
-      return;
-    }
+    // if (this.isAuthenticated) {
+    //   console.log("isaaaaaaaaaaaaaa");
+    //   this.router.navigate(["dashboard"]);
+    //   return;
+    // }
 
     if (window.location.hash !== "") {
       if (window.location.search.includes("error") || window.location.search.includes("error_description")) {
@@ -39,6 +49,11 @@ export class AppComponent implements OnInit {
   }
 
   get isAuthenticated() {
-    return this.fitbitDataService.isAuthenticated();
+    return this.fitbitDataService.appHasAccess();
+  }
+
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(["/login"]);
   }
 }

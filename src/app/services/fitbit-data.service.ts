@@ -19,8 +19,6 @@ export class FitbitDataService {
   authenticate(clientID: string) {
     window.location.href = `${this.config_oauth_url}?response_type=token&scope=${this.config_scope}&redirect_url=${this.config_redirect_uri}
       &expires_in=${this.config_expires_sec}&client_id=${this.clientID}&state=test_state`;
-    // window.location.href = `${this.config_oauth_url}?response_type=token&scope=${this.config_scope}
-    // &expires_in=${this.config_expires_sec}&client_id=${clientID}`;
   }
 
   logout() {
@@ -50,7 +48,7 @@ export class FitbitDataService {
     });
   }
 
-  isAuthenticated() {
+  appHasAccess() {
     return !!localStorage.getItem("access-token");
   }
 
@@ -98,9 +96,12 @@ export class FitbitDataService {
       // "Content-type": "application/x-www-form-urlencoded; charset=utf-8"
     });
 
-    return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + "2019-08-10" + "/" + "2019-08-10" + "/1min.json", {
-      // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/2018-03-01/2018-04-01.json", {
-      headers
-    });
+    return this.http.get(
+      "https://api.fitbit.com/1/user/-/activities/heart/date/" + "2019-08-10" + "/" + "2019-08-10" + "/1min.json",
+      {
+        // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/2018-03-01/2018-04-01.json", {
+        headers
+      }
+    );
   }
 }
