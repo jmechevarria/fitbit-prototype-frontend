@@ -13,7 +13,7 @@ export class LoginRegisterGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const currentUser = this.authenticationService.currentUserValue;
+    const currentUser = this.authenticationService.user;
     console.log(currentUser);
     if (currentUser) {
       // logged in so redirect to home page

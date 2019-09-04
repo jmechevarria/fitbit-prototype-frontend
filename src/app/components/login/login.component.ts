@@ -1,19 +1,24 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/services/alert.service";
+import { MyErrorStateMatcher } from "src/app/helpers/error-state-matcher";
 
 @Component({
   selector: "login",
-  templateUrl: "login.component.html"
+  templateUrl: "login.component.html",
+  styleUrls: ["./login.component.scss"]
+  // styles
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   submitted = false;
   returnUrl: string;
+  error: string;
+  matcher = new MyErrorStateMatcher();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -28,6 +33,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       username: ["", Validators.required],
       password: ["", Validators.required]
+      // email: ["", [Validators.required, Validators.email]]
     });
 
     // get return url from route parameters or default to '/'
@@ -41,6 +47,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    console.log(this.loginForm.invalid);
 
     // stop here if form is invalid
     if (this.loginForm.invalid) {
@@ -56,7 +63,8 @@ export class LoginComponent implements OnInit {
           this.router.navigate([this.returnUrl]);
         },
         error => {
-          this.alertService.error(error);
+          this.error = error;
+          // this.alertService.error(error);
           this.loading = false;
         }
       );

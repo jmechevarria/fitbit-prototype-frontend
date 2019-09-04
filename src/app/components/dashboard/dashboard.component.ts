@@ -1,9 +1,10 @@
 import { Component, OnInit, EventEmitter } from "@angular/core";
-import { FitbitDataService } from "../../services/fitbit-data.service";
+import { FitbitService } from "../../services/fitbit.service";
 import { Router } from "@angular/router";
 import { HtmlService } from "../../services/html.service";
 import { DatePipe } from "@angular/common";
 import { MatRadioChange } from "@angular/material/radio";
+// import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-dashboard",
@@ -11,7 +12,8 @@ import { MatRadioChange } from "@angular/material/radio";
   styleUrls: ["./dashboard.component.scss"]
 })
 export class DashboardComponent implements OnInit {
-  user: any;
+  // fitbitAPIApplicationID: string = environment.fitbitAPIApplicationID;
+  // fitbitUser: any;
   heartRateTimeSeries: any; //'activities-heart' => array of days
   latestHeartRateData: any;
 
@@ -34,7 +36,7 @@ export class DashboardComponent implements OnInit {
   // heartRateData: any; //'activities-heart' => array of days
 
   constructor(
-    private fitbitDataService: FitbitDataService,
+    private fitbitService: FitbitService,
     private router: Router,
     private htmlService: HtmlService, //used in template
     private datePipe: DatePipe
@@ -42,20 +44,19 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     // if (this.isAuthenticated) {
-    this.fitbitDataService.getUserProfile().subscribe(response => {
-      this.user = response;
-      console.log(this.user);
-    });
-
-    this.setLastHeartRateTimeSeries();
-    this.setHeartRateTimeSeriesIntraday(new Date());
-
+    // this.fitbitDataService.getUserProfile().subscribe(response => {
+    //   this.user = response;
+    //   console.log(this.user);
+    // });
+    // this.setLastHeartRateTimeSeries();
+    // this.setHeartRateTimeSeriesIntraday(new Date());
     // this.getHeartRateTimeSeries("2019-08-20", "2019-08-24");
     // }
     // else this.router.navigate([""]);
   }
+
   setHeartRateTimeSeriesIntraday(date: Date) {
-    this.fitbitDataService
+    this.fitbitService
       .getHeartRateIntraday(this.datePipe.transform(date, "yyyy-MM-dd"), this.datePipe.transform(date, "yyyy-MM-dd"))
       .subscribe(response => {
         console.log(response);
@@ -63,7 +64,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getHeartRateTimeSeries(from: string, to: string) {
-    return this.fitbitDataService.getHeartRateTimeSeries(from, to).subscribe(response => {
+    return this.fitbitService.getHeartRateTimeSeries(from, to).subscribe(response => {
       this.heartRateTimeSeries = response["activities-heart"];
       console.log(this.heartRateTimeSeries);
     });
@@ -78,66 +79,68 @@ export class DashboardComponent implements OnInit {
       date = new Date();
     }
 
-    this.fitbitDataService
-      .getHeartRateTimeSeries(this.datePipe.transform(date, "yyyy-MM-dd"), "1m")
-      .subscribe(response => {
-        this.latestHeartRateData = undefined;
-        this.heartRateTimeSeries = response["activities-heart"];
-        console.log(this.heartRateTimeSeries);
-        this.heartRateTimeSeries.reverse().some(day => {
-          console.log(day);
-          let found = false;
-          console.log(found);
-          day.value.heartRateZones.some(heartRateZone => {
-            if (heartRateZone.minutes !== undefined) {
-              this.latestHeartRateData = day;
-              console.log(heartRateZone);
-              found = true;
-              return true;
-            }
-          });
-          return found;
+    this.fitbitService.getHeartRateTimeSeries(this.datePipe.transform(date, "yyyy-MM-dd"), "1m").subscribe(response => {
+      this.latestHeartRateData = undefined;
+      this.heartRateTimeSeries = response["activities-heart"];
+      console.log(this.heartRateTimeSeries);
+      this.heartRateTimeSeries.reverse().some(day => {
+        console.log(day);
+        let found = false;
+        console.log(found);
+        day.value.heartRateZones.some(heartRateZone => {
+          if (heartRateZone.minutes !== undefined) {
+            this.latestHeartRateData = day;
+            console.log(heartRateZone);
+            found = true;
+            return true;
+          }
         });
-
-        console.log(this.latestHeartRateData);
-
-        if (this.latestHeartRateData === undefined) {
-          date.setDate(date.getDate() - 1);
-          this.setLastHeartRateTimeSeries(date);
-        }
-
-        // if (
-        //   !this.heartRateTimeSeries[0].value.heartRateZones.some(element => {
-        //     return element.minutes !== undefined;
-        //   }) &&
-        //   Date.now() - date.getTime() < 1000 * 60 * 60 * 24 * 365 //~milliseconds in a year
-        // ) {
-        //   //if no records were found for 'date', we look in the day before,
-        //   //recursively until some records are found or this shit blows up
-        //   date.setDate(date.getDate() - 1);
-        //   this.getLastHeartRateTimeSeries(date);
-        // }
+        return found;
       });
+
+      console.log(this.latestHeartRateData);
+
+      if (this.latestHeartRateData === undefined) {
+        date.setDate(date.getDate() - 1);
+        this.setLastHeartRateTimeSeries(date);
+      }
+
+      // if (
+      //   !this.heartRateTimeSeries[0].value.heartRateZones.some(element => {
+      //     return element.minutes !== undefined;
+      //   }) &&
+      //   Date.now() - date.getTime() < 1000 * 60 * 60 * 24 * 365 //~milliseconds in a year
+      // ) {
+      //   //if no records were found for 'date', we look in the day before,
+      //   //recursively until some records are found or this shit blows up
+      //   date.setDate(date.getDate() - 1);
+      //   this.getLastHeartRateTimeSeries(date);
+      // }
+    });
   }
 
-  get isAuthenticated() {
-    return this.fitbitDataService.appHasAccess();
+  get appHasAccess() {
+    return this.fitbitService.appHasAccess();
   }
 
-  logout() {
+  requestAccess() {
+    this.fitbitService.requestAccess();
+  }
+
+  disconnectFitbit() {
     // https: this.fitbitDataService.clearAccessToken();
-    this.fitbitDataService.logout().subscribe(
+    this.fitbitService.relinquishAccess().subscribe(
       () => {
         //on success
-        https: this.fitbitDataService.clearAccessToken();
+        // this.fitbitDataService.clearAccessToken();
         this.router.navigate([""]);
       },
       response => {
-        //on error
-        if (response.error.errors[0].errorType === "insufficient_permissions") {
-          https: this.fitbitDataService.clearAccessToken();
-          this.router.navigate([""]);
-        }
+        // //on error
+        console.log(response);
+        // if (response.error.errors[0].errorType === "insufficient_permissions") {
+        //   this.router.navigate([""]);
+        // }
       }
     );
   }

@@ -1,10 +1,6 @@
-// @import '~@angular/material/prebuilt-themes/indigo-pink.css';
-// @import '~@angular/material/prebuilt-themes/pink-bluegrey.css';
-// @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-// @import '~@angular/material/prebuilt-themes/purple-green.css';
-
-// @import url("https://fonts.googleapis.com/css?family=Open+Sans:400", "700", '','');
-body {
-  background: #456;
-  font-family: "Open Sans", sans-serif;
-}
+// @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500");
+@import url("https://fonts.googleapis.com/css?family=Chilanka&display=swap");
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+// @import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
+// @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+// @import "~@angular/material/prebuilt-themes/purple-green.css";

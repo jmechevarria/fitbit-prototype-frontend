@@ -1,0 +1,97 @@
+<!-- <div>
+  <h1 class="mat-display-1">
+    Heart Rate Time Series for user: <b>{{ user?.user.fullName }}</b>
+  </h1>
+  <mat-card class="example-card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Shiba Inu</mat-card-title>
+      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu" />
+    <mat-card-content>
+      <p>
+        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan. A small, agile
+        dog that copes very well with mountainous terrain, the Shiba Inu was originally bred for hunting.
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button>LIKE</button>
+      <button mat-button>SHARE</button>
+    </mat-card-actions>
+  </mat-card>
+  <h2 class="mat-h2">
+    Latest calories output: <b>{{ latestHeartRateData?.dateTime }}</b>
+  </h2>
+  <h2 class="mat-h2">
+    <b>{{ (latestHeartRateData?.value.heartRateZones)[0].name }}</b>
+    <b>{{ (latestHeartRateData?.value.heartRateZones)[1].name }}</b>
+    <b>{{ (latestHeartRateData?.value.heartRateZones)[2].name }}</b>
+    <b>{{ (latestHeartRateData?.value.heartRateZones)[3].name }}</b>
+  </h2>
+  <hr />
+  <mat-radio-group aria-label="Select an option" (change)="filterTypeChanged($event)">
+    <mat-radio-button checked value="time-span"></mat-radio-button>
+    <mat-form-field>
+      <mat-label>Time span</mat-label>
+      <mat-select [disabled]="filterType !== 'time-span'" (change)="timeSpanChanged()" [(value)]="selectedTimeSpan">
+        <mat-option *ngFor="let timeSpan of timeSpans" value="{{ htmlService.keys(timeSpan) }}">
+          {{ timeSpan[htmlService.keys(timeSpan)] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br />
+    <mat-radio-button value="range">Specific range</mat-radio-button>
+    <br />
+    <br />
+    <mat-form-field>
+      <input
+        [disabled]="filterType !== 'range'"
+        matInput
+        [matDatepicker]="from"
+        placeholder="From"
+        [(value)]="selectedRangeFrom"
+        [min]="selectedRangeMin"
+        [max]="selectedRangeMax"
+      />
+      <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
+      <mat-datepicker #from></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        [disabled]="filterType !== 'range'"
+        matInput
+        [matDatepicker]="to"
+        placeholder="To"
+        [(value)]="selectedRangeTo"
+        [min]="selectedRangeMin"
+        [max]="selectedRangeMax"
+      />
+      <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
+      <mat-datepicker #to></mat-datepicker>
+    </mat-form-field>
+  </mat-radio-group>
+  <button mat-flat-button color="primary" (click)="applyFilter()">Apply filter</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Out of range</th>
+        <th>Fat Burn</th>
+        <th>Cardio</th>
+        <th>Peak</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let day of heartRateTimeSeries">
+        <td>{{ day.dateTime }}</td>
+        <td *ngFor="let heartRateZone of day.value.heartRateZones; let i = index">
+          Calories out: {{ heartRateZone.caloriesOut }} Min: {{ heartRateZone.min }} Max:
+          {{ heartRateZone.max }} Minutes:
+          {{ heartRateZone.minutes }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->

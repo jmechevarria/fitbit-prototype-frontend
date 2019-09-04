@@ -9,9 +9,11 @@ import {
 } from "@angular/common/http";
 import { Observable, of, throwError } from "rxjs";
 import { delay, mergeMap, materialize, dematerialize } from "rxjs/operators";
+import { User } from "../models/user";
 
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem("users")) || [];
+let roles = JSON.parse(localStorage.getItem("roles")) || [];
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
@@ -61,15 +63,25 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     function authenticate() {
       const { username, password } = body;
-      const user = users.find(x => x.username === username && x.password === password);
-      if (!user) return error("Username or password is incorrect");
-      return ok({
-        id: user.id,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        token: "fake-jwt-token"
-      });
+      const userData = users.find(x => x.username === username && x.password === password);
+      if (!userData) return error("Username or password is incorrect");
+
+      let user: User = {} as User;
+
+      user.id = userData.id;
+      user.username = userData.username;
+      user.firstName = userData.firstName;
+      user.lastName = userData.lastName;
+      user.token = "fake-jwt-token";
+
+      const roleData = roles.find(role => role.id === userData.roleID);
+
+      user.role = {
+        id: roleData.id,
+        name: roleData.name
+      };
+
+      return ok(user);
     }
 
     function getUsers() {

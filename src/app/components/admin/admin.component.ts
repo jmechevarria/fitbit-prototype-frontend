@@ -12,7 +12,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   users: User[] = [];
 
   constructor(private authenticationService: AuthenticationService, private userService: UserService) {
-    this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
+    this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
   }

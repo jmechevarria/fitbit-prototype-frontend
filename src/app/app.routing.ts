@@ -8,16 +8,17 @@ import { AdminComponent } from "./components/admin/admin.component";
 import { RegisterComponent } from "./components/register/register.component";
 import { FitbitAccessGuard } from "./guards/fitbit-access.guard";
 import { LoginRegisterGuard } from "./guards/login-register.guard";
+import { AdminGuard } from "./guards/admin.guard";
 
 const routes: Routes = [
   { path: "", component: FitbitClientIDFormComponent },
   { path: "login", component: LoginComponent, canActivate: [LoginRegisterGuard] },
   { path: "register", component: RegisterComponent, canActivate: [LoginRegisterGuard] },
-  { path: "admin", component: AdminComponent, canActivate: [UserAuthenticationGuard] },
+  { path: "admin", component: AdminComponent, canActivate: [UserAuthenticationGuard, AdminGuard] },
   {
     path: "dashboard",
     component: DashboardComponent,
-    canActivate: [UserAuthenticationGuard, FitbitAccessGuard]
+    canActivate: [UserAuthenticationGuard /*, FitbitAccessGuard*/]
   },
 
   // otherwise redirect to home

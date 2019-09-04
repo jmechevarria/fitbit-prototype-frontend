@@ -1,21 +1,40 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 import { User } from "../models/user";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  private CURRENT_USER = "current-user";
+  private JWT = "own-token";
+
+  private currentUserSubject$: BehaviorSubject<User>;
+  public currentUser$: Observable<User>;
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem("currentUser")));
-    this.currentUser = this.currentUserSubject.asObservable();
+    this.currentUserSubject$ = new BehaviorSubject<User>(this.user);
+    this.currentUser$ = this.currentUserSubject$.asObservable();
   }
 
-  public get currentUserValue(): User {
-    return this.currentUserSubject.value;
+  get token() {
+    return localStorage.getItem(this.JWT);
+  }
+
+  set token(value) {
+    localStorage.setItem(this.JWT, value);
+  }
+
+  get user(): User {
+    return JSON.parse(localStorage.getItem(this.CURRENT_USER)) as User;
+  }
+
+  set user(value: User) {
+    localStorage.setItem(this.CURRENT_USER, JSON.stringify(value));
+  }
+
+  get isAuthenticated() {
+    return this.token !== "null";
   }
 
   login(username: string, password: string) {
@@ -25,18 +44,17 @@ export class AuthenticationService {
         // login successful if there's a jwt token in the response
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem("currentUser", JSON.stringify(user));
-          this.currentUserSubject.next(user);
+          this.token = user.token;
+          this.user = user;
+          this.currentUserSubject$.next(user);
         }
-
-        // return user;
       })
     );
   }
 
   logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem("currentUser");
-    this.currentUserSubject.next(null);
+    this.user = null;
+    this.token = null;
+    this.currentUserSubject$.next(null);
   }
 }

@@ -2,13 +2,8 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 
-// used to create fake backend
-import { fakeBackendProvider } from "./helpers";
-
 import { AppComponent } from "./app.component";
-// import { routing } from "./app.routing";
-
-import { JwtInterceptor, ErrorInterceptor } from "./helpers";
+import { JwtInterceptor, ErrorInterceptor, fakeBackendProvider } from "./helpers";
 import { AdminComponent } from "./components/admin/admin.component";
 import { LoginComponent } from "./components/login/login.component";
 import { AppRoutingModule } from "./app.routing";
@@ -24,6 +19,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { AlertComponent } from "./components/alert/alert.component";
 import { RegisterComponent } from "./components/register/register.component";
+import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.component";
 
 @NgModule({
   declarations: [
@@ -33,7 +29,8 @@ import { RegisterComponent } from "./components/register/register.component";
     LoginComponent,
     AlertComponent,
     AdminComponent,
-    RegisterComponent
+    RegisterComponent,
+    FitbitDataComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +41,6 @@ import { RegisterComponent } from "./components/register/register.component";
     MaterialModule,
     FlexLayoutModule,
     ReactiveFormsModule
-    // routing
   ],
   providers: [
     DatePipe,
