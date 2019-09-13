@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FitbitDataComponent } from './fitbit-data.component';
+import { DecisionTreeComponent } from './decision-tree.component';
 
-describe('FitbitDataComponent', () => {
-  let component: FitbitDataComponent;
-  let fixture: ComponentFixture<FitbitDataComponent>;
+describe('DecisionTreeComponent', () => {
+  let component: DecisionTreeComponent;
+  let fixture: ComponentFixture<DecisionTreeComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FitbitDataComponent ]
+      declarations: [ DecisionTreeComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FitbitDataComponent);
+    fixture = TestBed.createComponent(DecisionTreeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

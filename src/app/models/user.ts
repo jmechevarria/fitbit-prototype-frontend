@@ -1,4 +1,4 @@
-import { Role } from "./role";
+import { Role } from "./Role";
 
 export interface User {
   id: number;
@@ -7,6 +7,7 @@ export interface User {
   password: string;
   firstName: string;
   lastName: string;
+  lastName2: string;
   token: string;
   role: Role;
 }

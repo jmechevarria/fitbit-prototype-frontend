@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+}
+
+div.specific-range-container {
+  margin-top: 5px;
+}
+
+@media screen and (min-width: 600px) {
+  .form mat-button-toggle-group {
+    margin-right: 5px;
+  }
+}
+
+// @media screen and (max-width: 600px) {
+//   .form {
+//     display: flex;
+//     flex-direction: column;
+//   }
+
+//   .form mat-button-toggle-group {
+//     display: flex;
+//     flex-direction: column;
+//   }
+// }

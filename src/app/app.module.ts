@@ -20,6 +20,12 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { AlertComponent } from "./components/alert/alert.component";
 import { RegisterComponent } from "./components/register/register.component";
 import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.component";
+import { HeartRateTimeSeriesComponent } from "./components/heart-rate-time-series/heart-rate-time-series.component";
+
+import { MatButtonToggleModule } from "@angular/material";
+import { InterdayHeartrateTableComponent } from "./components/interday-heartrate-table/interday-heartrate-table.component";
+import { IntradayHeartrateTableComponent } from "./components/intraday-heartrate-table/intraday-heartrate-table.component";
+import { DecisionTreeComponent } from "./components/decision-tree/decision-tree.component";
 
 @NgModule({
   declarations: [
@@ -30,7 +36,11 @@ import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.compon
     AlertComponent,
     AdminComponent,
     RegisterComponent,
-    FitbitDataComponent
+    FitbitDataComponent,
+    HeartRateTimeSeriesComponent,
+    InterdayHeartrateTableComponent,
+    IntradayHeartrateTableComponent,
+    DecisionTreeComponent
   ],
   imports: [
     BrowserModule,
@@ -40,15 +50,16 @@ import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.compon
     BrowserAnimationsModule,
     MaterialModule,
     FlexLayoutModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButtonToggleModule
   ],
   providers: [
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
 
     // provider used to create fake backend
-    fakeBackendProvider
+    // fakeBackendProvider
   ],
   bootstrap: [AppComponent]
 })

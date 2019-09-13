@@ -1,10 +1,29 @@
-<button *ngIf="!appHasAccess" mat-button (click)="requestAccess()">Request Access</button>
-<button mat-flat-button color="warn" *ngIf="appHasAccess" (click)="disconnectFitbit()">Logout</button>
+<!-- <button *ngIf="!appHasAccess" mat-button (click)="requestAccess()">Request Access</button> -->
+<div fxLayoutAlign="end">
+  <button
+    id="disconnect"
+    mat-flat-button
+    matTooltip="Detener sincronización"
+    color="warn"
+    *ngIf="appHasAccess"
+    (click)="disconnectFitbit()"
+  >
+    <mat-icon>link_off</mat-icon>
+    <!-- <mat-chip><mat-icon>link_off</mat-icon></mat-chip> -->
+  </button>
+</div>
 
-<mat-selection-list #devices>
-  <mat-list-option *ngFor="let device of devices">
-    {{ device }}
-  </mat-list-option>
-</mat-selection-list>
+<mat-action-list *ngIf="!appHasAccess" color="primary">
+  <h3 mat-subheader>Fitbit users</h3>
+  <button mat-list-item *ngFor="let fitbitApp of fitbitApps | keyvalue" (click)="requestAccess(fitbitApp.value.id)">
+    <img matListAvatar src="assets/images/avatars/defaultProfile_150.png" alt="..." />
+    <div mat-line>
+      {{ fitbitApp.value.fitbitAccount.name }}
+    </div>
+    <p mat-line>
+      {{ fitbitApp.value.fitbitAccount.email }}
+    </p>
+  </button>
+</mat-action-list>
 
-<p>Options selected: {{ devices.selectedOptions.selected.length }}</p>
+<fitbit-data *ngIf="appHasAccess"></fitbit-data>

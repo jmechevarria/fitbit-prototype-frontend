@@ -27,12 +27,17 @@ export class ErrorInterceptor implements HttpInterceptor {
             this.router.navigate([""]);
           } else {
             //request fitbit credentials again
-            this.fitbitService.requestAccess();
+            console.log(request.body);
+            alert("error");
+
+            // this.fitbitService.requestAccess();
           }
         }
-        // alert(err);
+        console.log(err);
+        // alert(err.status);
         const error = err.error.message || err.statusText;
         return throwError(error);
+        // return throwError(err);
       })
     );
   }

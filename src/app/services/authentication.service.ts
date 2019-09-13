@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import { tap } from "rxjs/operators";
-import { User } from "../models/user";
+import { User } from "../models/User";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
@@ -39,7 +39,7 @@ export class AuthenticationService {
 
   login(username: string, password: string) {
     // return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password }).pipe(
-    return this.http.post<any>("http://localhost:3000/users/authenticate", { username, password }).pipe(
+    return this.http.post<any>("http://localhost:3000/api/v1/authenticate", { username, password }).pipe(
       tap(user => {
         // login successful if there's a jwt token in the response
         if (user && user.token) {

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { first } from "rxjs/operators";
-import { User } from "src/app/models/user";
+import { User } from "src/app/models/User";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { UserService } from "src/app/services/user.service";
 
@@ -39,8 +39,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.userService
       .getAll()
       .pipe(first())
-      .subscribe(users => {
-        this.users = users;
+      .subscribe(response => {
+        this.users = response["rows"];
       });
   }
 }

@@ -4,31 +4,44 @@
       <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
     </button>
     <span class="menu-spacer"></span>
-    <div>
-      <a mat-button class="nav-item nav-link" routerLink="/">Home</a>
-      <a mat-button class="nav-item nav-link" routerLink="/dashboard">Dashboard</a>
-      <!-- <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/accounts'"> Accounts </a>
+    <a mat-button class="nav-item nav-link" routerLink="/">Home</a>
+    <a mat-button class="nav-item nav-link" routerLink="/dashboard">Dashboard</a>
+    <!-- <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/accounts'"> Accounts </a>
       <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/create-account'"> Create Account </a> -->
-      <!-- [matMenuTriggerFor]="adminMenu" -->
-      <button
-        style="background: white; color: red; font-weight: bold"
-        *ngIf="currentUser?.role.id === 1"
-        mat-button
-        [routerLink]="'/admin'"
-      >
-        Administraci&oacute;n
-      </button>
-      <!-- <mat-menu #adminMenu="matMenu">
-        <button mat-menu-item>Item 1</button>
-        <button mat-menu-item>Item 2</button>
-      </mat-menu> -->
-    </div>
+    <!-- [matMenuTriggerFor]="adminMenu" -->
+    <button
+      style="background: white; color: red; font-weight: bold"
+      *ngIf="currentUser?.role.id === 1"
+      mat-button
+      [routerLink]="'/admin'"
+    >
+      Administration
+    </button>
+
     <span class="mat-toolbar-spacer"></span>
-    <div style="font-size: 15px">
-      <a *ngIf="!isAuthenticated" mat-button [routerLink]="['/login']">Login</a>
-      <label *ngIf="isAuthenticated">{{ currentUser?.firstName }} |</label>
-      <a *ngIf="isAuthenticated" mat-button class="nav-item nav-link" (click)="logout()">Logout</a>
+
+    <button mat-button [matMenuTriggerFor]="menu">Language</button>
+    <mat-menu #menu="matMenu">
+      <button (click)="setLocale('es-MX')" mat-menu-item>
+        <label>Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-mexico-50.png"/></label>
+      </button>
+      <button (click)="setLocale('es-ES')" mat-menu-item>
+        Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-spain-50.png" />
+      </button>
+      <button (click)="setLocale('en-US')" mat-menu-item>
+        English <img height="15" src="assets/images/flags/icons8-usa-50.png" />
+      </button>
+    </mat-menu>
+
+    <div *ngIf="isAuthenticated">
+      <button mat-button [matMenuTriggerFor]="userMenu">{{ currentUser?.firstName }}</button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item class="nav-item nav-link" (click)="logout()">Logout</button>
+      </mat-menu>
     </div>
+    <a *ngIf="!isAuthenticated" mat-button [routerLink]="['/login']">Login</a>
+    <!--<label *ngIf="isAuthenticated">{{ currentUser?.firstName }} |</label>
+    <a *ngIf="isAuthenticated" mat-button class="nav-item nav-link" (click)="logout()">Logout</a> -->
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -41,8 +54,8 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div style="height: 88vh;">
-      <alert></alert>
+    <alert></alert>
+    <div fxLayout="column">
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>

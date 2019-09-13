@@ -1,8 +1,8 @@
-<!-- <div>
-  <h1 class="mat-display-1">
-    Heart Rate Time Series for user: <b>{{ user?.user.fullName }}</b>
+<div fxLayout="column">
+  <h1>
+    Heart Rate Time Series for user: <b>{{ fitbitUser?.user.fullName }}</b>
   </h1>
-  <mat-card class="example-card">
+  <!-- <mat-card class="example-card">
     <mat-card-header>
       <div mat-card-avatar class="example-header-image"></div>
       <mat-card-title>Shiba Inu</mat-card-title>
@@ -19,79 +19,73 @@
       <button mat-button>LIKE</button>
       <button mat-button>SHARE</button>
     </mat-card-actions>
-  </mat-card>
-  <h2 class="mat-h2">
-    Latest calories output: <b>{{ latestHeartRateData?.dateTime }}</b>
-  </h2>
-  <h2 class="mat-h2">
-    <b>{{ (latestHeartRateData?.value.heartRateZones)[0].name }}</b>
-    <b>{{ (latestHeartRateData?.value.heartRateZones)[1].name }}</b>
-    <b>{{ (latestHeartRateData?.value.heartRateZones)[2].name }}</b>
-    <b>{{ (latestHeartRateData?.value.heartRateZones)[3].name }}</b>
-  </h2>
-  <hr />
-  <mat-radio-group aria-label="Select an option" (change)="filterTypeChanged($event)">
-    <mat-radio-button checked value="time-span"></mat-radio-button>
-    <mat-form-field>
-      <mat-label>Time span</mat-label>
-      <mat-select [disabled]="filterType !== 'time-span'" (change)="timeSpanChanged()" [(value)]="selectedTimeSpan">
-        <mat-option *ngFor="let timeSpan of timeSpans" value="{{ htmlService.keys(timeSpan) }}">
-          {{ timeSpan[htmlService.keys(timeSpan)] }}
+  </mat-card> -->
+
+  <div class="form">
+    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" value="PREDEFINED_RANGE">
+      <mat-button-toggle (click)="rangeTypeChanged(PREDEFINED_RANGE)" value="PREDEFINED_RANGE">
+        Predefined
+      </mat-button-toggle>
+      <mat-button-toggle (click)="rangeTypeChanged(SPECIFIC_RANGE)" value="SPECIFIC_RANGE">Specific</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field *ngIf="rangeType === PREDEFINED_RANGE">
+      <mat-select [disabled]="rangeType !== PREDEFINED_RANGE" [(value)]="selectedPredefinedRange">
+        <mat-option
+          *ngFor="let predefinedRange of predefinedRanges | keyvalue: sortNull"
+          value="{{ predefinedRange.key }}"
+        >
+          {{ predefinedRange.value }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <br />
-    <mat-radio-button value="range">Specific range</mat-radio-button>
-    <br />
-    <br />
-    <mat-form-field>
+    <mat-form-field *ngIf="rangeType === SPECIFIC_RANGE">
       <input
-        [disabled]="filterType !== 'range'"
+        id="specific-range-from"
+        disabled
         matInput
         [matDatepicker]="from"
         placeholder="From"
-        [(value)]="selectedRangeFrom"
-        [min]="selectedRangeMin"
-        [max]="selectedRangeMax"
+        [(ngModel)]="specificRangeFrom"
+        [min]="SPECIFIC_RANGE_MIN_BOTH"
+        [max]="SPECIFIC_RANGE_MAX_BOTH"
+        (dateChange)="specificRangeChanged($event)"
       />
       <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
-      <mat-datepicker #from></mat-datepicker>
+      <mat-datepicker [disabled]="rangeType !== SPECIFIC_RANGE" #from></mat-datepicker>
     </mat-form-field>
-    <mat-form-field>
+    &nbsp;
+    <mat-form-field *ngIf="rangeType === SPECIFIC_RANGE">
       <input
-        [disabled]="filterType !== 'range'"
+        id="specific-range-to"
+        disabled
         matInput
         [matDatepicker]="to"
         placeholder="To"
-        [(value)]="selectedRangeTo"
-        [min]="selectedRangeMin"
-        [max]="selectedRangeMax"
+        [(ngModel)]="specificRangeTo"
+        [min]="SPECIFIC_RANGE_MIN_BOTH"
+        [max]="SPECIFIC_RANGE_MAX_BOTH"
+        (dateChange)="specificRangeChanged($event)"
       />
       <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
-      <mat-datepicker #to></mat-datepicker>
+      <mat-datepicker [disabled]="rangeType !== SPECIFIC_RANGE" #to></mat-datepicker>
     </mat-form-field>
-  </mat-radio-group>
-  <button mat-flat-button color="primary" (click)="applyFilter()">Apply filter</button>
 
-  <table>
-    <thead>
-      <tr>
-        <th></th>
-        <th>Out of range</th>
-        <th>Fat Burn</th>
-        <th>Cardio</th>
-        <th>Peak</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let day of heartRateTimeSeries">
-        <td>{{ day.dateTime }}</td>
-        <td *ngFor="let heartRateZone of day.value.heartRateZones; let i = index">
-          Calories out: {{ heartRateZone.caloriesOut }} Min: {{ heartRateZone.min }} Max:
-          {{ heartRateZone.max }} Minutes:
-          {{ heartRateZone.minutes }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div> -->
+    <button
+      [disabled]="rangeType === SPECIFIC_RANGE && (!specificRangeFrom || !specificRangeTo)"
+      mat-flat-button
+      color="primary"
+      (click)="updateTable()"
+    >
+      <mat-icon>autorenew</mat-icon>
+    </button>
+  </div>
+
+  <div class="data-display">
+    <interday-heartrate-table
+      [heartRateInterdayLoading]="heartRateInterdayLoading"
+      [heartRateInterday]="heartRateInterday"
+      [dataSource]="dataSource"
+    ></interday-heartrate-table>
+  </div>
+</div>

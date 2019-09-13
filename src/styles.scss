@@ -4,3 +4,43 @@
 // @import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
 // @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 // @import "~@angular/material/prebuilt-themes/purple-green.css";
+
+// xs 	'screen and (max-width: 599px)'
+// sm 	'screen and (min-width: 600px) and (max-width: 959px)'
+// md 	'screen and (min-width: 960px) and (max-width: 1279px)'
+// lg 	'screen and (min-width: 1280px) and (max-width: 1919px)'
+// xl 	'screen and (min-width: 1920px) and (max-width: 5000px)'
+
+// lt-sm 	'screen and (max-width: 599px)'
+// lt-md 	'screen and (max-width: 959px)'
+// lt-lg 	'screen and (max-width: 1279px)'
+// lt-xl 	'screen and (max-width: 1919px)'
+
+// gt-xs 	'screen and (min-width: 600px)'
+// gt-sm 	'screen and (min-width: 960px)'
+// gt-md 	'screen and (min-width: 1280px)'
+// gt-lg 	'screen and (min-width: 1920px)'
+
+body {
+  margin: 0;
+}
+
+//COUNTERS
+
+/*mat-button-toggle in fitbit-data component*/
+mat-button-toggle .mat-button-toggle-label-content {
+  line-height: 2 !important;
+}
+
+/*table thead first and last cells*/
+table td.mat-cell:first-of-type,
+table td.mat-footer-cell:first-of-type,
+table th.mat-header-cell:first-of-type {
+  padding-left: 0;
+}
+
+table td.mat-cell:last-of-type,
+table td.mat-footer-cell:last-of-type,
+table th.mat-header-cell:last-of-type {
+  padding-right: 0;
+}

@@ -1,0 +1,37 @@
+#interday-container {
+  max-width: 600px;
+  // margin-right: 10px;
+}
+
+.interday-table-container {
+  max-height: 600px;
+  overflow: auto;
+  // margin-right: 10px;
+}
+
+.mat-header-cell,
+.mat-cell {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+}
+
+tr.mat-row:not(.highlight):hover {
+  background: #eaeaea;
+}
+
+tr.mat-header-row {
+  height: 30px;
+}
+
+tr.mat-row.highlight {
+  background: #e36060;
+}
+
+@media screen and (min-width: 600px) {
+  #interday-container {
+    width: 600px;
+  }
+}

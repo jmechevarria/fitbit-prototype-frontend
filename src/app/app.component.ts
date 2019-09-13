@@ -3,8 +3,10 @@ import { parseWindowHash } from "./helper";
 import { ImplicitGrantFlowResponse } from "./models/ImplicitGrantFlowResponse";
 import { Router } from "@angular/router";
 import { FitbitService } from "./services/fitbit.service";
-import { User } from "./models/user";
+import { User } from "./models/User";
 import { AuthenticationService } from "./services/authentication.service";
+import { Locale } from "moment";
+import { DateAdapter } from "@angular/material/core";
 
 @Component({
   selector: "app-root",
@@ -19,7 +21,8 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
-    private fitbitService: FitbitService
+    private fitbitService: FitbitService,
+    private adapter: DateAdapter<any>
   ) {
     this.authenticationService.currentUser$.subscribe(x => {
       this.currentUser = x;
@@ -28,20 +31,20 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (window.location.hash !== "") {
-      console.log(window.location);
       if (window.location.search.includes("error") || window.location.search.includes("error_description")) {
-        console.log("if");
-        // window.location.search = "";
-        // this.router.navigate([""]);
+        this.router.navigate([""]);
       } else if (window.location.hash.includes("access_token")) {
         const implicitGrantFlowResponse = parseWindowHash<ImplicitGrantFlowResponse>(window.location.hash);
 
         this.fitbitService.accessToken = implicitGrantFlowResponse.access_token;
-        this.fitbitService.userID = implicitGrantFlowResponse.user_id;
+        this.fitbitService.fitbitUserID = implicitGrantFlowResponse.user_id;
       }
-      // window.location.hash = "";
-      window.location.href = window.location.origin + window.location.pathname;
+
+      window.location.hash = "";
+      window.location.search = "";
     }
+
+    this.setLocale();
   }
 
   get isAuthenticated() {
@@ -57,5 +60,11 @@ export class AppComponent implements OnInit {
       this.authenticationService.logout();
       this.router.navigate([""]);
     });
+  }
+
+  setLocale(locale?: string) {
+    if (!locale) locale = localStorage.getItem("locale");
+    this.adapter.setLocale(locale);
+    localStorage.setItem("locale", locale);
   }
 }
