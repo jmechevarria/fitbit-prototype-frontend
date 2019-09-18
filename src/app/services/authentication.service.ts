@@ -6,55 +6,66 @@ import { User } from "../models/User";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
-  private CURRENT_USER = "current-user";
-  private JWT = "own-token";
+  private _CURRENT_USER = "current-user";
+  //holds info about fitbit accounts not related to the current user/caregiver
+  private _OTHER_FITBIT_ACCOUNTS = "other-fitbit-accounts";
+  // private JWT = "own-token";
 
   private currentUserSubject$: BehaviorSubject<User>;
   public currentUser$: Observable<User>;
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject$ = new BehaviorSubject<User>(this.user);
+    this.currentUserSubject$ = new BehaviorSubject<User>(this.currentUser);
     this.currentUser$ = this.currentUserSubject$.asObservable();
   }
 
-  get token() {
-    return localStorage.getItem(this.JWT);
+  get currentUser() {
+    return JSON.parse(localStorage.getItem(this._CURRENT_USER));
   }
 
-  set token(value) {
-    localStorage.setItem(this.JWT, value);
+  set currentUser(value) {
+    localStorage.setItem(this._CURRENT_USER, JSON.stringify(value));
   }
 
-  get user(): User {
-    return JSON.parse(localStorage.getItem(this.CURRENT_USER)) as User;
+  get otherFitbitAccounts() {
+    return JSON.parse(localStorage.getItem(this._OTHER_FITBIT_ACCOUNTS));
   }
 
-  set user(value: User) {
-    localStorage.setItem(this.CURRENT_USER, JSON.stringify(value));
+  set otherFitbitAccounts(value) {
+    localStorage.setItem(this._OTHER_FITBIT_ACCOUNTS, JSON.stringify(value));
   }
 
   get isAuthenticated() {
-    return this.token !== "null";
+    // return this.token && this.token !== "null";
+    return this.currentUser && this.currentUser !== "null";
   }
 
   login(username: string, password: string) {
     // return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password }).pipe(
     return this.http.post<any>("http://localhost:3000/api/v1/authenticate", { username, password }).pipe(
-      tap(user => {
+      tap(response => {
+        console.log(response);
         // login successful if there's a jwt token in the response
-        if (user && user.token) {
+        if (response && response.authenticatedUser.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
-          this.token = user.token;
-          this.user = user;
-          this.currentUserSubject$.next(user);
+          // this.token = user.token;
+          this.currentUser = response.authenticatedUser;
+          this.otherFitbitAccounts = response.otherFitbitAccounts;
+
+          // this.saveInfoInLocalStorage(response);
+          this.currentUserSubject$.next(this.currentUser);
         }
       })
     );
   }
 
+  // saveInfoInLocalStorage(user: any) {
+  //   this.currentUser = user;
+  // }
+
   logout() {
-    this.user = null;
-    this.token = null;
+    this.currentUser = null;
+    // this.token = null;
     this.currentUserSubject$.next(null);
   }
 }

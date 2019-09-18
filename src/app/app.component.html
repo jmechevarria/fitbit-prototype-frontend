@@ -5,19 +5,21 @@
     </button>
     <span class="menu-spacer"></span>
     <a mat-button class="nav-item nav-link" routerLink="/">Home</a>
-    <a mat-button class="nav-item nav-link" routerLink="/dashboard">Dashboard</a>
-    <!-- <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/accounts'"> Accounts </a>
-      <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/create-account'"> Create Account </a> -->
-    <!-- [matMenuTriggerFor]="adminMenu" -->
+    <a *ngIf="currentUser?.data.roleID === 2" mat-button class="nav-item nav-link" routerLink="/dashboard">
+      Dashboard
+    </a>
+
     <button
       style="background: white; color: red; font-weight: bold"
-      *ngIf="currentUser?.role.id === 1"
+      *ngIf="currentUser?.data.roleID === 1"
       mat-button
       [routerLink]="'/admin'"
     >
       Administration
     </button>
-
+    <!-- <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/accounts'"> Accounts </a>
+      <a *ngIf="currentUser?.role.id === 1" mat-button [routerLink]="'/create-account'"> Create Account </a> -->
+    <!-- [matMenuTriggerFor]="adminMenu" -->
     <span class="mat-toolbar-spacer"></span>
 
     <button mat-button [matMenuTriggerFor]="menu">Language</button>
@@ -34,7 +36,7 @@
     </mat-menu>
 
     <div *ngIf="isAuthenticated">
-      <button mat-button [matMenuTriggerFor]="userMenu">{{ currentUser?.firstName }}</button>
+      <button mat-button [matMenuTriggerFor]="userMenu">{{ currentUser?.data.username }}</button>
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item class="nav-item nav-link" (click)="logout()">Logout</button>
       </mat-menu>

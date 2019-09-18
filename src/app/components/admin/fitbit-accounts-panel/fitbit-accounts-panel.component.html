@@ -1,0 +1,29 @@
+<h1 class="mat-headline">Fitbit accounts</h1>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>Fitbit accounts</h3>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-list role="list">
+      <ng-container *ngFor="let fitbitAccount of fitbitAccounts | keyvalue">
+        <mat-list-item role="listitem">
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%">
+            <div>
+              <label> {{ fitbitAccount.value.fullname }} </label>
+            </div>
+            <div>
+              <button mat-icon-button>
+                <mat-icon click-stop-propagation color="warn" (click)="deleteFitbitAccount(fitbitAccount.key)">
+                  delete
+                </mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -24,9 +24,9 @@ export class InterdayHeartrateTableComponent implements OnInit {
 
   heartRateIntraday: [];
   heartRateIntradayLoading: boolean = false;
+  selectedRowIndex: number = -1;
 
   private _dataSource;
-  selectedRowIndex: number = -1;
 
   @Input()
   set dataSource(dataSource) {
@@ -37,11 +37,12 @@ export class InterdayHeartrateTableComponent implements OnInit {
     return this._dataSource;
   }
 
-  private _heartRateInterdayLoading;
+  private _heartRateInterdayLoading: boolean = true;
 
   @Input()
   set heartRateInterdayLoading(heartRateInterdayLoading) {
     this._heartRateInterdayLoading = heartRateInterdayLoading;
+    console.log(this._heartRateInterdayLoading);
   }
 
   get heartRateInterdayLoading() {

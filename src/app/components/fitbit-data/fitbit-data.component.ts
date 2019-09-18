@@ -4,6 +4,7 @@ import { DatePipe } from "@angular/common";
 import * as moment from "moment";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
+import { materialize, dematerialize, delay } from "rxjs/operators";
 
 export interface interdayHeartRateDataSource {
   date: string;
@@ -42,68 +43,76 @@ export class FitbitDataComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   dataSource: MatTableDataSource<interdayHeartRateDataSource>;
+  showComponent: boolean;
+  fitbitAccountID: number;
 
   constructor(private fitbitService: FitbitService, private datePipe: DatePipe) {}
 
   ngOnInit() {
-    this.fetchHeartRateInterDay(this.datePipe.transform(new Date(), "yyyy-MM-dd"), this.selectedPredefinedRange);
-
-    this.fitbitService.getUserProfile().subscribe(response => {
-      this.fitbitUser = response;
-      console.log(this.fitbitUser);
-    });
+    // this.fetchHeartRateInterDay(this.datePipe.transform(new Date(), "yyyy-MM-dd"), this.selectedPredefinedRange);
+    // this.fitbitService.getUserProfile().subscribe(response => {
+    //   this.fitbitUser = response;
+    //   console.log(this.fitbitUser);
+    // });
   }
 
-  /**
-   *
-   * @param date A Date object
-   */
-  fetchHeartRateInterDay(from: string, to: string) {
-    this.dataSource = null;
+  getHeartRateInterday(fitbitAccountID: number, from?: string, to?: string) {
+    this.fitbitAccountID = fitbitAccountID;
     this.heartRateInterdayLoading = true;
-    this.fitbitService.getHeartRateInterday(from, to).subscribe(
-      response => {
-        console.log(response);
-        this.dataSource = new MatTableDataSource(this.mapToDataSource(response));
+    this.showComponent = true;
+    this.fitbitService
+      .fetchHeartRateInterday(
+        fitbitAccountID,
+        !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
+        !!to ? to : this.selectedPredefinedRange
+      )
+      .subscribe(
+        response => {
+          console.log(response);
 
-        this.dataSource.filterPredicate = (data: interdayHeartRateDataSource, filter: string): boolean => {
-          return (
-            data.date.indexOf(filter) !== -1 ||
-            (data["Out of Range"] &&
-              data["Out of Range"].caloriesOut
-                .toString()
-                .toLowerCase()
-                .indexOf(filter.toLowerCase()) !== -1) ||
-            (data["Fat Burn"] &&
-              data["Fat Burn"].caloriesOut
-                .toString()
-                .toLowerCase()
-                .indexOf(filter.toLowerCase()) !== -1) ||
-            (data.Cardio &&
-              data.Cardio.caloriesOut
-                .toString()
-                .toLowerCase()
-                .indexOf(filter.toLowerCase()) !== -1) ||
-            (data.Peak &&
-              data.Peak.caloriesOut
-                .toString()
-                .toLowerCase()
-                .indexOf(filter.toLowerCase()) !== -1)
-          );
-        };
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+          this.dataSource = null;
+          this.dataSource = new MatTableDataSource(this.mapToDataSource(response));
 
-        console.log(this.dataSource.data);
-      },
-      error => {
-        console.log(error);
-        this.heartRateInterdayLoading = false;
-      },
-      () => {
-        this.heartRateInterdayLoading = false;
-      }
-    );
+          this.dataSource.filterPredicate = (data: interdayHeartRateDataSource, filter: string): boolean => {
+            return (
+              data.date.indexOf(filter) !== -1 ||
+              (data["Out of Range"] &&
+                data["Out of Range"].caloriesOut
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(filter.toLowerCase()) !== -1) ||
+              (data["Fat Burn"] &&
+                data["Fat Burn"].caloriesOut
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(filter.toLowerCase()) !== -1) ||
+              (data.Cardio &&
+                data.Cardio.caloriesOut
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(filter.toLowerCase()) !== -1) ||
+              (data.Peak &&
+                data.Peak.caloriesOut
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(filter.toLowerCase()) !== -1)
+            );
+          };
+
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+
+          console.log(this.dataSource);
+          this.heartRateInterdayLoading = false;
+        },
+        error => {
+          console.log(error);
+          this.heartRateInterdayLoading = false;
+        },
+        () => {
+          this.heartRateInterdayLoading = false;
+        }
+      );
   }
 
   updateTable() {
@@ -112,7 +121,7 @@ export class FitbitDataComponent implements OnInit {
     const to: string =
       this.rangeType === this.SPECIFIC_RANGE ? this.specificRangeTo.format("Y-MM-DD") : this.selectedPredefinedRange;
 
-    this.fetchHeartRateInterDay(from, to);
+    this.getHeartRateInterday(this.fitbitAccountID, from, to);
   }
 
   specificRangeChanged(event: MatDatepickerInputEvent<moment.Moment>) {

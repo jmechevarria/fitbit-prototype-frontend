@@ -1,0 +1,23 @@
+<mat-accordion>
+  <mat-expansion-panel
+    fxLayout="column"
+    [expanded]="isFirst"
+    *ngFor="let fitbitAccount of fitbitAccounts; first as isFirst"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ fitbitAccount.fullname }}
+      </mat-panel-title>
+      <mat-panel-description>
+        Age: {{ fitbitAccount.age }} | Height: {{ fitbitAccount.height_cm }} | Weight:
+        {{ fitbitAccount.weight_kg }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div fxLayout fxLayoutAlign="space-between">
+      <span><img matListAvatar src="assets/images/devices/blaze.png" alt="..." width="50" /> Blaze</span>
+      <div>
+        <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount.id)">Show data</button>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

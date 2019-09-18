@@ -1,13 +1,12 @@
-import { Role } from "./Role";
+// import { Role } from "./Role";
 
 export interface User {
-  id: number;
-  email: string;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  lastName2: string;
   token: string;
-  role: Role;
+  data: {
+    id: number;
+    email: string;
+    username: string;
+    fullname: string;
+    roleID: number;
+  };
 }

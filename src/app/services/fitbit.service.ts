@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpResponse } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpResponse, HttpParams } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { tap } from "rxjs/operators";
+import { tap, materialize, delay, dematerialize } from "rxjs/operators";
 import { of } from "rxjs";
 import { Device } from "../models/device";
 import { FitbitApp } from "../models/FitbitApp";
 import { FitbitAccount } from "../models/FitbitAccount";
 import * as moment from "moment";
+import { User } from "../models/User";
 
 @Injectable({
   providedIn: "root"
@@ -123,7 +124,7 @@ export class FitbitService {
   }
 
   appHasAccess() {
-    return this.accessToken !== "null";
+    return this.accessToken && this.accessToken !== "null";
   }
 
   clearAccessTokens() {
@@ -146,5 +147,15 @@ export class FitbitService {
     // return this.http.get(
     //   "https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + "/1min/time/00:00/00:10.json"
     // );
+  }
+
+  fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string) {
+    return this.http
+      .get(
+        `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/device/1/activities/heart/date/${from}/${to}`
+      )
+      .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
+      .pipe(delay(500))
+      .pipe(dematerialize());
   }
 }

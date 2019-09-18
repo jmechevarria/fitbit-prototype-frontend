@@ -1,4 +1,9 @@
 /** No CSS for this example */
+mat-toolbar,
+mat-toolbar-row {
+  height: 60px !important;
+}
+
 .mat-toolbar-spacer {
   flex: 1 1 auto;
 }
@@ -7,6 +12,11 @@ mat-sidenav-container {
   background: white;
 }
 
+mat-sidenav {
+  height: 100vh !important;
+}
+
 mat-sidenav-content {
+  min-height: calc(100vh - 60px) !important;
   padding: 0 10px 10px;
 }

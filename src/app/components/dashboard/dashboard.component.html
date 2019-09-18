@@ -1,4 +1,3 @@
-<!-- <button *ngIf="!appHasAccess" mat-button (click)="requestAccess()">Request Access</button> -->
 <div fxLayoutAlign="end">
   <button
     id="disconnect"
@@ -9,21 +8,23 @@
     (click)="disconnectFitbit()"
   >
     <mat-icon>link_off</mat-icon>
-    <!-- <mat-chip><mat-icon>link_off</mat-icon></mat-chip> -->
   </button>
 </div>
+<devices-panel
+  [fitbitAccounts]="currentUser.data.fitbitAccounts"
+  (showHeartRateData_EE)="getHeartRateData($event)"
+></devices-panel>
 
-<mat-action-list *ngIf="!appHasAccess" color="primary">
+<!-- <mat-action-list *ngIf="!appHasAccess" color="primary">
   <h3 mat-subheader>Fitbit users</h3>
-  <button mat-list-item *ngFor="let fitbitApp of fitbitApps | keyvalue" (click)="requestAccess(fitbitApp.value.id)">
+  <button
+    mat-list-item
+    *ngFor="let fitbitAccount of currentUser?.data.fitbitAccounts"
+    (click)="showData(fitbitAccount.id)"
+  >
     <img matListAvatar src="assets/images/avatars/defaultProfile_150.png" alt="..." />
-    <div mat-line>
-      {{ fitbitApp.value.fitbitAccount.name }}
-    </div>
-    <p mat-line>
-      {{ fitbitApp.value.fitbitAccount.email }}
-    </p>
+    <div mat-line>{{ fitbitAccount.firstname + " " + fitbitAccount.lastname + " " + fitbitAccount.lastname2 }}</div>
   </button>
-</mat-action-list>
+</mat-action-list> -->
 
-<fitbit-data *ngIf="appHasAccess"></fitbit-data>
+<fitbit-data></fitbit-data>

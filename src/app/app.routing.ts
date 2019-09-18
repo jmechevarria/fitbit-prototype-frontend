@@ -9,6 +9,7 @@ import { RegisterComponent } from "./components/register/register.component";
 import { FitbitAccessGuard } from "./guards/fitbit-access.guard";
 import { LoginRegisterGuard } from "./guards/login-register.guard";
 import { AdminGuard } from "./guards/admin.guard";
+import { CaregiverGuard } from "./guards/caregiver.guard";
 
 const routes: Routes = [
   { path: "", component: FitbitClientIDFormComponent },
@@ -18,7 +19,7 @@ const routes: Routes = [
   {
     path: "dashboard",
     component: DashboardComponent,
-    canActivate: [UserAuthenticationGuard /*, FitbitAccessGuard*/]
+    canActivate: [UserAuthenticationGuard, CaregiverGuard]
   },
 
   // otherwise redirect to home

@@ -1,4 +1,4 @@
-<div fxLayout="column">
+<div *ngIf="showComponent" fxLayout="column">
   <h1>
     Heart Rate Time Series for user: <b>{{ fitbitUser?.user.fullName }}</b>
   </h1>
@@ -81,10 +81,11 @@
     </button>
   </div>
 
-  <div class="data-display">
+  <!-- <div class="data-display"> -->
+  <div>
     <interday-heartrate-table
-      [heartRateInterdayLoading]="heartRateInterdayLoading"
       [heartRateInterday]="heartRateInterday"
+      [heartRateInterdayLoading]="heartRateInterdayLoading"
       [dataSource]="dataSource"
     ></interday-heartrate-table>
   </div>

@@ -1,8 +1,15 @@
-<h1>Hi {{ currentUser.firstName }}!</h1>
-<p>You're logged in with Angular 7!!</p>
-<h3>All registered users:</h3>
-<ul>
-  <li *ngFor="let user of users">
-    {{ user.username }} ({{ user.firstName }} {{ user.lastName }}) - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
-  </li>
-</ul>
+<div id="admin-component-container" fxLayout fxLayout.lt-md="column" fxLayoutGap="10px">
+  <users-panel
+    [users]="users"
+    [fitbitAccounts]="fitbitAccounts"
+    (deleteUser_EE)="deleteUser($event)"
+    (unlinkFromFitbitAccount_EE)="unlinkFromFitbitAccount($event)"
+    (linkToFitbitAccount_EE)="linkToFitbitAccount($event)"
+  >
+  </users-panel>
+  <mat-divider vertical="true"></mat-divider>
+  <fitbit-accounts-panel
+    [fitbitAccounts]="fitbitAccounts"
+    (deleteFitbitAccount_EE)="deleteFitbitAccount($event)"
+  ></fitbit-accounts-panel>
+</div>

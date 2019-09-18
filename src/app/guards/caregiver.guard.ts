@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from "@angular/router";
 import { Observable } from "rxjs";
-import { AuthenticationService } from "../services/authentication.service";
 import { map } from "rxjs/operators";
+import { AuthenticationService } from "../services/authentication.service";
 
 @Injectable({
   providedIn: "root"
 })
-export class AdminGuard implements CanActivate {
-  constructor(private authenticationService: AuthenticationService, private router: Router) {}
+export class CaregiverGuard implements CanActivate {
+  constructor(private router: Router, private authenticationService: AuthenticationService) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -20,7 +20,7 @@ export class AdminGuard implements CanActivate {
         //there has to be a user logged in for this to work, we make sure of that by
         //running the 'user-authenticatioin' guard before this one
         userRole = user.data.roleID;
-        if (userRole !== 1) {
+        if (userRole !== 2) {
           this.router.navigate([""]);
           return false;
         }

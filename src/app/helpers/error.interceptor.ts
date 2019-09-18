@@ -30,9 +30,10 @@ export class ErrorInterceptor implements HttpInterceptor {
             console.log(request.body);
             alert("error");
 
-            // this.fitbitService.requestAccess();
+            this.fitbitService.requestAccess(this.fitbitService.currentFitbitAppID);
           }
         }
+
         console.log(err);
         // alert(err.status);
         const error = err.error.message || err.statusText;

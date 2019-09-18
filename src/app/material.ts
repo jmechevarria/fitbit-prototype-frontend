@@ -22,6 +22,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { CUSTOM_DATE_DISPLAY_FORMAT } from "./helpers/custom-date-format";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   imports: [
@@ -43,7 +45,9 @@ import { CUSTOM_DATE_DISPLAY_FORMAT } from "./helpers/custom-date-format";
     MatChipsModule,
     MatTableModule,
     MatPaginatorModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatExpansionModule,
+    MatDialogModule
   ],
   exports: [
     MatDatepickerModule,
@@ -66,7 +70,9 @@ import { CUSTOM_DATE_DISPLAY_FORMAT } from "./helpers/custom-date-format";
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatExpansionModule,
+    MatDialogModule
   ],
   providers: [{ provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_DISPLAY_FORMAT }]
 })
