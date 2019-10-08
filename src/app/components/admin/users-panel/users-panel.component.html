@@ -1,9 +1,9 @@
-<h1 class="mat-headline">Users</h1>
+<h1 class="mat-headline">{{ "admin.users_panel.users" | translate }}</h1>
 
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>Administrators</h3>
+      <h3>{{ "admin.users_panel.administrators" | translate }}</h3>
     </mat-expansion-panel-header>
     <mat-list role="list">
       <ng-container *ngFor="let user of users | keyvalue">
@@ -25,7 +25,7 @@
 
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>Caregivers</h3>
+      <h3>{{ "admin.users_panel.caregivers" | translate }}</h3>
     </mat-expansion-panel-header>
     <mat-accordion>
       <ng-container *ngFor="let user of users | keyvalue">
@@ -35,23 +35,23 @@
               {{ user.value.fullname }} ({{ user.value.username }})
             </mat-panel-title>
             <mat-panel-description fxLayoutAlign="space-between center">
-              Fitbit accounts attended by this caregiver
+              {{ "admin.users_panel.fitbit_accounts_attended_by_this_caregiver" | translate }}
               <button
                 click-stop-propagation
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
-                aria-label="Example icon-button with a menu"
+                aria-label="'admin.users_panel.caregiver_options_menu' | translate"
               >
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="linkToFitbitAccount_Dialog(user.value)">
+                <button mat-menu-item (click)="linkToFitbitAccount(user.value)">
                   <mat-icon>add_circle</mat-icon>
-                  <span>Link to Fitbit account</span>
+                  <span>{{ "admin.users_panel.link_to_fitbit_accounts" | translate }}</span>
                 </button>
                 <button mat-menu-item (click)="deleteUser(user.key)">
                   <mat-icon color="warn">delete</mat-icon>
-                  <span>Delete user</span>
+                  <span>{{ "admin.users_panel.delete_user" | translate }}</span>
                 </button>
               </mat-menu>
             </mat-panel-description>
@@ -64,8 +64,20 @@
                     <label>{{ fitbitAccount.value.fullname }}</label>
                   </div>
                   <div>
+                    <a (click)="revokeAccessToken(fitbitAccount.value.fitbit_app_id)" class="text-danger">
+                      <button matTooltip="{{ 'admin.users_panel.revoke_access_token' | translate }}" mat-icon-button>
+                        <mat-icon>link_off</mat-icon>
+                      </button>
+                    </a>
+                    <a (click)="refreshAccessToken(fitbitAccount.value.fitbit_app_id)" class="text-danger">
+                      <button matTooltip="{{ 'admin.users_panel.refresh_access_token' | translate }}" mat-icon-button>
+                        <mat-icon>autorenew</mat-icon>
+                      </button>
+                    </a>
                     <a (click)="unlinkFromFitbitAccount(user.key, fitbitAccount.key)" class="text-danger">
-                      <button mat-icon-button><mat-icon>link_off</mat-icon></button>
+                      <button matTooltip="{{ 'admin.users_panel.unlink' | translate }}" mat-icon-button>
+                        <mat-icon>clear</mat-icon>
+                      </button>
                     </a>
                   </div>
                 </div>

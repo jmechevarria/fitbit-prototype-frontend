@@ -1,21 +1,19 @@
 #interday-container {
-  max-width: 600px;
-  // margin-right: 10px;
+  width: 100%;
 }
 
-.interday-table-container {
-  max-height: 600px;
+table {
+  width: 100%;
+}
+
+#interday-table-container {
+  max-height: 400px;
   overflow: auto;
-  // margin-right: 10px;
 }
 
 .mat-header-cell,
 .mat-cell {
   text-align: center;
-}
-
-table {
-  width: 100%;
 }
 
 tr.mat-row:not(.highlight):hover {
@@ -30,8 +28,25 @@ tr.mat-row.highlight {
   background: #e36060;
 }
 
+mat-paginator {
+  float: right;
+}
+
+mat-paginator {
+  width: 100%;
+}
+
 @media screen and (min-width: 600px) {
-  #interday-container {
-    width: 600px;
+  mat-form-field,
+  #interday-table-container {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  mat-form-field,
+  #interday-table-container,
+  mat-paginator {
+    width: 100%;
   }
 }

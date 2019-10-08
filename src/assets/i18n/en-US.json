@@ -1,0 +1,75 @@
+{
+  "home": {
+    "main_menu": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "administration": "Administration",
+      "language": "Language",
+      "english": "English",
+      "spanish": "Spanish",
+      "logout": "Logout"
+    }
+  },
+  "admin": {
+    "users_panel": {
+      "fitbit_accounts": "Fitbit accounts",
+      "users": "Users",
+      "administrators": "Administrators",
+      "caregivers": "Caregivers",
+      "fitbit_accounts_attended_by_this_caregiver": "Fitbit accounts attended by this caregiver",
+      "caregiver_options_menu": "Caregiver Options Menu",
+      "link_to_fitbit_accounts": "Link to Fitbit accounts",
+      "delete_user": "Delete user",
+      "revoke_access_token": "Revoke access token",
+      "refresh_access_token": "Refresh access token",
+      "unlink": "Unlink"
+    }
+  },
+  "dashboard": {
+    "devices_panel": {
+      "age": "Age",
+      "height": "Height",
+      "weight": "Weight",
+      "show_data": "Show data",
+      "this_user_has_no_active_fitbit_accounts_to_monitor": "This user has no active fitbit accounts to monitor"
+    },
+    "fitbit_data": {
+      "heart_rate_time_series_for_user": "Heart rate time series for user",
+      "predefined": "Predefined",
+      "specific": "Specific",
+      "from": "From",
+      "to": "To",
+      "interday": {
+        "filter": "Filter",
+        "date": "Date",
+        "out_of_range": "Out of Range",
+        "fat_burn": "Fat Burn",
+        "cardio": "Cardio",
+        "peak": "Peak",
+        "calories": "cal",
+        "minutes": "min",
+        "no_activity_perceived": "No activity perceived",
+        "no_results_for_selected_interval": "No results for selected interval"
+      },
+      "intraday": { "options": "Options", "select_type": "Select type", "download": "Download" }
+    }
+  },
+  "login": {
+    "welcome": "Welcome",
+    "username": "Username",
+    "username_is_required": "Username is required",
+    "password": "Password",
+    "password_is_required": "Password is required"
+  },
+  "widgets": {
+    "selection_list_dialog": {
+      "accounts_selected": "Accounts selected",
+      "link_caregiver_to_fitbit_accounts": "Link caregiver to fitbit accounts"
+    }
+  },
+  "shared": {
+    "login": "Login",
+    "cancel": "Cancel",
+    "proceed": "Proceed"
+  }
+}

@@ -10,16 +10,16 @@ export class FitbitAccountService {
     return this.http.get("http://localhost:3000/api/v1/fitbit-accounts");
   }
 
+  // getById(id: number) {
+  //   return this.http.get(`http://localhost:3000/api/v1/fitbit-accounts/${id}`);
+  // }
+
   delete(id: number) {
     return this.http.delete(`http://localhost:3000/api/v1/fitbit-accounts/${id}`);
   }
 
   // getAll() {
   //   return this.http.get<FitbitAccount[]>("http://localhost:3000/api/v1/users");
-  // }
-
-  // getById(id: number) {
-  //   return this.http.get(`http://localhost:3000/api/v1/users/${id}`);
   // }
 
   // register(user: User) {

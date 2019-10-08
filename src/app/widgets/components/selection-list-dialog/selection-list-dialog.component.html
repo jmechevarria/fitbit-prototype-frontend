@@ -1,0 +1,22 @@
+<!-- <h1 mat-dialog-title>Link caregiver to Fitbit account</h1> -->
+<h1 mat-dialog-title>{{ "widgets.selection_list_dialog.link_caregiver_to_fitbit_accounts" | translate }}</h1>
+<div mat-dialog-content>
+  <mat-selection-list #fitbitAccountsList [(ngModel)]="data.selected">
+    <ng-container *ngFor="let fa of data.fitbitAccounts | keyvalue; let i = index">
+      <mat-list-option *ngIf="fa.value.show" [value]="fa">
+        {{ i }}. {{ fa.value.fullname }} (ID: {{ fa.key }})
+      </mat-list-option>
+    </ng-container>
+  </mat-selection-list>
+
+  <p class="mat-caption">
+    {{ "widgets.selection_list_dialog.accounts_selected" | translate }}
+    {{ fitbitAccountsList.selectedOptions.selected.length }}
+  </p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="close()">{{ "shared.cancel" | translate }}</button>
+  <button mat-raised-button [mat-dialog-close]="data.selected" color="warn" cdkFocusInitial>
+    {{ "shared.proceed" | translate }}
+  </button>
+</div>

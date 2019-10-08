@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from "@angular/core";
-import { MatPaginator, MatSort, MatTableDataSource } from "@angular/material";
+import { MatPaginator, MatSort } from "@angular/material";
 import { FitbitService } from "src/app/services/fitbit.service";
-import { interdayHeartRateDataSource } from "../fitbit-data/fitbit-data.component";
 
 @Component({
   selector: "interday-heartrate-table",
@@ -19,8 +18,8 @@ export class InterdayHeartrateTableComponent implements OnInit {
   };
 
   //PAGINATION AND SORTING
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  // @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   heartRateIntraday: [];
   heartRateIntradayLoading: boolean = false;
@@ -42,7 +41,6 @@ export class InterdayHeartrateTableComponent implements OnInit {
   @Input()
   set heartRateInterdayLoading(heartRateInterdayLoading) {
     this._heartRateInterdayLoading = heartRateInterdayLoading;
-    console.log(this._heartRateInterdayLoading);
   }
 
   get heartRateInterdayLoading() {
@@ -60,12 +58,22 @@ export class InterdayHeartrateTableComponent implements OnInit {
     return this._heartRateInterday;
   }
 
+  private _fitbitAccountID: number;
+
+  @Input()
+  set fitbitAccountID(fitbitAccountID: number) {
+    this._fitbitAccountID = fitbitAccountID;
+  }
+
+  get fitbitAccountID(): number {
+    return this._fitbitAccountID;
+  }
+
   constructor(private fitbitService: FitbitService) {}
 
   ngOnInit() {}
 
   applyFilter(filterValue: string) {
-    console.log(filterValue);
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
@@ -74,27 +82,24 @@ export class InterdayHeartrateTableComponent implements OnInit {
   }
 
   getIntraday(day, rowIndex) {
+    this.highlightRow();
     this.heartRateIntraday = [];
-    this.heartRateIntradayLoading = true;
-    this.fitbitService.getHeartRateIntraday(day.date, "1d").subscribe(
+    this.fitbitService.fetchHeartRateIntraday(this._fitbitAccountID, day.date, "1d").subscribe(
       response => {
-        if (response["activities-heart-intraday"] && response["activities-heart-intraday"]["dataset"]) {
-          this.heartRateIntraday = response["activities-heart-intraday"]["dataset"];
+        console.log(response);
+        if (!!response["dataset"]) {
+          this.heartRateIntraday = response["dataset"];
           this.highlightRow(rowIndex);
         }
       },
       error => {
         console.log(error);
         this.heartRateIntradayLoading = false;
-      },
-      () => {
-        this.heartRateIntradayLoading = false;
       }
     );
   }
 
-  highlightRow(rowIndex) {
-    // console.log(rowIndex.id);
+  highlightRow(rowIndex = undefined) {
     this.selectedRowIndex = rowIndex;
   }
 }

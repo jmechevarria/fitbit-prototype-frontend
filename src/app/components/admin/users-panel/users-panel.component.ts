@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, Inject } from "@angular/core";
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
+import { DialogService } from "src/app/services/dialog.service";
+import { SelectionListDialogComponent } from "src/app/widgets/components/selection-list-dialog/selection-list-dialog.component";
+import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
 
 export interface DialogData {
   fitbitAccounts: {};
@@ -14,13 +16,7 @@ export interface DialogData {
 export class UsersPanelComponent implements OnInit {
   private _users;
 
-  // animal: string;
-  // name: string;
-  dialogData: DialogData = {} as DialogData;
-
-  constructor(
-    public dialog: MatDialog // private userService: UserService
-  ) {}
+  constructor(private dialogService: DialogService) {}
 
   ngOnInit() {}
 
@@ -34,105 +30,75 @@ export class UsersPanelComponent implements OnInit {
   }
 
   @Input()
-  set fitbitAccounts(value) {
-    this.dialogData.fitbitAccounts = value;
-    console.log(this.dialogData.fitbitAccounts);
-  }
-
-  get fitbitAccounts() {
-    return this.dialogData.fitbitAccounts;
-  }
+  fitbitAccounts;
 
   @Output() deleteUser_EE = new EventEmitter();
 
   deleteUser(id: number) {
-    this.deleteUser_EE.next(id);
+    const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
+      data: {
+        title: "Delete user",
+        body: `<p class='mat-h4'>User <b>${this._users[id].fullname}</b> will be deleted from the system.</p>
+        <p class='mat-body-strong' style="font-style: italic; color: red">This action is irreversible.</p>`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reply => {
+      if (reply) {
+        this.deleteUser_EE.next(id);
+      }
+    });
   }
 
   @Output() unlinkFromFitbitAccount_EE = new EventEmitter();
 
   unlinkFromFitbitAccount(userID, fitbitAccountID) {
-    this.unlinkFromFitbitAccount_EE.next({ userID, fitbitAccountID });
+    const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
+      data: {
+        title: "Unlink caregiver from Fitbit account",
+        body: `<p class='mat-h4'>Caregiver <b>${this._users[userID].fullname}</b> will no longer be able to monitor fitbit account
+        <b>${this.fitbitAccounts[fitbitAccountID].fullname}</b> (ID: ${fitbitAccountID})</p>`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(reply => {
+      if (reply) {
+        this.unlinkFromFitbitAccount_EE.next({ userID, fitbitAccountID });
+      }
+    });
   }
 
   @Output() linkToFitbitAccount_EE = new EventEmitter();
 
-  linkToFitbitAccount_Dialog(user) {
-    let fitbitAccounts = this.dialogData.fitbitAccounts;
-    console.log(user);
-    console.log(Object.values(this.dialogData.fitbitAccounts));
-    Object.keys(fitbitAccounts).forEach(id => {
-      fitbitAccounts[id].show = true;
-      if (!!user.fitbitAccounts[id]) {
-        // delete fitbitAccounts[element];
-        console.log(id);
-        fitbitAccounts[id].show = false;
-      }
-    });
-    console.log(fitbitAccounts);
+  linkToFitbitAccount(user) {
+    const fitbitAccounts = Object.keys(this.fitbitAccounts).reduce((acc, key) => {
+      acc[key] = { ...this.fitbitAccounts[key], show: !user.fitbitAccounts[key] && true };
+      return acc;
+    }, {});
 
-    const dialogRef = this.dialog.open(LinkToFitbitAccount_Dialog, {
-      width: "50%",
-      data: { fitbitAccounts, selected: [] }
-      // data: { user, selected: [] }
+    const dialogRef = this.dialogService.customDialogComponent(SelectionListDialogComponent, {
+      data: { fitbitAccounts: fitbitAccounts, selected: [] }
     });
 
     dialogRef.afterClosed().subscribe(selected => {
+      console.log(selected);
       if (!!selected && !!selected.length) {
-        console.log(selected);
-        this.dialogData.selected = selected;
+        const selectedFAIDs = selected.map(element => element.key);
 
-        const selectedFAIDs = this.dialogData.selected.map(element => {
-          return element.key;
-        });
-        console.log(selectedFAIDs);
-
-        this.linkToFitbitAccount_EE.next({ userID: user.id, selectedFAIDs });
+        this.linkToFitbitAccount_EE.emit({ userID: user.id, selectedFAIDs });
       }
     });
   }
-}
 
-@Component({
-  selector: "link-to-fitbit-account-dialog",
-  template: `
-    <h1 mat-dialog-title>Link caregiver to Fitbit accounts</h1>
-    <div mat-dialog-content>
-      <mat-selection-list #fitbitAccounts [(ngModel)]="data.selected">
-        <ng-container *ngFor="let fa of data.fitbitAccounts | keyvalue">
-          <mat-list-option *ngIf="fa.value.show" [value]="fa"> {{ fa.key }}. {{ fa.value.fullname }} </mat-list-option>
-        </ng-container>
-      </mat-selection-list>
+  @Output() refreshAccessToken_EE = new EventEmitter();
 
-      <p>Accounts selected: {{ fitbitAccounts.selectedOptions.selected.length }}</p>
-
-      <!-- <mat-form-field>
-        <input matInput [(ngModel)]="data.animal" />
-      </mat-form-field>-->
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button (click)="close()">No Thanks</button>
-      <button mat-button [mat-dialog-close]="data.selected" cdkFocusInitial>Ok</button>
-    </div>
-  `
-})
-export class LinkToFitbitAccount_Dialog implements OnInit {
-  constructor(public dialogRef: MatDialogRef<LinkToFitbitAccount_Dialog>, @Inject(MAT_DIALOG_DATA) public data) {}
-
-  ngOnInit() {
-    console.log(this.data.user);
-    console.log(this.data.fitbitAccounts);
+  refreshAccessToken(fitbitAppID) {
+    if (!!fitbitAppID) this.refreshAccessToken_EE.emit(fitbitAppID);
   }
 
-  // @Input()
-  // set fitbitAccounts(value) {
-  //   console.log(value);
-  //   this.data.fitbitAccounts = value.filter(element => {
-  //     return this.data.user.fitbitAccounts[element];
-  //   });
-  // }
+  @Output() revokeAccessToken_EE = new EventEmitter();
 
-  close(): void {
-    this.dialogRef.close();
+  revokeAccessToken(fitbitAppID) {
+    if (!!fitbitAppID) this.revokeAccessToken_EE.emit(fitbitAppID);
   }
 }
