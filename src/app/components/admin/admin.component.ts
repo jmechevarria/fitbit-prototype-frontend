@@ -4,7 +4,11 @@ import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FitbitAccountService } from "src/app/services/fitbit-account.service";
 import { UserService } from "src/app/services/user.service";
-// import { FitbitAccountsPanelComponent } from "./fitbit-accounts-panel/fitbit-accounts-panel.component";
+import { FitbitService } from "src/app/services/fitbit.service";
+import { FitbitAppService } from "src/app/services/fitbit-app.service";
+import { Router } from "@angular/router";
+import { parseWindowHash } from "../../helpers/parseWindowHash";
+import { ImplicitGrantFlowResponse } from "../../models/ImplicitGrantFlowResponse";
 
 @Component({
   selector: "admin",
@@ -21,7 +25,10 @@ export class AdminComponent implements OnInit, OnDestroy {
   constructor(
     private authenticationService: AuthenticationService,
     private fitbitAccountService: FitbitAccountService,
-    private userService: UserService
+    private userService: UserService,
+    private fitbitService: FitbitService,
+    private fitbitAppService: FitbitAppService,
+    private router: Router
   ) {
     this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(user => {
       this.currentUser = user;
@@ -29,6 +36,34 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const hash = window.location.hash;
+    const search = window.location.search;
+
+    if (hash !== "") {
+      if (search.includes("error") || search.includes("error_description")) {
+        this.router.navigate([""]);
+      } else if (hash.includes("access_token")) {
+        const implicitGrantFlowResponse = parseWindowHash<ImplicitGrantFlowResponse>(hash);
+
+        this.fitbitAppService
+          .updateAccessTokenAndUserID(this.fitbitService.tempFitbitAppID, {
+            user_id: implicitGrantFlowResponse.user_id,
+            access_token: implicitGrantFlowResponse.access_token
+          })
+          .subscribe(
+            () => {
+              //on success, we remove fitbitAppID from local storage since it's not needed anymore
+              this.fitbitService.tempFitbitAppID = null;
+              window.location.hash = "";
+              window.location.search = "";
+            },
+            error => {
+              console.log(error);
+            }
+          );
+      }
+    }
+
     this.loadUsers();
     this.loadFitbitAccounts();
   }
@@ -38,7 +73,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.currentUserSubscription.unsubscribe();
   }
 
-  // @ViewChild(FitbitAccountsPanelComponent, { static: false }) fitbitDataComponent: FitbitAccountsPanelComponent;
   unlinkFromFitbitAccount(params) {
     this.userService
       .unlinkFromFitbitAccount(params.userID, params.fitbitAccountID)
@@ -64,8 +98,6 @@ export class AdminComponent implements OnInit, OnDestroy {
 
           this.users[userID].fitbitAccounts[fitbitAccountID] = this.fitbitAccounts[fitbitAccountID];
         });
-        // this.users = response["rows"];
-        // console.log(this.users);
       });
   }
 
@@ -76,7 +108,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         console.log(response);
         this.users = response["rows"];
-        // console.log(this.users);
       });
   }
 
@@ -111,5 +142,21 @@ export class AdminComponent implements OnInit, OnDestroy {
     //       delete user.fitbitAccounts[deletedID];
     //     });
     //   });
+  }
+
+  refreshAccessToken(fitbitAppID: number) {
+    if (!!fitbitAppID) {
+      this.fitbitAppService
+        .getById(fitbitAppID)
+        .pipe(first())
+        .subscribe(response => {
+          const fitbitApp = response["rows"][fitbitAppID];
+          this.fitbitService.requestAccess(fitbitApp);
+        });
+    }
+  }
+
+  revokeAccessToken(fitbitAppID: number) {
+    this.fitbitService.relinquishAccess(fitbitAppID).subscribe();
   }
 }

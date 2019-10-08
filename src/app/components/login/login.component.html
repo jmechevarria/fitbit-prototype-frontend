@@ -1,5 +1,5 @@
 <mat-card>
-  <mat-card-title>Welcome</mat-card-title>
+  <mat-card-title>{{ "login.welcome" | translate }}</mat-card-title>
   <mat-card-content>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <!-- <p>
@@ -16,18 +16,18 @@
       <p>
         <mat-form-field>
           <!-- [errorStateMatcher]="matcher" -->
-          <input type="text" matInput placeholder="Username" formControlName="username" />
+          <input type="text" matInput placeholder="{{ 'login.username' | translate }}" formControlName="username" />
           <mat-error *ngIf="formFields.username.hasError('required')">
-            Username is <strong>required</strong>
+            {{ "login.username_is_required" | translate }}
           </mat-error>
         </mat-form-field>
       </p>
 
       <p>
         <mat-form-field>
-          <input type="password" matInput placeholder="Password" formControlName="password" />
+          <input type="password" matInput placeholder="{{ 'login.password' | translate }}" formControlName="password" />
           <mat-error *ngIf="formFields.password.hasError('required')">
-            Password is <strong>required</strong>
+            {{ "login.password_is_required" | translate }}
           </mat-error>
         </mat-form-field>
       </p>
@@ -36,12 +36,12 @@
         {{ error }}
       </p>
 
-      <button type="button" mat-button routerLink="/register">Register</button>
+      <!-- <button type="button" mat-button routerLink="/register">Register</button> -->
       <button id="login" mat-raised-button color="primary" [disabled]="loading" mat-button>
         <img
           *ngIf="loading"
           src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
-        />Login
+        />{{ "shared.login" | translate }}
       </button>
     </form>
   </mat-card-content>

@@ -6,7 +6,6 @@ import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { UserAuthenticationGuard } from "./guards/user-authentication.guard";
 import { AdminComponent } from "./components/admin/admin.component";
 import { RegisterComponent } from "./components/register/register.component";
-import { FitbitAccessGuard } from "./guards/fitbit-access.guard";
 import { LoginRegisterGuard } from "./guards/login-register.guard";
 import { AdminGuard } from "./guards/admin.guard";
 import { CaregiverGuard } from "./guards/caregiver.guard";

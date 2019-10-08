@@ -1,6 +1,6 @@
 <div *ngIf="showComponent" fxLayout="column">
-  <h1>
-    Heart Rate Time Series for user: <b>{{ fitbitUser?.user.fullName }}</b>
+  <h1 class="mat-headline">
+    {{ "dashboard.fitbit_data.heart_rate_time_series_for_user" | translate }}: <b>{{ fitbitAccount?.fullname }}</b>
   </h1>
   <!-- <mat-card class="example-card">
     <mat-card-header>
@@ -22,11 +22,13 @@
   </mat-card> -->
 
   <div class="form">
-    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" value="PREDEFINED_RANGE">
+    <mat-button-toggle-group name="fontStyle" aria-label="Range selection" value="PREDEFINED_RANGE">
       <mat-button-toggle (click)="rangeTypeChanged(PREDEFINED_RANGE)" value="PREDEFINED_RANGE">
-        Predefined
+        {{ "dashboard.fitbit_data.predefined" | translate }}
       </mat-button-toggle>
-      <mat-button-toggle (click)="rangeTypeChanged(SPECIFIC_RANGE)" value="SPECIFIC_RANGE">Specific</mat-button-toggle>
+      <mat-button-toggle (click)="rangeTypeChanged(SPECIFIC_RANGE)" value="SPECIFIC_RANGE">{{
+        "dashboard.fitbit_data.specific" | translate
+      }}</mat-button-toggle>
     </mat-button-toggle-group>
 
     <mat-form-field *ngIf="rangeType === PREDEFINED_RANGE">
@@ -35,6 +37,7 @@
           *ngFor="let predefinedRange of predefinedRanges | keyvalue: sortNull"
           value="{{ predefinedRange.key }}"
         >
+          <!-- {{ "dashboard.fitbit_data.predefined_ranges" | translate: param }} -->
           {{ predefinedRange.value }}
         </mat-option>
       </mat-select>
@@ -45,7 +48,7 @@
         disabled
         matInput
         [matDatepicker]="from"
-        placeholder="From"
+        placeholder="{{ 'dashboard.fitbit_data.from' | translate }}"
         [(ngModel)]="specificRangeFrom"
         [min]="SPECIFIC_RANGE_MIN_BOTH"
         [max]="SPECIFIC_RANGE_MAX_BOTH"
@@ -61,7 +64,7 @@
         disabled
         matInput
         [matDatepicker]="to"
-        placeholder="To"
+        placeholder="{{ 'dashboard.fitbit_data.to' | translate }}"
         [(ngModel)]="specificRangeTo"
         [min]="SPECIFIC_RANGE_MIN_BOTH"
         [max]="SPECIFIC_RANGE_MAX_BOTH"
@@ -81,12 +84,12 @@
     </button>
   </div>
 
-  <!-- <div class="data-display"> -->
   <div>
     <interday-heartrate-table
       [heartRateInterday]="heartRateInterday"
       [heartRateInterdayLoading]="heartRateInterdayLoading"
       [dataSource]="dataSource"
+      [fitbitAccountID]="fitbitAccount.id"
     ></interday-heartrate-table>
   </div>
 </div>

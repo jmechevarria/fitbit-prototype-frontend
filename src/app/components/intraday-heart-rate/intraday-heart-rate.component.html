@@ -1,0 +1,62 @@
+<div fxLayout="column" fxLayoutAlign="space-between center" id="intraday-container">
+  <div *ngIf="!!chartData.length" id="intraday-table-container" class="mat-elevation-z8">
+    <div fxLayoutAlign="flex-end center">
+      <button click-stop-propagation mat-button [matMenuTriggerFor]="chartMenu" aria-label="Chart Options">
+        {{ "dashboard.fitbit_data.intraday.options" | translate }}
+      </button>
+      <mat-menu #chartMenu="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="chartTypesMenu">
+          {{ "dashboard.fitbit_data.intraday.select_type" | translate }}
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="exportTypesMenu">
+          {{ "dashboard.fitbit_data.intraday.download" | translate }}
+        </button>
+      </mat-menu>
+
+      <mat-menu #chartTypesMenu="matMenu">
+        <button
+          *ngFor="let chartType of chartTypes | keyvalue"
+          mat-menu-item
+          (click)="changeChartType($event, chartType.value.id)"
+        >
+          <mat-icon>{{ chartType.value.icon }}</mat-icon>
+          <span>{{ chartType.value.label | titlecase }}</span>
+        </button>
+      </mat-menu>
+      <mat-menu #exportTypesMenu="matMenu">
+        <button mat-menu-item (click)="exportChart($event, 'pdf')">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <a mat-menu-item (click)="exportChart($event, 'png')">
+          <mat-icon>image</mat-icon>
+          <span>PNG</span>
+        </a>
+      </mat-menu>
+    </div>
+    <div style="display: block;">
+      <canvas
+        id="chart"
+        baseChart
+        height="300"
+        width="100%"
+        [datasets]="chartData"
+        [labels]="chartLabels"
+        [options]="chartOptions"
+        [colors]="chartColors"
+        [legend]="chartLegend"
+        [chartType]="chartType"
+        [plugins]="chartPlugins"
+      >
+      </canvas>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="heartRateIntraday && !heartRateIntraday.length && !heartRateIntradayLoading"> -->
+  <div *ngIf="!chartData.length && !heartRateIntradayLoading">
+    {{ "dashboard.fitbit_data.interday.no_results_for_selected_interval" | translate }}
+  </div>
+  <div *ngIf="heartRateIntradayLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

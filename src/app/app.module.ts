@@ -1,9 +1,12 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
-import { JwtInterceptor, ErrorInterceptor, fakeBackendProvider } from "./helpers";
+import { JwtInterceptor, ErrorInterceptor } from "./helpers";
 import { AdminComponent } from "./components/admin/admin.component";
 import { LoginComponent } from "./components/login/login.component";
 import { AppRoutingModule } from "./app.routing";
@@ -23,12 +26,19 @@ import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.compon
 
 import { MatButtonToggleModule } from "@angular/material";
 import { InterdayHeartrateTableComponent } from "./components/interday-heartrate-table/interday-heartrate-table.component";
-import { IntradayHeartrateTableComponent } from "./components/intraday-heartrate-table/intraday-heartrate-table.component";
+import { IntradayHeartRateComponent } from "./components/intraday-heart-rate/intraday-heart-rate.component";
 import { DecisionTreeComponent } from "./components/decision-tree/decision-tree.component";
 import { DevicesPanelComponent } from "./components/devices-panel/devices-panel.component";
-import { UsersPanelComponent, LinkToFitbitAccount_Dialog } from "./components/admin/users-panel/users-panel.component";
+import { UsersPanelComponent } from "./components/admin/users-panel/users-panel.component";
 import { FitbitAccountsPanelComponent } from "./components/admin/fitbit-accounts-panel/fitbit-accounts-panel.component";
 import { ClickStopPropagationDirective } from "./directives/click-stop-propagation.directive";
+import { WidgetsModule } from "./widgets/widgets.module";
+import { SharedModule } from "./shared/shared.module";
+import { environment } from "src/environments/environment";
+
+export function I18nHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, environment.baseURL + environment.i18n, ".json");
+}
 
 @NgModule({
   declarations: [
@@ -41,17 +51,22 @@ import { ClickStopPropagationDirective } from "./directives/click-stop-propagati
     RegisterComponent,
     FitbitDataComponent,
     InterdayHeartrateTableComponent,
-    IntradayHeartrateTableComponent,
+    IntradayHeartRateComponent,
     DecisionTreeComponent,
     DevicesPanelComponent,
     UsersPanelComponent,
     FitbitAccountsPanelComponent,
-    ClickStopPropagationDirective,
-    LinkToFitbitAccount_Dialog
+    ClickStopPropagationDirective
   ],
-  entryComponents: [LinkToFitbitAccount_Dialog],
   imports: [
     BrowserModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: I18nHttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
@@ -59,7 +74,11 @@ import { ClickStopPropagationDirective } from "./directives/click-stop-propagati
     MaterialModule,
     FlexLayoutModule,
     ReactiveFormsModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    WidgetsModule,
+    SharedModule
+
+    // ChartsModule
   ],
   providers: [
     DatePipe,

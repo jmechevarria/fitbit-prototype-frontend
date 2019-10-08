@@ -9,15 +9,27 @@
         {{ fitbitAccount.fullname }}
       </mat-panel-title>
       <mat-panel-description>
-        Age: {{ fitbitAccount.age }} | Height: {{ fitbitAccount.height_cm }} | Weight:
+        {{ "dashboard.devices_panel.age" | translate }}: {{ age(fitbitAccount.birthdate) }} |
+        {{ "dashboard.devices_panel.height" | translate }}: {{ fitbitAccount.height_cm }} |
+        {{ "dashboard.devices_panel.weight" | translate }}:
         {{ fitbitAccount.weight_kg }}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <div fxLayout fxLayoutAlign="space-between">
-      <span><img matListAvatar src="assets/images/devices/blaze.png" alt="..." width="50" /> Blaze</span>
-      <div>
-        <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount.id)">Show data</button>
-      </div>
-    </div>
+    <mat-list role="list" id="devices">
+      <mat-list-item *ngFor="let device of fitbitAccount.devices" role="listitem">
+        <span fxLayoutAlign="space-around center"
+          ><img matListAvatar src="http://localhost:3000/devices/{{ device.image }}" alt="device.image" width="50" />
+          {{ device.brand }} {{ device.model }}</span
+        >
+        <div>
+          <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount)">
+            {{ "dashboard.devices_panel.show_data" | translate }}
+          </button>
+        </div>
+      </mat-list-item>
+    </mat-list>
   </mat-expansion-panel>
 </mat-accordion>
+<div *ngIf="!fitbitAccounts.length">
+  {{ "dashboard.devices_panel.this_user_has_no_active_fitbit_accounts_to_monitor" | translate }}
+</div>

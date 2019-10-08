@@ -50,7 +50,7 @@ export class AuthenticationService {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           // this.token = user.token;
           this.currentUser = response.authenticatedUser;
-          this.otherFitbitAccounts = response.otherFitbitAccounts;
+          // this.otherFitbitAccounts = response.otherFitbitAccounts;
 
           // this.saveInfoInLocalStorage(response);
           this.currentUserSubject$.next(this.currentUser);

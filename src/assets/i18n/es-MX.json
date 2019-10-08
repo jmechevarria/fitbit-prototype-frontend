@@ -1,0 +1,72 @@
+{
+  "home": {
+    "main_menu": {
+      "home": "Inicio",
+      "dashboard": "Panel",
+      "administration": "Administración",
+      "language": "Lenguaje",
+      "english": "Inglés",
+      "spanish": "Español",
+      "logout": "Cerrar sesión"
+    }
+  },
+  "admin": {
+    "users_panel": {
+      "fitbit_accounts": "Cuentas Fitbit",
+      "users": "Usuarios",
+      "administrators": "Administradores",
+      "caregivers": "Cuidadores",
+      "fitbit_accounts_attended_by_this_caregiver": "Cuentas Fitbit atendidas por este cuidador",
+      "caregiver_options_menu": "Menú de opciones del cuidador",
+      "link_to_fitbit_accounts": "Vincular a cuentas Fitbit",
+      "delete_user": "Eliminar usuario",
+      "revoke_access_token": "Revocar token de acceso",
+      "refresh_access_token": "Renovar token de acceso",
+      "unlink": "Desvincular"
+    }
+  },
+  "dashboard": {
+    "devices_panel": {
+      "age": "Edad",
+      "height": "Altura",
+      "weight": "Peso",
+      "show_data": "Mostrar datos",
+      "this_user_has_no_active_fitbit_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa"
+    },
+    "fitbit_data": {
+      "heart_rate_time_series_for_user": "Series de tiempo del ritmo cardíaco del usuario",
+      "predefined": "Predefinido",
+      "specific": "Específico",
+      "from": "Desde",
+      "to": "Hasta",
+      "interday": {
+        "filter": "Filtro",
+        "date": "Fecha",
+        "out_of_range": "Fuera de Rango",
+        "fat_burn": "Quemar Grasa",
+        "cardio": "Cardio",
+        "peak": "Tope",
+        "calories": "cal",
+        "minutes": "min",
+        "no_activity_perceived": "Sin actividad percibida",
+        "no_results_for_selected_interval": "Sin resultados para el intervalo seleccionado"
+      },
+      "intraday": { "options": "Opciones", "select_type": "Seleccionar tipo", "download": "Descargar" }
+    }
+  },
+  "login": {
+    "welcome": "Bienvenido",
+    "username": "Usuario",
+    "username_is": "El usuario es requerido",
+    "password": "Clave",
+    "password_is_required": "La clave es requerida"
+  },
+  "widgets": {
+    "selection_list_dialog": {
+      "accounts_selected": "Cuentas seleccionadas"
+    }
+  },
+  "shared": {
+    "login": "Iniciar sesión"
+  }
+}

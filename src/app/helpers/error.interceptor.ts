@@ -2,18 +2,11 @@ import { Injectable } from "@angular/core";
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { AuthenticationService } from "../services/authentication.service";
 import { Router } from "@angular/router";
-import { FitbitService } from "../services/fitbit.service";
-import { environment } from "src/environments/environment";
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(
-    private authenticationService: AuthenticationService,
-    private fitbitService: FitbitService,
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
@@ -26,19 +19,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           if (!request.url.match("fitbit.com")) {
             this.router.navigate([""]);
           } else {
-            //request fitbit credentials again
             console.log(request.body);
             alert("error");
-
-            this.fitbitService.requestAccess(this.fitbitService.currentFitbitAppID);
           }
         }
 
         console.log(err);
-        // alert(err.status);
         const error = err.error.message || err.statusText;
         return throwError(error);
-        // return throwError(err);
       })
     );
   }
