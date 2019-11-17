@@ -1,3 +1,7 @@
+#fitbit-data-container {
+  padding-top: 5px;
+}
+
 table {
   width: 100%;
 }
@@ -6,20 +10,43 @@ div.specific-range-container {
   margin-top: 5px;
 }
 
-@media screen and (min-width: 600px) {
-  .form mat-button-toggle-group {
-    margin-right: 5px;
-  }
+#interday-table-container {
+  max-height: 400px;
+  overflow: auto;
 }
 
-// @media screen and (max-width: 600px) {
-//   .form {
-//     display: flex;
-//     flex-direction: column;
-//   }
+.mat-header-cell,
+.mat-cell {
+  text-align: center;
+}
 
-//   .form mat-button-toggle-group {
-//     display: flex;
-//     flex-direction: column;
-//   }
-// }
+tr.mat-row.highlight {
+  background: #e36060;
+}
+
+tr.mat-row:not(.highlight):hover {
+  background: #eaeaea;
+}
+
+tr.mat-header-row {
+  height: 30px;
+}
+
+mat-paginator {
+  float: right;
+  width: 100%;
+}
+
+#intraday-container {
+  min-width: 0;
+}
+
+#intraday-chart-container {
+  width: 100%;
+}
+
+@media screen and (max-width: 959px) {
+  #interday-table-container {
+    max-height: 150px;
+  }
+}

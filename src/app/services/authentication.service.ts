@@ -42,14 +42,14 @@ export class AuthenticationService {
 
   login(username: string, password: string) {
     // return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password }).pipe(
-    return this.http.post<any>("http://localhost:3000/api/v1/authenticate", { username, password }).pipe(
+    return this.http.post<any>("http://localhost:3000/api/v1/login", { username, password }).pipe(
       tap(response => {
         console.log(response);
         // login successful if there's a jwt token in the response
-        if (response && response.authenticatedUser.token) {
+        if (response && response.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           // this.token = user.token;
-          this.currentUser = response.authenticatedUser;
+          this.currentUser = response;
           // this.otherFitbitAccounts = response.otherFitbitAccounts;
 
           // this.saveInfoInLocalStorage(response);

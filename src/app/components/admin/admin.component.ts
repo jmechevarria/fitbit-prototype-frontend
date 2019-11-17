@@ -5,7 +5,6 @@ import { AuthenticationService } from "src/app/services/authentication.service";
 import { FitbitAccountService } from "src/app/services/fitbit-account.service";
 import { UserService } from "src/app/services/user.service";
 import { FitbitService } from "src/app/services/fitbit.service";
-import { FitbitAppService } from "src/app/services/fitbit-app.service";
 import { Router } from "@angular/router";
 import { parseWindowHash } from "../../helpers/parseWindowHash";
 import { ImplicitGrantFlowResponse } from "../../models/ImplicitGrantFlowResponse";
@@ -27,7 +26,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     private fitbitAccountService: FitbitAccountService,
     private userService: UserService,
     private fitbitService: FitbitService,
-    private fitbitAppService: FitbitAppService,
     private router: Router
   ) {
     this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(user => {
@@ -44,16 +42,17 @@ export class AdminComponent implements OnInit, OnDestroy {
         this.router.navigate([""]);
       } else if (hash.includes("access_token")) {
         const implicitGrantFlowResponse = parseWindowHash<ImplicitGrantFlowResponse>(hash);
-
-        this.fitbitAppService
-          .updateAccessTokenAndUserID(this.fitbitService.tempFitbitAppID, {
+        console.log(implicitGrantFlowResponse);
+        this.fitbitAccountService
+          .patch(this.fitbitService.tempFitbitAccountID, {
             user_id: implicitGrantFlowResponse.user_id,
-            access_token: implicitGrantFlowResponse.access_token
+            access_token: implicitGrantFlowResponse.access_token,
+            expires_in: implicitGrantFlowResponse.expires_in
           })
           .subscribe(
             () => {
-              //on success, we remove fitbitAppID from local storage since it's not needed anymore
-              this.fitbitService.tempFitbitAppID = null;
+              //on success, we remove tempFitbitAccountID from local storage since it's not needed anymore
+              this.fitbitService.tempFitbitAccountID = null;
               window.location.hash = "";
               window.location.search = "";
             },
@@ -78,8 +77,8 @@ export class AdminComponent implements OnInit, OnDestroy {
       .unlinkFromFitbitAccount(params.userID, params.fitbitAccountID)
       .pipe(first())
       .subscribe(response => {
-        const userID = response["rows"][0].caregiver_id,
-          fitbitAccountID = response["rows"][0].fitbit_account_id;
+        const userID = response["caregiver_id"],
+          fitbitAccountID = response["fitbit_account_id"];
 
         delete this.users[userID].fitbitAccounts[fitbitAccountID];
       });
@@ -90,9 +89,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       .linkToFitbitAccount(params.userID, params.selectedFAIDs)
       .pipe(first())
       .subscribe(response => {
-        console.log(response);
-        const rows = response["rows"];
-        rows.forEach(row => {
+        (response as Array<any>).forEach(row => {
           const userID = row.caregiver_id,
             fitbitAccountID = row.fitbit_account_id;
 
@@ -106,8 +103,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       .getAll()
       .pipe(first())
       .subscribe(response => {
-        console.log(response);
-        this.users = response["rows"];
+        this.users = response;
       });
   }
 
@@ -116,7 +112,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       .getAll()
       .pipe(first())
       .subscribe(response => {
-        this.fitbitAccounts = response["rows"];
+        this.fitbitAccounts = response;
       });
   }
 
@@ -144,19 +140,19 @@ export class AdminComponent implements OnInit, OnDestroy {
     //   });
   }
 
-  refreshAccessToken(fitbitAppID: number) {
-    if (!!fitbitAppID) {
-      this.fitbitAppService
-        .getById(fitbitAppID)
+  refreshAccessToken(fitbitAccountID: number) {
+    if (!!fitbitAccountID) {
+      this.fitbitAccountService
+        .get(fitbitAccountID)
         .pipe(first())
-        .subscribe(response => {
-          const fitbitApp = response["rows"][fitbitAppID];
-          this.fitbitService.requestAccess(fitbitApp);
+        .subscribe(fitbitAccount => {
+          if (!!fitbitAccount[fitbitAccountID]["client_id"])
+            this.fitbitService.requestAccess(fitbitAccount[fitbitAccountID]);
         });
     }
   }
 
-  revokeAccessToken(fitbitAppID: number) {
-    this.fitbitService.relinquishAccess(fitbitAppID).subscribe();
+  revokeAccessToken(fitbitAccountID: number) {
+    this.fitbitService.relinquishAccess(fitbitAccountID).subscribe();
   }
 }

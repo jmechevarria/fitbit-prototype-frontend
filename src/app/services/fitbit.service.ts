@@ -1,14 +1,8 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpResponse, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { tap, materialize, delay, dematerialize } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 import { of } from "rxjs";
-import { Device } from "../models/device";
-import { FitbitApp } from "../models/FitbitApp";
-import { FitbitAccount } from "../models/FitbitAccount";
-import * as moment from "moment";
-import { User } from "../models/User";
-import { FitbitAppService } from "./fitbit-app.service";
 
 @Injectable({
   providedIn: "root"
@@ -19,13 +13,13 @@ export class FitbitService {
    * temp to know which app the access was requested for, then in app component's ngoninit, it is used to update the
    * access token and user id in the db according to this var's value
    */
-  private TEMP_FITBIT_APP_ID = "temp-fitbit-app-id";
+  private TEMP_FITBIT_ACCOUNT_ID = "temp-fitbit-account-id";
   private configRedirectURI;
   private configOauthURL;
   private configScope;
   private configExpiresSec;
 
-  constructor(private http: HttpClient, private fitbitAppService: FitbitAppService) {
+  constructor(private http: HttpClient) {
     const { configExpiresSec, configOauthURL, configRedirectURI, configScope } = environment;
 
     this.configExpiresSec = configExpiresSec;
@@ -50,31 +44,24 @@ export class FitbitService {
   //   return localStorage.getItem(this.FITBIT_USER_ID);
   // }
 
-  set tempFitbitAppID(value) {
-    localStorage.setItem(this.TEMP_FITBIT_APP_ID, !!value ? value.toString() : null);
+  set tempFitbitAccountID(value) {
+    localStorage.setItem(this.TEMP_FITBIT_ACCOUNT_ID, !!value ? value.toString() : null);
   }
 
-  get tempFitbitAppID() {
-    return parseInt(localStorage.getItem(this.TEMP_FITBIT_APP_ID));
+  get tempFitbitAccountID() {
+    return parseInt(localStorage.getItem(this.TEMP_FITBIT_ACCOUNT_ID));
   }
 
-  // get fitbitApps(): [] {
-  //   return JSON.parse(localStorage.getItem(this.FITBIT_APPS));
-  // }
-
-  // get dateRanges() {
-  //   return { "1d": "24 hours", "7d": "7 days", "30d": "30 days", "1w": "week", "1m": "month" };
-  // }
-
-  requestAccess(fitbitApp) {
-    this.tempFitbitAppID = fitbitApp.id;
-    const fitbitAppClientID = fitbitApp.client_id;
+  requestAccess(fitbitAccount) {
+    this.tempFitbitAccountID = fitbitAccount.id;
+    console.log(fitbitAccount);
+    const clientID = fitbitAccount.client_id;
     window.location.href = `${this.configOauthURL}?response_type=token&scope=${this.configScope}&redirect_url=${this.configRedirectURI}
-      &expires_in=${this.configExpiresSec}&client_id=${fitbitAppClientID}&state=test_state`;
+      &expires_in=${this.configExpiresSec}&client_id=${clientID}&state=test_state`;
   }
 
-  relinquishAccess(fitbitAppID) {
-    return this.revokeAccess(fitbitAppID).pipe(
+  relinquishAccess(fitbitAccountID) {
+    return this.revokeAccess(fitbitAccountID).pipe(
       tap(
         () => {},
         response => {
@@ -86,14 +73,15 @@ export class FitbitService {
     );
   }
 
-  private revokeAccess(fitbitAppID) {
+  private revokeAccess(fitbitAccountID) {
     return this.http.patch(`http://localhost:3000/api/v1/FITBIT/oauth2/revoke`, {
       values: {
         user_id: null,
-        access_token: null
+        access_token: null,
+        token_expires_on: null
       },
       where: {
-        id: fitbitAppID
+        id: fitbitAccountID
       }
     });
   }
@@ -120,10 +108,11 @@ export class FitbitService {
   //   return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + ".json");
   // }
 
-  fetchHeartRateIntraday(fitbitAccountID: number, from: string, to: string) {
-    console.log(fitbitAccountID, from, to);
+  fetchHeartRateIntraday(fitbitAccountID: number, day: string) {
+    console.log(fitbitAccountID, day);
+
     return this.http.get(
-      `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/device/1/activities/heart/intraday/${from}/${to}`
+      `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/activities/heart/intraday/${day}`
     );
     // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + "/1min.json");
     // https://api.fitbit.com/1/user/-/activities/heart/date/[date]/[end-date]/[detail-level]/time/[start-time]/[end-time].json
@@ -132,10 +121,8 @@ export class FitbitService {
     // );
   }
 
-  fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string) {
-    return this.http.get(
-      `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/device/1/activities/heart/interday/${from}/${to}`
-    );
+  fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string, clientOffset: string) {
+    return this.http.get(`http://localhost:3000/api/v1/daily-summary/${fitbitAccountID}/${from}/${to}/${clientOffset}`);
     // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
     // .pipe(delay(500))
     // .pipe(dematerialize());

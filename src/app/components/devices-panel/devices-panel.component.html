@@ -2,27 +2,32 @@
   <mat-expansion-panel
     fxLayout="column"
     [expanded]="isFirst"
-    *ngFor="let fitbitAccount of fitbitAccounts; first as isFirst"
+    *ngFor="let fitbitAccount of fitbitAccounts | keyvalue; first as isFirst"
   >
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{ fitbitAccount.fullname }}
+        {{ fitbitAccount.value.fullname }}
       </mat-panel-title>
       <mat-panel-description>
-        {{ "dashboard.devices_panel.age" | translate }}: {{ age(fitbitAccount.birthdate) }} |
-        {{ "dashboard.devices_panel.height" | translate }}: {{ fitbitAccount.height_cm }} |
+        {{ "dashboard.devices_panel.age" | translate }}: {{ age(fitbitAccount.value.birthdate) }} |
+        {{ "dashboard.devices_panel.height" | translate }}: {{ fitbitAccount.value.height_cm }} |
         {{ "dashboard.devices_panel.weight" | translate }}:
-        {{ fitbitAccount.weight_kg }}
+        {{ fitbitAccount.value.weight_kg }}
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list role="list" id="devices">
-      <mat-list-item *ngFor="let device of fitbitAccount.devices" role="listitem">
+      <mat-list-item *ngFor="let device of fitbitAccount.value.devices | keyvalue" role="listitem">
         <span fxLayoutAlign="space-around center"
-          ><img matListAvatar src="http://localhost:3000/devices/{{ device.image }}" alt="device.image" width="50" />
-          {{ device.brand }} {{ device.model }}</span
+          ><img
+            matListAvatar
+            src="http://localhost:3000/devices/{{ device.value.image }}"
+            alt="device.value.image"
+            width="50"
+          />
+          {{ device.value.brand }} {{ device.value.model }}</span
         >
         <div>
-          <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount)">
+          <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount.value)">
             {{ "dashboard.devices_panel.show_data" | translate }}
           </button>
         </div>
@@ -30,6 +35,6 @@
     </mat-list>
   </mat-expansion-panel>
 </mat-accordion>
-<div *ngIf="!fitbitAccounts.length">
+<div *ngIf="(fitbitAccounts | json) === '{}'">
   {{ "dashboard.devices_panel.this_user_has_no_active_fitbit_accounts_to_monitor" | translate }}
 </div>

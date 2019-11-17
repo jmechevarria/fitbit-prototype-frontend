@@ -1,8 +1,14 @@
 import { NgModule } from "@angular/core";
-import { ChartsModule } from "ng2-charts";
+import { ChartModule, HIGHCHARTS_MODULES } from "angular-highcharts";
+import * as more from "highcharts/highcharts-more.src";
+import * as HighchartsExporting from "highcharts/modules/exporting";
+import * as HighchartsExportingOffline from "highcharts/modules/offline-exporting";
 
 @NgModule({
-  imports: [ChartsModule],
-  exports: [ChartsModule]
+  imports: [ChartModule],
+  exports: [ChartModule],
+  providers: [
+    { provide: HIGHCHARTS_MODULES, useFactory: () => [more, HighchartsExporting, HighchartsExportingOffline] } // add as factory to your providers
+  ]
 })
 export class SharedModule {}

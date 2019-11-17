@@ -26,14 +26,4 @@ export class DashboardComponent implements OnInit {
   getHeartRateData(fitbitAccount) {
     this.fitbitDataComponent.getHeartRateInterday(fitbitAccount);
   }
-
-  //maybe to admin
-  // requestAccess(fitbitAppID: string) {
-  //   if (!fitbitAppID) {
-  //     this.alertService.error("No existe el dispositivo seleccionado");
-
-  //     alert("devices");
-  //   }
-  //   this.fitbitService.requestAccess(fitbitAppID);
-  // }
 }

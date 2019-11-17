@@ -23,21 +23,22 @@
     <button mat-button [matMenuTriggerFor]="menu">{{ "home.main_menu.language" | translate }}</button>
     <mat-menu #menu="matMenu">
       <button (click)="setLocale('es-MX')" mat-menu-item>
-        <label
-          >{{ "home.main_menu.spanish" | translate }} <img height="15" src="assets/images/flags/icons8-mexico-50.png"
-        /></label>
+        <label>Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-mexico-50.png"/></label>
       </button>
       <button (click)="setLocale('es-ES')" mat-menu-item>
-        {{ "home.main_menu.spanish" | translate }} <img height="15" src="assets/images/flags/icons8-spain-50.png" />
+        Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-spain-50.png" />
       </button>
       <button (click)="setLocale('en-US')" mat-menu-item>
-        {{ "home.main_menu.english" | translate }} <img height="15" src="assets/images/flags/icons8-usa-50.png" />
+        English <img height="15" src="assets/images/flags/icons8-usa-50.png" />
       </button>
     </mat-menu>
 
     <div *ngIf="isAuthenticated">
       <button mat-button [matMenuTriggerFor]="userMenu">{{ currentUser?.data.username }}</button>
       <mat-menu #userMenu="matMenu">
+        <button mat-menu-item class="nav-item nav-link" [routerLink]="['/notifications']">
+          {{ "home.main_menu.notifications" | translate }}
+        </button>
         <button mat-menu-item class="nav-item nav-link" (click)="logout()">
           {{ "home.main_menu.logout" | translate }}
         </button>

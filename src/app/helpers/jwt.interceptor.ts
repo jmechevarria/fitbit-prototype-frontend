@@ -9,8 +9,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let token = null;
-
-    if (request.url.match("localhost:4200") && this.authenticationService.currentUser) {
+    if (request.url.match("localhost:3000") && this.authenticationService.currentUser) {
       token = this.authenticationService.currentUser.token;
     }
 

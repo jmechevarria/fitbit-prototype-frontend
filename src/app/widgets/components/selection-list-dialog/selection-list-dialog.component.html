@@ -4,7 +4,7 @@
   <mat-selection-list #fitbitAccountsList [(ngModel)]="data.selected">
     <ng-container *ngFor="let fa of data.fitbitAccounts | keyvalue; let i = index">
       <mat-list-option *ngIf="fa.value.show" [value]="fa">
-        {{ i }}. {{ fa.value.fullname }} (ID: {{ fa.key }})
+        {{ i + 1 }}. {{ fa.value.fullname }} (ID: {{ fa.key }})
       </mat-list-option>
     </ng-container>
   </mat-selection-list>

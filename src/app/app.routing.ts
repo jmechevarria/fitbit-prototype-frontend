@@ -9,6 +9,7 @@ import { RegisterComponent } from "./components/register/register.component";
 import { LoginRegisterGuard } from "./guards/login-register.guard";
 import { AdminGuard } from "./guards/admin.guard";
 import { CaregiverGuard } from "./guards/caregiver.guard";
+import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 
 const routes: Routes = [
   { path: "", component: FitbitClientIDFormComponent },
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: "dashboard",
     component: DashboardComponent,
+    canActivate: [UserAuthenticationGuard, CaregiverGuard]
+  },
+  {
+    path: "notifications",
+    component: NotificationsPanelComponent,
     canActivate: [UserAuthenticationGuard, CaregiverGuard]
   },
 

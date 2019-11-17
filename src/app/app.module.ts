@@ -25,8 +25,6 @@ import { RegisterComponent } from "./components/register/register.component";
 import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.component";
 
 import { MatButtonToggleModule } from "@angular/material";
-import { InterdayHeartrateTableComponent } from "./components/interday-heartrate-table/interday-heartrate-table.component";
-import { IntradayHeartRateComponent } from "./components/intraday-heart-rate/intraday-heart-rate.component";
 import { DecisionTreeComponent } from "./components/decision-tree/decision-tree.component";
 import { DevicesPanelComponent } from "./components/devices-panel/devices-panel.component";
 import { UsersPanelComponent } from "./components/admin/users-panel/users-panel.component";
@@ -35,6 +33,7 @@ import { ClickStopPropagationDirective } from "./directives/click-stop-propagati
 import { WidgetsModule } from "./widgets/widgets.module";
 import { SharedModule } from "./shared/shared.module";
 import { environment } from "src/environments/environment";
+import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.baseURL + environment.i18n, ".json");
@@ -50,13 +49,12 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     AdminComponent,
     RegisterComponent,
     FitbitDataComponent,
-    InterdayHeartrateTableComponent,
-    IntradayHeartRateComponent,
     DecisionTreeComponent,
     DevicesPanelComponent,
     UsersPanelComponent,
     FitbitAccountsPanelComponent,
-    ClickStopPropagationDirective
+    ClickStopPropagationDirective,
+    NotificationsPanelComponent
   ],
   imports: [
     BrowserModule,
@@ -84,9 +82,6 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
-
-    // provider used to create fake backend
-    // fakeBackendProvider
   ],
   bootstrap: [AppComponent]
 })

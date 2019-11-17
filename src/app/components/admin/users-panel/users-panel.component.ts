@@ -2,6 +2,9 @@ import { Component, OnInit, Input, Output, EventEmitter, Inject } from "@angular
 import { DialogService } from "src/app/services/dialog.service";
 import { SelectionListDialogComponent } from "src/app/widgets/components/selection-list-dialog/selection-list-dialog.component";
 import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
+import { TranslateService } from "@ngx-translate/core";
+import { forkJoin } from "rxjs";
+import { switchMap, tap, filter } from "rxjs/operators";
 
 export interface DialogData {
   fitbitAccounts: {};
@@ -14,61 +17,79 @@ export interface DialogData {
   styleUrls: ["../admin.component.scss", "./users-panel.component.scss"]
 })
 export class UsersPanelComponent implements OnInit {
-  private _users;
-
-  constructor(private dialogService: DialogService) {}
-
-  ngOnInit() {}
-
   @Input()
-  set users(value) {
-    this._users = value;
-  }
-
-  get users() {
-    return this._users;
-  }
+  users;
 
   @Input()
   fitbitAccounts;
 
   @Output() deleteUser_EE = new EventEmitter();
+  @Output() unlinkFromFitbitAccount_EE = new EventEmitter();
+  @Output() linkToFitbitAccount_EE = new EventEmitter();
+
+  constructor(private dialogService: DialogService, private translate: TranslateService) {}
+
+  ngOnInit() {}
 
   deleteUser(id: number) {
-    const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
-      data: {
-        title: "Delete user",
-        body: `<p class='mat-h4'>User <b>${this._users[id].fullname}</b> will be deleted from the system.</p>
-        <p class='mat-body-strong' style="font-style: italic; color: red">This action is irreversible.</p>`
-      }
+    const title$ = this.translate.get("admin.users_panel.dialog.delete_user");
+    const body$ = this.translate.get("admin.users_panel.dialog.delete_user_body_msg", {
+      name: `<b>${this.users[id].fullname}</b>`
     });
+    const warning$ = this.translate.get("shared.warning");
 
-    dialogRef.afterClosed().subscribe(reply => {
-      if (reply) {
-        this.deleteUser_EE.next(id);
-      }
-    });
+    forkJoin([title$, body$, warning$])
+      .pipe(
+        switchMap(([title, body, warning]) => {
+          const bodyText = `<p class='mat-h4'>${body}
+          </p><p class='mat-body-strong' color='warn' style="font-style: italic; color: red">${warning}</p>`;
+
+          const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
+            data: {
+              title,
+              body: bodyText
+            }
+          });
+
+          return dialogRef.afterClosed();
+        }),
+        filter(reply => reply),
+        tap(() => {
+          this.deleteUser_EE.next(id);
+        })
+      )
+      .subscribe();
   }
-
-  @Output() unlinkFromFitbitAccount_EE = new EventEmitter();
 
   unlinkFromFitbitAccount(userID, fitbitAccountID) {
-    const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
-      data: {
-        title: "Unlink caregiver from Fitbit account",
-        body: `<p class='mat-h4'>Caregiver <b>${this._users[userID].fullname}</b> will no longer be able to monitor fitbit account
-        <b>${this.fitbitAccounts[fitbitAccountID].fullname}</b> (ID: ${fitbitAccountID})</p>`
-      }
+    const title$ = this.translate.get("admin.users_panel.dialog.unlink_caregiver_from_fitbit_account");
+    const body$ = this.translate.get("admin.users_panel.dialog.unlink_caregiver_from_fitbit_account_body", {
+      userFullname: `<b>${this.users[userID].fullname}</b>`,
+      fitbitAccountFullname: `<b>${this.fitbitAccounts[fitbitAccountID].fullname}</b>`,
+      fitbitAccountID: fitbitAccountID
     });
 
-    dialogRef.afterClosed().subscribe(reply => {
-      if (reply) {
-        this.unlinkFromFitbitAccount_EE.next({ userID, fitbitAccountID });
-      }
-    });
+    forkJoin([title$, body$])
+      .pipe(
+        switchMap(([title, body]) => {
+          const bodyText = `<p class='mat-h4'>${body}</p>`;
+
+          const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
+            data: {
+              title,
+              body: bodyText
+            }
+          });
+
+          return dialogRef.afterClosed();
+        }),
+        filter(reply => reply),
+        tap(() => {
+          this.unlinkFromFitbitAccount_EE.next({ userID, fitbitAccountID });
+        })
+      )
+      .subscribe();
   }
-
-  @Output() linkToFitbitAccount_EE = new EventEmitter();
 
   linkToFitbitAccount(user) {
     const fitbitAccounts = Object.keys(this.fitbitAccounts).reduce((acc, key) => {
@@ -81,7 +102,6 @@ export class UsersPanelComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(selected => {
-      console.log(selected);
       if (!!selected && !!selected.length) {
         const selectedFAIDs = selected.map(element => element.key);
 
@@ -90,15 +110,15 @@ export class UsersPanelComponent implements OnInit {
     });
   }
 
-  @Output() refreshAccessToken_EE = new EventEmitter();
+  // @Output() refreshAccessToken_EE = new EventEmitter();
 
-  refreshAccessToken(fitbitAppID) {
-    if (!!fitbitAppID) this.refreshAccessToken_EE.emit(fitbitAppID);
-  }
+  // refreshAccessToken(fitbitAccountID) {
+  //   if (!!fitbitAccountID) this.refreshAccessToken_EE.emit(fitbitAccountID);
+  // }
 
-  @Output() revokeAccessToken_EE = new EventEmitter();
+  // @Output() revokeAccessToken_EE = new EventEmitter();
 
-  revokeAccessToken(fitbitAppID) {
-    if (!!fitbitAppID) this.revokeAccessToken_EE.emit(fitbitAppID);
-  }
+  // revokeAccessToken(fitbitAccountID) {
+  //   if (!!fitbitAccountID) this.revokeAccessToken_EE.emit(fitbitAccountID);
+  // }
 }

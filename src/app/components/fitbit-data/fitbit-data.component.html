@@ -1,44 +1,27 @@
-<div *ngIf="showComponent" fxLayout="column">
-  <h1 class="mat-headline">
-    {{ "dashboard.fitbit_data.heart_rate_time_series_for_user" | translate }}: <b>{{ fitbitAccount?.fullname }}</b>
-  </h1>
-  <!-- <mat-card class="example-card">
-    <mat-card-header>
-      <div mat-card-avatar class="example-header-image"></div>
-      <mat-card-title>Shiba Inu</mat-card-title>
-      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu" />
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan. A small, agile
-        dog that copes very well with mountainous terrain, the Shiba Inu was originally bred for hunting.
-      </p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions>
-  </mat-card> -->
-
-  <div class="form">
+<div
+  id="fitbit-data-container"
+  *ngIf="showComponent"
+  fxLayout
+  fxLayoutAlign="start none"
+  fxLayoutGap="10px"
+  fxLayout.lt-md="column"
+>
+  <div id="controls-container" fxLayout="column" fxLayoutAlign="start none">
     <mat-button-toggle-group name="fontStyle" aria-label="Range selection" value="PREDEFINED_RANGE">
-      <mat-button-toggle (click)="rangeTypeChanged(PREDEFINED_RANGE)" value="PREDEFINED_RANGE">
+      <mat-button-toggle (click)="rangeTypeChanged(PREDEFINED_RANGE)" value="PREDEFINED_RANGE" fxFlex="1 1 0%">
         {{ "dashboard.fitbit_data.predefined" | translate }}
       </mat-button-toggle>
-      <mat-button-toggle (click)="rangeTypeChanged(SPECIFIC_RANGE)" value="SPECIFIC_RANGE">{{
+      <mat-button-toggle (click)="rangeTypeChanged(SPECIFIC_RANGE)" value="SPECIFIC_RANGE" fxFlex="1 1 0%">{{
         "dashboard.fitbit_data.specific" | translate
       }}</mat-button-toggle>
     </mat-button-toggle-group>
-
     <mat-form-field *ngIf="rangeType === PREDEFINED_RANGE">
       <mat-select [disabled]="rangeType !== PREDEFINED_RANGE" [(value)]="selectedPredefinedRange">
         <mat-option
           *ngFor="let predefinedRange of predefinedRanges | keyvalue: sortNull"
           value="{{ predefinedRange.key }}"
         >
-          <!-- {{ "dashboard.fitbit_data.predefined_ranges" | translate: param }} -->
-          {{ predefinedRange.value }}
+          {{ predefinedRange.value | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -84,12 +67,190 @@
     </button>
   </div>
 
-  <div>
-    <interday-heartrate-table
-      [heartRateInterday]="heartRateInterday"
-      [heartRateInterdayLoading]="heartRateInterdayLoading"
-      [dataSource]="dataSource"
-      [fitbitAccountID]="fitbitAccount.id"
-    ></interday-heartrate-table>
+  <div
+    *ngIf="!heartRateInterdayLoading && interdayDataSource?.data.length"
+    fxLayout
+    fxLayout.lt-md="column"
+    fxLayoutGap="10px"
+    id="heart-rate-container"
+    fxFlex="1 1 0%"
+  >
+    <div fxLayout="column" id="interday-container" fxFlex="1 1 0%">
+      <mat-form-field>
+        <input
+          matInput
+          (keyup)="applyFilter($event.target.value)"
+          placeholder="{{ 'dashboard.fitbit_data.interday.filter' | translate }}"
+        />
+      </mat-form-field>
+
+      <div id="interday-table-container">
+        <table id="interday-table" mat-table [dataSource]="interdayDataSource" matSort class="mat-elevation-z8">
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr
+            mat-row
+            *matRowDef="let day; columns: displayedColumns; let i = index"
+            [ngClass]="{ highlight: i == selectedRowIndex }"
+            (click)="getIntraday(day, i)"
+          ></tr>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ "dashboard.fitbit_data.interday.date" | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">{{ day["date"] }}</td>
+          </ng-container>
+
+          <!-- out of range -->
+          <ng-container matColumnDef="hrz_1">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="background: lightgreen">
+              <!-- {{ HEART_RATE_ZONES.hrz_1 }} -->
+              {{ hrz_translations[HEART_RATE_ZONES.hrz_1] | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">
+              <span *ngIf="day[HEART_RATE_ZONES.hrz_1]; else no_activity">
+                <div fxLayout="column">
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_1].caloriesOut | number: ".2-2" }}
+                    {{ "dashboard.fitbit_data.interday.calories" | translate }}.
+                  </div>
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_1].minutes }}
+                    {{ "dashboard.fitbit_data.interday.minutes" | translate }}.
+                  </div>
+                </div>
+              </span>
+              <ng-template #no_activity
+                ><label style="color: lightgray">{{
+                  "dashboard.fitbit_data.interday.no_activity_perceived" | translate
+                }}</label></ng-template
+              >
+            </td>
+          </ng-container>
+
+          <!-- fat burn -->
+          <ng-container matColumnDef="hrz_2">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="background: #ecec69">
+              <!-- {{ HEART_RATE_ZONES.hrz_2 }} -->
+              {{ hrz_translations[HEART_RATE_ZONES.hrz_2] | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">
+              <span *ngIf="day[HEART_RATE_ZONES.hrz_2]; else no_activity">
+                <div fxLayout="column">
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_2].caloriesOut | number: ".2-2" }}
+                    {{ "dashboard.fitbit_data.interday.calories" | translate }}.
+                  </div>
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_2].minutes }}
+                    {{ "dashboard.fitbit_data.interday.minutes" | translate }}.
+                  </div>
+                </div>
+              </span>
+              <ng-template #no_activity
+                ><label style="color: lightgray">{{
+                  "dashboard.fitbit_data.interday.no_activity_perceived" | translate
+                }}</label></ng-template
+              >
+            </td>
+          </ng-container>
+
+          <!-- Cardio -->
+          <ng-container matColumnDef="hrz_3">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="background: rgb(255, 160, 36)">
+              <!-- {{ HEART_RATE_ZONES.hrz_3 }} -->
+              {{ hrz_translations[HEART_RATE_ZONES.hrz_3] | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">
+              <span *ngIf="day[HEART_RATE_ZONES.hrz_3]; else no_activity">
+                <div fxLayout="column" fxLayoutAlign="center center">
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_3].caloriesOut | number: ".2-2" }}
+                    {{ "dashboard.fitbit_data.interday.calories" | translate }}.
+                  </div>
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_3].minutes }}
+                    {{ "dashboard.fitbit_data.interday.minutes" | translate }}.
+                  </div>
+                </div>
+              </span>
+              <ng-template #no_activity
+                ><label style="color: lightgray">{{
+                  "dashboard.fitbit_data.interday.no_activity_perceived" | translate
+                }}</label></ng-template
+              >
+            </td>
+          </ng-container>
+
+          <!-- peak -->
+          <ng-container matColumnDef="{{ HEART_RATE_ZONES.hrz_4 }}">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="background: rgb(182, 27, 27); color: white">
+              <!-- {{ HEART_RATE_ZONES.hrz_4 }} -->
+              {{ hrz_translations[HEART_RATE_ZONES.hrz_4] | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">
+              <span *ngIf="day[HEART_RATE_ZONES.hrz_4]; else no_activity">
+                <div fxLayout="column">
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_4].caloriesOut | number: ".2-2" }}
+                    {{ "dashboard.fitbit_data.interday.calories" | translate }}.
+                  </div>
+                  <div>
+                    {{ day[HEART_RATE_ZONES.hrz_4].minutes }}
+                    {{ "dashboard.fitbit_data.interday.minutes" | translate }}.
+                  </div>
+                </div>
+              </span>
+              <ng-template #no_activity
+                ><label style="color: lightgray">{{
+                  "dashboard.fitbit_data.interday.no_activity_perceived" | translate
+                }}</label></ng-template
+              >
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="steps">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="background: rgb(29, 133, 244); color: white">
+              <!-- {{ HEART_RATE_ZONES.hrz_4 }} -->
+              {{ "dashboard.fitbit_data.interday.steps" | translate }}
+            </th>
+            <td mat-cell *matCellDef="let day">
+              <span *ngIf="day['steps']; else no_activity">
+                {{ day["steps"] }}
+              </span>
+              <ng-template #no_activity
+                ><label style="color: lightgray">{{
+                  "dashboard.fitbit_data.interday.no_activity_perceived" | translate
+                }}</label></ng-template
+              >
+            </td>
+          </ng-container>
+        </table>
+
+        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator> -->
+      </div>
+    </div>
+
+    <div *ngIf="showIntradayData" fxLayout id="intraday-container" fxFlex="1 1 0%">
+      <div *ngIf="!heartRateIntradayLoadingError" id="intraday-chart-container" class="mat-elevation-z8">
+        <div style="position: relative;width: 100%; z-index:1">
+          <button (click)="hideIntradayData()" mat-button style="position: absolute; top: 10px; right: 10px;">X</button>
+        </div>
+
+        <div [chart]="chart"></div>
+      </div>
+      <div *ngIf="heartRateIntradayLoadingError">ERROR RETRIEVING DATA</div>
+
+      <div *ngIf="!intradayChartOptions && !heartRateIntradayLoading && !heartRateIntradayLoadingError">
+        {{ "dashboard.fitbit_data.interday.no_results_for_selected_interval" | translate }}
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!interdayDataSource?.data.length && !heartRateInterdayLoading">
+    {{ "dashboard.fitbit_data.interday.no_results_for_selected_interval" | translate }}
+  </div>
+
+  <div *ngIf="heartRateInterdayLoading">
+    <mat-spinner></mat-spinner>
   </div>
 </div>

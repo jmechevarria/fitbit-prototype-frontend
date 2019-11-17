@@ -64,16 +64,16 @@
                     <label>{{ fitbitAccount.value.fullname }}</label>
                   </div>
                   <div>
-                    <a (click)="revokeAccessToken(fitbitAccount.value.fitbit_app_id)" class="text-danger">
+                    <!-- <a (click)="revokeAccessToken(fitbitAccount.value.id)" class="text-danger">
                       <button matTooltip="{{ 'admin.users_panel.revoke_access_token' | translate }}" mat-icon-button>
                         <mat-icon>link_off</mat-icon>
                       </button>
                     </a>
-                    <a (click)="refreshAccessToken(fitbitAccount.value.fitbit_app_id)" class="text-danger">
+                    <a (click)="refreshAccessToken(fitbitAccount.value.id)" class="text-danger">
                       <button matTooltip="{{ 'admin.users_panel.refresh_access_token' | translate }}" mat-icon-button>
                         <mat-icon>autorenew</mat-icon>
                       </button>
-                    </a>
+                    </a> -->
                     <a (click)="unlinkFromFitbitAccount(user.key, fitbitAccount.key)" class="text-danger">
                       <button matTooltip="{{ 'admin.users_panel.unlink' | translate }}" mat-icon-button>
                         <mat-icon>clear</mat-icon>

@@ -5,9 +5,8 @@
       "dashboard": "Panel",
       "administration": "Administración",
       "language": "Lenguaje",
-      "english": "Inglés",
-      "spanish": "Español",
-      "logout": "Cerrar sesión"
+      "logout": "Cerrar sesión",
+      "notifications": "Notificaciones"
     }
   },
   "admin": {
@@ -22,7 +21,19 @@
       "delete_user": "Eliminar usuario",
       "revoke_access_token": "Revocar token de acceso",
       "refresh_access_token": "Renovar token de acceso",
-      "unlink": "Desvincular"
+      "unlink": "Desvincular",
+      "dialog": {
+        "delete_user": "Eliminar usuario",
+        "delete_user_body_msg": "El usuario {{ name }} será eliminado del sistema.",
+        "unlink_caregiver_from_fitbit_account": "Desvincular cuidador de cuenta Fitbit",
+        "unlink_caregiver_from_fitbit_account_body": "El(la) cuidador(a) {{userFullname}} ya no podrá monitorizar la cuenta Fitbit {{fitbitAccountFullname}} (ID: {{fitbitAccountID}})"
+      }
+    },
+    "fitbit_accounts_panel": {
+      "dialog": {
+        "delete_fitbit_account": "Eliminar cuenta Fitbit",
+        "delete_fitbit_account_body_msg": "La cuenta Fitbit {{ name }} será eliminada del sistema."
+      }
     }
   },
   "dashboard": {
@@ -46,6 +57,7 @@
         "fat_burn": "Quemar Grasa",
         "cardio": "Cardio",
         "peak": "Tope",
+        "steps": "Pasos",
         "calories": "cal",
         "minutes": "min",
         "no_activity_perceived": "Sin actividad percibida",
@@ -57,16 +69,28 @@
   "login": {
     "welcome": "Bienvenido",
     "username": "Usuario",
-    "username_is": "El usuario es requerido",
+    "username_is_required": "El usuario es requerido",
     "password": "Clave",
     "password_is_required": "La clave es requerida"
   },
   "widgets": {
     "selection_list_dialog": {
-      "accounts_selected": "Cuentas seleccionadas"
+      "accounts_selected": "Cuentas seleccionadas",
+      "link_caregiver_to_fitbit_accounts": "Vincular cuidador con cuenta Fitbit"
     }
   },
   "shared": {
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "cancel": "Cancelar",
+    "proceed": "Proceder",
+    "confirm": "Confirmar",
+    "today": "Hoy",
+    "last_7_days": "Últimos 7 días",
+    "last_30_days": "Últimos 30 días",
+    "warning": "Esta acción es irreversible"
+  },
+  "dialog": {
+    "default_body": "Confirmar o cancelar la acción",
+    "confirmation_dialog": "Confirmación"
   }
 }

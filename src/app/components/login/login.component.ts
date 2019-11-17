@@ -58,9 +58,10 @@ export class LoginComponent implements OnInit {
       .login(this.formFields.username.value, this.formFields.password.value)
       .pipe(first())
       .subscribe(
-        response => {
+        authenticatedUser => {
           // this.router.navigate([this.returnUrl]);
-          const roleID = response.authenticatedUser.data.roleID;
+          // const roleID = response.authenticatedUser.data.roleID;
+          const roleID = authenticatedUser.data.roleID;
           if (roleID === 1) this.router.navigate(["/admin"]);
           else if (roleID === 2) this.router.navigate(["/dashboard"]);
           else this.router.navigate([""]);

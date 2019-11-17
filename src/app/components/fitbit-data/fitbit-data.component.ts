@@ -4,13 +4,17 @@ import { DatePipe } from "@angular/common";
 import * as moment from "moment";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
+import { Chart } from "angular-highcharts";
+import * as jsPDF from "jspdf";
+// import { DailySummaryService } from "src/app/services/daily_summary.service";
 
-export interface InterdayHeartRateDataSource {
+export interface InterdayDataSource {
   date: string;
-  "Out of Range": { caloriesOut: string; minutes: string };
-  "Fat Burn": { caloriesOut: string; minutes: string };
-  Cardio: { caloriesOut: string; minutes: string };
-  Peak: { caloriesOut: string; minutes: string };
+  hrz_1: { caloriesOut: string; minutes: string };
+  hrz_2: { caloriesOut: string; minutes: string };
+  hrz_3: { caloriesOut: string; minutes: string };
+  hrz_4: { caloriesOut: string; minutes: string };
+  steps: number;
 }
 
 @Component({
@@ -19,8 +23,12 @@ export interface InterdayHeartRateDataSource {
   styleUrls: ["./fitbit-data.component.scss"]
 })
 export class FitbitDataComponent implements OnInit {
-  fitbitUser: any;
-
+  // fitbitUser: any;
+  constructor(
+    private fitbitService: FitbitService,
+    // private dailySummaryService: DailySummaryService,
+    private datePipe: DatePipe
+  ) {}
   test: boolean = false;
 
   //DATE RANGE
@@ -31,60 +39,55 @@ export class FitbitDataComponent implements OnInit {
   specificRangeFrom: moment.Moment = moment().subtract(29, "day"); //current 'from': 30 DAYS AGO
   specificRangeTo: moment.Moment = moment(); //current 'to': TODAY
   predefinedRanges: {} = {
-    "1d": "Today",
-    "1w": "Last 7 days",
-    "30d": "Last 30 days"
+    "1d": "shared.today",
+    "1w": "shared.last_7_days",
+    "30d": "shared.last_30_days"
   };
   selectedPredefinedRange: string = "30d";
   rangeType: string = this.PREDEFINED_RANGE;
 
-  heartRateInterday: []; //'activities-heart' => array of days
+  heartRateInterday;
   heartRateInterdayLoading: boolean = false;
 
   //PAGINATION AND SORTING
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  dataSource: MatTableDataSource<InterdayHeartRateDataSource>;
+  interdayDataSource: MatTableDataSource<InterdayDataSource>;
   showComponent: boolean;
   fitbitAccount;
   langSubscription: any;
 
-  constructor(
-    private fitbitService: FitbitService,
-    private datePipe: DatePipe // private translateService: TranslateService
-  ) {}
-
   ngOnInit() {
-    this.dataSource = new MatTableDataSource<InterdayHeartRateDataSource>();
-    this.dataSource.filterPredicate = (data: InterdayHeartRateDataSource, filter: string): boolean => {
+    this.interdayDataSource = new MatTableDataSource<InterdayDataSource>();
+    this.interdayDataSource.filterPredicate = (data: InterdayDataSource, filter: string): boolean => {
       return (
         data.date.indexOf(filter) !== -1 ||
-        (data["Out of Range"] &&
-          data["Out of Range"].caloriesOut
+        (data.hrz_1 &&
+          data.hrz_1.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
-        (data["Fat Burn"] &&
-          data["Fat Burn"].caloriesOut
+        (data.hrz_2 &&
+          data.hrz_2.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
-        (data.Cardio &&
-          data.Cardio.caloriesOut
+        (data.hrz_3 &&
+          data.hrz_3.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
-        (data.Peak &&
-          data.Peak.caloriesOut
+        (data.hrz_4 &&
+          data.hrz_4.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1)
       );
     };
 
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.interdayDataSource.paginator = this.paginator;
+    this.interdayDataSource.sort = this.sort;
   }
 
   getHeartRateInterday(fitbitAccount, from?: string, to?: string) {
@@ -95,11 +98,12 @@ export class FitbitDataComponent implements OnInit {
       .fetchHeartRateInterday(
         this.fitbitAccount.id,
         !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
-        !!to ? to : this.selectedPredefinedRange
+        !!to ? to : this.selectedPredefinedRange,
+        moment().format("Z")
       )
       .subscribe(
         response => {
-          this.dataSource.data = this.responseToDataSource(response);
+          this.interdayDataSource.data = this.responseToDataSource(response);
           this.heartRateInterdayLoading = false;
         },
         error => {
@@ -113,6 +117,7 @@ export class FitbitDataComponent implements OnInit {
   }
 
   updateTable() {
+    this.hideIntradayData();
     const from: string =
       this.rangeType === this.PREDEFINED_RANGE ? moment().format("Y-MM-DD") : this.specificRangeFrom.format("Y-MM-DD");
     const to: string =
@@ -132,27 +137,245 @@ export class FitbitDataComponent implements OnInit {
     if (value) this.rangeType = value;
   }
 
-  private responseToDataSource(response): Array<InterdayHeartRateDataSource> {
+  private responseToDataSource(response): Array<InterdayDataSource> {
     if (!!response) {
-      this.heartRateInterday = response.reverse();
-      return this.heartRateInterday.map(day => {
-        let dataObject: InterdayHeartRateDataSource = {} as InterdayHeartRateDataSource;
-        dataObject.date = day["dateTime"];
+      this.heartRateInterday = response;
+      return Object.values(this.heartRateInterday)
+        .reverse()
+        .map(day => {
+          let dataObject = {} as InterdayDataSource;
+          dataObject.date = day["date"];
 
-        const heartRateZones: Array<any> = day["value"]["heartRateZones"];
+          dataObject.hrz_1 = { caloriesOut: day["hrz_1_calories"].toFixed(2), minutes: day["hrz_1_minutes"] };
+          dataObject.hrz_2 = { caloriesOut: day["hrz_2_calories"].toFixed(2), minutes: day["hrz_2_minutes"] };
+          dataObject.hrz_3 = { caloriesOut: day["hrz_3_calories"].toFixed(2), minutes: day["hrz_3_minutes"] };
+          dataObject.hrz_4 = { caloriesOut: day["hrz_4_calories"].toFixed(2), minutes: day["hrz_4_minutes"] };
+          dataObject.steps = day["steps"];
 
-        heartRateZones.forEach(zone => {
-          if (zone["caloriesOut"] !== undefined) {
-            dataObject[zone["name"]] = {};
-            dataObject[zone["name"]]["caloriesOut"] = zone["caloriesOut"].toFixed(2);
-            dataObject[zone["name"]]["minutes"] = zone["minutes"];
-          }
+          return dataObject;
         });
-
-        return dataObject;
-      });
     }
   }
 
   sortNull() {} //this is to make 'predefinedRanges' be rendered as ordered in the variable declaration
+
+  HEART_RATE_ZONES = {
+    hrz_1: "hrz_1",
+    hrz_2: "hrz_2",
+    hrz_3: "hrz_3",
+    hrz_4: "hrz_4"
+  };
+
+  hrz_translations = {
+    [this.HEART_RATE_ZONES.hrz_1]: "dashboard.fitbit_data.interday.out_of_range",
+    [this.HEART_RATE_ZONES.hrz_2]: "dashboard.fitbit_data.interday.fat_burn",
+    [this.HEART_RATE_ZONES.hrz_3]: "dashboard.fitbit_data.interday.cardio",
+    [this.HEART_RATE_ZONES.hrz_4]: "dashboard.fitbit_data.interday.peak"
+  };
+
+  displayedColumns: string[] = [
+    "date",
+    this.HEART_RATE_ZONES.hrz_1,
+    this.HEART_RATE_ZONES.hrz_2,
+    this.HEART_RATE_ZONES.hrz_3,
+    this.HEART_RATE_ZONES.hrz_4,
+    "steps"
+  ];
+  selectedRowIndex: number = -1;
+
+  //INTRADAY DATA
+  heartRateIntradayLoading: boolean = false;
+  heartRateIntradayLoadingError: boolean = false;
+  intradayChartOptions;
+
+  chartTypes = [
+    { id: "line", label: "Línea", icon: "timeline" },
+    { id: "bar", label: "Barra", icon: "bar_chart" }
+  ];
+
+  public chartType = "line";
+  showIntradayData = false;
+  // chart: Chart;
+  chart = new Chart({
+    chart: {
+      type: "line",
+      zoomType: "x"
+      // renderTo: 'container'
+    },
+    xAxis: {
+      type: "datetime",
+      dateTimeLabelFormats: {
+        // hour: "%I %p",
+        minute: "%I:%M %p"
+      }
+    },
+    yAxis: {
+      title: {
+        text: "Heart rate"
+      }
+    },
+    credits: {
+      enabled: false
+    },
+    tooltip: {
+      positioner: function() {
+        return { x: 0, y: 0 };
+      },
+      shadow: false,
+      borderWidth: 0,
+      backgroundColor: "rgba(255,255,255,0.8)"
+    },
+    navigation: {
+      buttonOptions: {
+        enabled: true
+      }
+    },
+    exporting: {
+      fallbackToExportServer: false
+    }
+  });
+
+  applyFilter(filterValue: string) {
+    this.interdayDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.interdayDataSource.paginator) {
+      this.interdayDataSource.paginator.firstPage();
+    }
+  }
+
+  getIntraday(day, rowIndex) {
+    this.showIntradayData = true;
+    // if (!this.chart) this.createChart();
+
+    this.highlightRow();
+    this.intradayChartOptions = null;
+    this.heartRateIntradayLoading = true;
+    this.chart.removeSeries(0);
+
+    if (this.chart.ref) {
+      this.chart.ref.showLoading();
+      this.chart.ref.update(
+        {
+          title: {
+            text: this.fitbitAccount.fullname + " | Heart Rate Time Series"
+          },
+          subtitle: {
+            text: day.date
+          }
+        },
+        true,
+        true,
+        true
+      );
+    }
+
+    this.fitbitService.fetchHeartRateIntraday(this.fitbitAccount["id"], day.date).subscribe(
+      heartRateIntraday => {
+        const points = [];
+        for (const secondHeartBeatPair of (heartRateIntraday as Array<Object>).reverse()) {
+          points.push([
+            moment(day.date)
+              .add(secondHeartBeatPair["second"], "seconds")
+              // .add(moment().utcOffset(), "minutes")
+              .valueOf(),
+            secondHeartBeatPair["heart_beat"]
+          ]);
+        }
+
+        this.intradayChartOptions = {
+          title: {
+            text: this.fitbitAccount.fullname + " | Heart Rate Time Series"
+          },
+          subtitle: {
+            text: day.date
+          },
+          series: [
+            {
+              name: "Heart rate",
+              data: points,
+              showInLegend: false
+            }
+          ]
+        };
+
+        this.chart.ref.update(this.intradayChartOptions, true, true, true);
+        this.chart.ref.hideLoading();
+
+        this.highlightRow(rowIndex);
+        this.heartRateIntradayLoading = false;
+      },
+      error => {
+        console.log(error);
+        this.heartRateIntradayLoading = false;
+        this.heartRateIntradayLoadingError = true;
+      }
+    );
+  }
+
+  highlightRow(rowIndex = undefined) {
+    this.selectedRowIndex = rowIndex;
+  }
+
+  exportChart(event, format) {
+    const canvas = document.getElementById("chart") as HTMLCanvasElement;
+    if (format === "png") {
+      const anchor = event.target.parentNode;
+      anchor.href = canvas.toDataURL();
+      anchor.download = "test.png";
+    } else if (format === "pdf") {
+      const imgData = canvas.toDataURL("image/png", 1.0);
+      const pdf = new jsPDF();
+
+      pdf.addImage(imgData, "PNG", 0, 0);
+      pdf.save("test.pdf");
+    }
+  }
+
+  /**
+   * line, bar, radar, pie, polarArea, doughnut, bubble and scatter
+   */
+  changeChartType(event, type) {
+    event.preventDefault();
+    this.chartType = type;
+  }
+
+  hideIntradayData() {
+    this.showIntradayData = false;
+    this.highlightRow();
+  }
+
+  // createChart() {
+  //   this.chart = new Chart({
+  //     chart: {
+  //       type: "line",
+  //       zoomType: "x"
+  //       // renderTo: 'container'
+  //     },
+  //     xAxis: {
+  //       type: "datetime",
+  //       dateTimeLabelFormats: {
+  //         // hour: "%I %p",
+  //         minute: "%I:%M %p"
+  //       }
+  //     },
+  //     yAxis: {
+  //       title: {
+  //         text: "Heart rate"
+  //       }
+  //     },
+  //     credits: {
+  //       enabled: false
+  //     },
+  //     tooltip: {
+  //       positioner: function() {
+  //         return { x: 0, y: 0 };
+  //       },
+  //       shadow: false,
+  //       borderWidth: 0,
+  //       backgroundColor: "rgba(255,255,255,0.8)"
+  //     }
+  //   });
+  // }
+
+  // private clearIntradayData() {}
 }
