@@ -1,8 +1,8 @@
-export const parseWindowHash = <T = any>(unformattedHashString: string) => {
-  if (unformattedHashString.indexOf("#") !== -1) {
-    unformattedHashString = unformattedHashString.split("#")[1];
+export const parseWindowHash = <T = any>(hashString: string) => {
+  if (hashString.indexOf("#") !== -1) {
+    hashString = hashString.split("#")[1];
 
-    const parts = unformattedHashString.split("&");
+    const parts = hashString.split("&");
 
     const asObject = {};
 

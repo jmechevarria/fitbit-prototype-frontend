@@ -3,7 +3,11 @@ import { BrowserModule } from "@angular/platform-browser";
 import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 
-import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from "@angular/common/http";
+import {
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+  HttpClient
+} from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { JwtInterceptor, ErrorInterceptor } from "./helpers";
@@ -32,11 +36,17 @@ import { FitbitAccountsPanelComponent } from "./components/admin/fitbit-accounts
 import { ClickStopPropagationDirective } from "./directives/click-stop-propagation.directive";
 import { WidgetsModule } from "./widgets/widgets.module";
 import { SharedModule } from "./shared/shared.module";
-import { environment } from "src/environments/environment";
 import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
+import { PushNotificationService } from "./services/push-notification.service";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, environment.baseURL + environment.i18n, ".json");
+  return new TranslateHttpLoader(
+    http,
+    environment.baseURL + environment.i18n,
+    ".json"
+  );
 }
 
 @NgModule({
@@ -74,14 +84,18 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     ReactiveFormsModule,
     MatButtonToggleModule,
     WidgetsModule,
-    SharedModule
+    SharedModule,
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production
+    })
 
     // ChartsModule
   ],
   providers: [
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    PushNotificationService
   ],
   bootstrap: [AppComponent]
 })

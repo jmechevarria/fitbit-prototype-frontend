@@ -100,25 +100,13 @@ export class FitbitService {
   //   });
   // }
 
-  getUserProfile() {
-    return this.http.get("https://api.fitbit.com/1/user/-/profile.json");
-  }
-
-  // getHeartRateInterday(from: string, to: string) {
-  //   return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + ".json");
-  // }
-
+ 
   fetchHeartRateIntraday(fitbitAccountID: number, day: string) {
     console.log(fitbitAccountID, day);
 
     return this.http.get(
       `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/activities/heart/intraday/${day}`
     );
-    // return this.http.get("https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + "/1min.json");
-    // https://api.fitbit.com/1/user/-/activities/heart/date/[date]/[end-date]/[detail-level]/time/[start-time]/[end-time].json
-    // return this.http.get(
-    //   "https://api.fitbit.com/1/user/-/activities/heart/date/" + from + "/" + to + "/1min/time/00:00/00:10.json"
-    // );
   }
 
   fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string, clientOffset: string) {

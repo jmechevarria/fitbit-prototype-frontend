@@ -1,6 +1,11 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl
+} from "@angular/forms";
 import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/services/alert.service";
@@ -29,7 +34,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.route.snapshot.queryParams);
     this.loginForm = this.formBuilder.group({
       username: ["", Validators.required],
       password: ["", Validators.required]
@@ -68,7 +72,6 @@ export class LoginComponent implements OnInit {
         },
         error => {
           this.error = error;
-          // this.alertService.error(error);
           this.loading = false;
         }
       );

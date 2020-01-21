@@ -8,12 +8,18 @@ import { switchMap, filter, tap } from "rxjs/operators";
 @Component({
   selector: "fitbit-accounts-panel",
   templateUrl: "./fitbit-accounts-panel.component.html",
-  styleUrls: ["../admin.component.scss", "./fitbit-accounts-panel.component.scss"]
+  styleUrls: [
+    "../admin.component.scss",
+    "./fitbit-accounts-panel.component.scss"
+  ]
 })
 export class FitbitAccountsPanelComponent implements OnInit {
   private _fitbitAccounts: [] = [];
 
-  constructor(private dialogService: DialogService, private translate: TranslateService) {}
+  constructor(
+    private dialogService: DialogService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {}
 
@@ -29,22 +35,27 @@ export class FitbitAccountsPanelComponent implements OnInit {
   @Output() refreshAccessToken_EE = new EventEmitter();
 
   refreshAccessToken(fitbitAccountID) {
-    if (!!fitbitAccountID) this.refreshAccessToken_EE.emit(fitbitAccountID);
+    if (fitbitAccountID) this.refreshAccessToken_EE.emit(fitbitAccountID);
   }
 
   @Output() revokeAccessToken_EE = new EventEmitter();
 
   revokeAccessToken(fitbitAccountID) {
-    if (!!fitbitAccountID) this.revokeAccessToken_EE.emit(fitbitAccountID);
+    if (fitbitAccountID) this.revokeAccessToken_EE.emit(fitbitAccountID);
   }
 
   @Output() deleteFitbitAccount_EE = new EventEmitter();
 
   deleteFitbitAccount(id: number) {
-    const title$ = this.translate.get("admin.fitbit_accounts_panel.dialog.delete_fitbit_account");
-    const body$ = this.translate.get("admin.fitbit_accounts_panel.dialog.delete_fitbit_account_body_msg", {
-      name: `<b>${this.fitbitAccounts[id].fullname}</b>`
-    });
+    const title$ = this.translate.get(
+      "admin.fitbit_accounts_panel.dialog.delete_fitbit_account"
+    );
+    const body$ = this.translate.get(
+      "admin.fitbit_accounts_panel.dialog.delete_fitbit_account_body_msg",
+      {
+        name: `<b>${this.fitbitAccounts[id].fullname}</b>`
+      }
+    );
     const warning$ = this.translate.get("shared.warning");
 
     forkJoin([title$, body$, warning$])
@@ -53,12 +64,15 @@ export class FitbitAccountsPanelComponent implements OnInit {
           let bodyText = `<p class='mat-h4'>${body}
           </p><p class='mat-body-strong' color='warn' style="font-style: italic; color: red">${warning}</p>`;
 
-          const dialogRef = this.dialogService.customDialogComponent(ConfirmationDialogComponent, {
-            data: {
-              title,
-              body: bodyText
+          const dialogRef = this.dialogService.customDialogComponent(
+            ConfirmationDialogComponent,
+            {
+              data: {
+                title,
+                body: bodyText
+              }
             }
-          });
+          );
 
           return dialogRef.afterClosed();
         }),

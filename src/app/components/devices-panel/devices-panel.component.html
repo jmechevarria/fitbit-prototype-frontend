@@ -14,6 +14,15 @@
         {{ "dashboard.devices_panel.weight" | translate }}:
         {{ fitbitAccount.value.weight_kg }}
       </mat-panel-description>
+      <button
+        id="show-data"
+        click-stop-propagation
+        mat-flat-button
+        color="primary"
+        (click)="getHeartRateData(fitbitAccount.value)"
+      >
+        {{ "dashboard.devices_panel.show_data" | translate }}
+      </button>
     </mat-expansion-panel-header>
     <mat-list role="list" id="devices">
       <mat-list-item *ngFor="let device of fitbitAccount.value.devices | keyvalue" role="listitem">
@@ -27,9 +36,9 @@
           {{ device.value.brand }} {{ device.value.model }}</span
         >
         <div>
-          <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount.value)">
+          <!-- <button mat-flat-button color="primary" (click)="getHeartRateData(fitbitAccount.value)">
             {{ "dashboard.devices_panel.show_data" | translate }}
-          </button>
+          </button> -->
         </div>
       </mat-list-item>
     </mat-list>

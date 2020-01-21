@@ -51,7 +51,7 @@
       "from": "Desde",
       "to": "Hasta",
       "interday": {
-        "filter": "Filtro",
+        "filter": "Filtrar",
         "date": "Fecha",
         "out_of_range": "Fuera de Rango",
         "fat_burn": "Quemar Grasa",

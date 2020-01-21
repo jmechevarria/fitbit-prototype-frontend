@@ -28,9 +28,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     private fitbitService: FitbitService,
     private router: Router
   ) {
-    this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
+    this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(
+      user => {
+        this.currentUser = user;
+      }
+    );
   }
 
   ngOnInit() {
@@ -41,8 +43,10 @@ export class AdminComponent implements OnInit, OnDestroy {
       if (search.includes("error") || search.includes("error_description")) {
         this.router.navigate([""]);
       } else if (hash.includes("access_token")) {
-        const implicitGrantFlowResponse = parseWindowHash<ImplicitGrantFlowResponse>(hash);
-        console.log(implicitGrantFlowResponse);
+        const implicitGrantFlowResponse = parseWindowHash<
+          ImplicitGrantFlowResponse
+        >(hash);
+
         this.fitbitAccountService
           .patch(this.fitbitService.tempFitbitAccountID, {
             user_id: implicitGrantFlowResponse.user_id,
@@ -93,7 +97,9 @@ export class AdminComponent implements OnInit, OnDestroy {
           const userID = row.caregiver_id,
             fitbitAccountID = row.fitbit_account_id;
 
-          this.users[userID].fitbitAccounts[fitbitAccountID] = this.fitbitAccounts[fitbitAccountID];
+          this.users[userID].fitbitAccounts[
+            fitbitAccountID
+          ] = this.fitbitAccounts[fitbitAccountID];
         });
       });
   }
@@ -141,12 +147,12 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   refreshAccessToken(fitbitAccountID: number) {
-    if (!!fitbitAccountID) {
+    if (fitbitAccountID) {
       this.fitbitAccountService
         .get(fitbitAccountID)
         .pipe(first())
         .subscribe(fitbitAccount => {
-          if (!!fitbitAccount[fitbitAccountID]["client_id"])
+          if (fitbitAccount[fitbitAccountID]["client_id"])
             this.fitbitService.requestAccess(fitbitAccount[fitbitAccountID]);
         });
     }

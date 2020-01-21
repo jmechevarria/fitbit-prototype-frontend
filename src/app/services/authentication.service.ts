@@ -36,27 +36,24 @@ export class AuthenticationService {
   }
 
   get isAuthenticated() {
-    // return this.token && this.token !== "null";
-    return this.currentUser && this.currentUser !== "null";
+    return !!this.currentUser;
   }
 
   login(username: string, password: string) {
     // return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password }).pipe(
-    return this.http.post<any>("http://localhost:3000/api/v1/login", { username, password }).pipe(
-      tap(response => {
-        console.log(response);
-        // login successful if there's a jwt token in the response
-        if (response && response.token) {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          // this.token = user.token;
-          this.currentUser = response;
-          // this.otherFitbitAccounts = response.otherFitbitAccounts;
-
-          // this.saveInfoInLocalStorage(response);
-          this.currentUserSubject$.next(this.currentUser);
-        }
-      })
-    );
+    return this.http
+      .post<any>("http://localhost:3000/api/v1/login", { username, password })
+      .pipe(
+        tap(response => {
+          console.log(response);
+          // login successful if there's a jwt token in the response
+          if (response && response.token) {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            this.currentUser = response;
+            this.currentUserSubject$.next(this.currentUser);
+          }
+        })
+      );
   }
 
   // saveInfoInLocalStorage(user: any) {

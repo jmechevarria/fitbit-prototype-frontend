@@ -1,11 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { FitbitService } from "./services/fitbit.service";
 import { User } from "./models/User";
 import { AuthenticationService } from "./services/authentication.service";
 import { DateAdapter } from "@angular/material/core";
 import { TranslateService } from "@ngx-translate/core";
+import { SwPush, SwUpdate } from "@angular/service-worker";
+import { PushNotificationService } from "./services/push-notification.service";
+import { MatSnackBar } from "@angular/material";
 
+const VAPID_PUBLIC =
+  "BCLqXPqZe-QWv8hQ-2RR9g5VKrhJnGHiM0PN0hs-xgka4inF2ylT5sjWd-8fyGT2OC1xagNR4D0SqgbDPjH8VD0";
+// "privateKey":"OkNDVpMzXz7CW_G7s07hxsogeh2XeJiOoogWfBLQRxw"
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -18,12 +23,52 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
-    private fitbitService: FitbitService,
     private adapter: DateAdapter<any>,
-    private translate: TranslateService
+    private translate: TranslateService,
+    matSnackBar: MatSnackBar,
+    swPush: SwPush,
+    swUpdate: SwUpdate,
+    pushNotificationService: PushNotificationService
   ) {
-    this.authenticationService.currentUser$.subscribe(x => {
-      this.currentUser = x;
+    if (swPush.isEnabled) {
+      swPush
+        .requestSubscription({
+          serverPublicKey: VAPID_PUBLIC
+        })
+        .then(subscription => {
+          // send subscription to the server
+          console.log("subscription object generated: ", subscription);
+          pushNotificationService
+            .sendSubscriptionToTheServer(subscription)
+            .subscribe();
+        })
+        .catch(console.error);
+
+      swUpdate.available.subscribe(update => {
+        matSnackBar
+          .open("Update Avaiblable", "Reload")
+          .onAction()
+          .subscribe(() => {
+            window.location.reload();
+          });
+      });
+
+      swPush.messages.subscribe(msg => {
+        console.log(JSON.stringify(msg));
+        matSnackBar.open(
+          `${JSON.stringify(msg["notification"])} 🔔`,
+          "Cerrar",
+          {
+            duration: 2000
+          }
+        );
+      });
+    }
+
+    console.log("out");
+
+    this.authenticationService.currentUser$.subscribe(user => {
+      this.currentUser = user;
     });
     translate.setDefaultLang("en-US");
   }
@@ -46,11 +91,5 @@ export class AppComponent implements OnInit {
     localStorage.setItem("locale", locale);
     this.adapter.setLocale(locale); //for date picker
     this.translate.use(locale); //whole site
-  }
-
-  profiletest() {
-    this.fitbitService.getUserProfile().subscribe(response => {
-      console.log(response);
-    });
   }
 }

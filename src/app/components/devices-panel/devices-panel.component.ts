@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewEncapsulation
+} from "@angular/core";
 import * as moment from "moment";
 
 @Component({
@@ -14,7 +21,7 @@ export class DevicesPanelComponent implements OnInit {
   ngOnInit() {}
 
   age(birthdate) {
-    if (!!birthdate) {
+    if (birthdate) {
       return moment().diff(birthdate, "years");
     }
   }
@@ -35,7 +42,6 @@ export class DevicesPanelComponent implements OnInit {
   // }
 
   getHeartRateData(fitbitAccount) {
-    console.log(fitbitAccount);
     this.showHeartRateData_EE.next(fitbitAccount);
   }
 }
