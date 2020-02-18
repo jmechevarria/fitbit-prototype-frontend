@@ -8,9 +8,15 @@
     <mat-list role="list">
       <ng-container *ngFor="let user of users | keyvalue">
         <mat-list-item *ngIf="user.value.role_id === 1" role="listitem">
-          <div fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%">
+          <div
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            style="width: 100%"
+          >
             <div>
-              <label> {{ user.value.fullname }} ({{ user.value.username }}) </label>
+              <label>
+                {{ user.value.fullname }} ({{ user.value.username }})
+              </label>
             </div>
             <!-- <div>
                 <button mat-icon-button>
@@ -35,9 +41,13 @@
               {{ user.value.fullname }} ({{ user.value.username }})
             </mat-panel-title>
             <mat-panel-description fxLayoutAlign="space-between center">
-              {{ "admin.users_panel.fitbit_accounts_attended_by_this_caregiver" | translate }}
+              {{
+                "admin.users_panel.fitbit_accounts_attended_by_this_caregiver"
+                  | translate
+              }}
               <button
-                click-stop-propagation
+                click-event
+                params="[stopPropagation]"
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
                 aria-label="'admin.users_panel.caregiver_options_menu' | translate"
@@ -47,7 +57,9 @@
               <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="linkToFitbitAccount(user.value)">
                   <mat-icon>add_circle</mat-icon>
-                  <span>{{ "admin.users_panel.link_to_fitbit_accounts" | translate }}</span>
+                  <span>{{
+                    "admin.users_panel.link_to_fitbit_accounts" | translate
+                  }}</span>
                 </button>
                 <button mat-menu-item (click)="deleteUser(user.key)">
                   <mat-icon color="warn">delete</mat-icon>
@@ -58,8 +70,17 @@
           </mat-expansion-panel-header>
           <mat-list role="list">
             <ng-container>
-              <mat-list-item role="listitem" *ngFor="let fitbitAccount of user.value.fitbitAccounts | keyvalue">
-                <div fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%">
+              <mat-list-item
+                role="listitem"
+                *ngFor="
+                  let fitbitAccount of user.value.fitbitAccounts | keyvalue
+                "
+              >
+                <div
+                  fxLayout="row"
+                  fxLayoutAlign="space-between center"
+                  style="width: 100%"
+                >
                   <div>
                     <label>{{ fitbitAccount.value.fullname }}</label>
                   </div>
@@ -74,8 +95,18 @@
                         <mat-icon>autorenew</mat-icon>
                       </button>
                     </a> -->
-                    <a (click)="unlinkFromFitbitAccount(user.key, fitbitAccount.key)" class="text-danger">
-                      <button matTooltip="{{ 'admin.users_panel.unlink' | translate }}" mat-icon-button>
+                    <a
+                      (click)="
+                        unlinkFromFitbitAccount(user.key, fitbitAccount.key)
+                      "
+                      class="text-danger"
+                    >
+                      <button
+                        matTooltip="{{
+                          'admin.users_panel.unlink' | translate
+                        }}"
+                        mat-icon-button
+                      >
                         <mat-icon>clear</mat-icon>
                       </button>
                     </a>

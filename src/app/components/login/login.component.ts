@@ -1,11 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  AbstractControl
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { AlertService } from "src/app/services/alert.service";
@@ -29,8 +24,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService
+    private authenticationService: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -63,6 +57,7 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe(
         authenticatedUser => {
+          console.log(authenticatedUser);
           // this.router.navigate([this.returnUrl]);
           // const roleID = response.authenticatedUser.data.roleID;
           const roleID = authenticatedUser.data.roleID;
@@ -71,6 +66,8 @@ export class LoginComponent implements OnInit {
           else this.router.navigate([""]);
         },
         error => {
+          console.log(error);
+
           this.error = error;
           this.loading = false;
         }

@@ -33,13 +33,16 @@ import { DecisionTreeComponent } from "./components/decision-tree/decision-tree.
 import { DevicesPanelComponent } from "./components/devices-panel/devices-panel.component";
 import { UsersPanelComponent } from "./components/admin/users-panel/users-panel.component";
 import { FitbitAccountsPanelComponent } from "./components/admin/fitbit-accounts-panel/fitbit-accounts-panel.component";
-import { ClickStopPropagationDirective } from "./directives/click-stop-propagation.directive";
+import { ClickEventDirective } from "./directives/click-event.directive";
 import { WidgetsModule } from "./widgets/widgets.module";
 import { SharedModule } from "./shared/shared.module";
 import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { PushNotificationService } from "./services/push-notification.service";
+import { NotificationComponent } from "./components/notification/notifications-dropdown.component";
+import { ReplaceSubstring } from "./helpers/ReplaceSubstringPipe";
+// import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(
@@ -63,8 +66,10 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     DevicesPanelComponent,
     UsersPanelComponent,
     FitbitAccountsPanelComponent,
-    ClickStopPropagationDirective,
-    NotificationsPanelComponent
+    ClickEventDirective,
+    NotificationsPanelComponent,
+    NotificationComponent,
+    ReplaceSubstring
   ],
   imports: [
     BrowserModule,

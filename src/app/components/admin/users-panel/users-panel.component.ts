@@ -25,10 +25,10 @@ export interface DialogData {
 })
 export class UsersPanelComponent implements OnInit {
   @Input()
-  users: Object;
+  users: any;
 
   @Input()
-  fitbitAccounts: Object;
+  fitbitAccounts: any;
 
   @Output() deleteUser_EE = new EventEmitter();
   @Output() unlinkFromFitbitAccount_EE = new EventEmitter();
@@ -120,7 +120,7 @@ export class UsersPanelComponent implements OnInit {
       (acc, key) => {
         acc[key] = {
           ...this.fitbitAccounts[key],
-          show: !user.fitbitAccounts[key] && true
+          show: !user.fitbitAccounts[key]
         };
         return acc;
       },
@@ -135,7 +135,7 @@ export class UsersPanelComponent implements OnInit {
     );
 
     dialogRef.afterClosed().subscribe(selected => {
-      if (selected && !!selected.length) {
+      if (selected && selected.length) {
         const selectedFAIDs = selected.map(element => element.key);
 
         this.linkToFitbitAccount_EE.emit({ userID: user.id, selectedFAIDs });

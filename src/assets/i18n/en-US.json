@@ -6,7 +6,11 @@
       "administration": "Administration",
       "language": "Language",
       "logout": "Logout",
-      "notifications": "Notifications"
+      "notifications_dropdown": {
+        "notifications": "Notifications",
+        "all_notifications": "All Notifications",
+        "inbox": "inbox"
+      }
     }
   },
   "admin": {
@@ -63,8 +67,16 @@
         "no_activity_perceived": "No activity perceived",
         "no_results_for_selected_interval": "No results for selected interval"
       },
-      "intraday": { "options": "Options", "select_type": "Select type", "download": "Download" }
+      "intraday": {
+        "options": "Options",
+        "select_type": "Select type",
+        "download": "Download"
+      }
     }
+  },
+  "notifications_panel": {
+    "mark_read": "Mark read",
+    "mark_unread": "Mark unread"
   },
   "login": {
     "welcome": "Welcome",

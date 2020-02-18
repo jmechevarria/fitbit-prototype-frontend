@@ -5,8 +5,6 @@ import * as moment from "moment";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
 import { Chart } from "angular-highcharts";
-import * as jsPDF from "jspdf";
-// import { DailySummaryService } from "src/app/services/daily_summary.service";
 
 export interface InterdayDataSource {
   date: string;
@@ -103,8 +101,10 @@ export class FitbitDataComponent implements OnInit {
     this.fitbitService
       .fetchHeartRateInterday(
         this.fitbitAccount.id,
-        !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
-        !!to ? to : this.selectedPredefinedRange,
+        // !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
+        // !!to ? to : this.selectedPredefinedRange,
+        from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
+        to ? to : this.selectedPredefinedRange,
         moment().format("Z")
       )
       .subscribe(
@@ -149,27 +149,39 @@ export class FitbitDataComponent implements OnInit {
 
   private responseToDataSource(response): Array<InterdayDataSource> {
     if (response) {
+      console.log(response);
       this.heartRateInterday = response;
       return Object.values(this.heartRateInterday)
         .reverse()
         .map(day => {
+
+          console.log(day["date"], moment.parseZone(day["date"]));
+          
           let dataObject = {} as InterdayDataSource;
-          dataObject.date = day["date"];
+          dataObject.date = moment.parseZone(day["date"]).format('YYYY-MM-DD');
 
           dataObject.hrz_1 = {
-            caloriesOut: day["hrz_1_calories"].toFixed(2),
+            caloriesOut: day["hrz_1_calories"]
+              ? day["hrz_1_calories"].toFixed(2)
+              : null,
             minutes: day["hrz_1_minutes"]
           };
           dataObject.hrz_2 = {
-            caloriesOut: day["hrz_2_calories"].toFixed(2),
+            caloriesOut: day["hrz_2_calories"]
+              ? day["hrz_2_calories"].toFixed(2)
+              : null,
             minutes: day["hrz_2_minutes"]
           };
           dataObject.hrz_3 = {
-            caloriesOut: day["hrz_3_calories"].toFixed(2),
+            caloriesOut: day["hrz_3_calories"]
+              ? day["hrz_3_calories"].toFixed(2)
+              : null,
             minutes: day["hrz_3_minutes"]
           };
           dataObject.hrz_4 = {
-            caloriesOut: day["hrz_4_calories"].toFixed(2),
+            caloriesOut: day["hrz_4_calories"]
+              ? day["hrz_4_calories"].toFixed(2)
+              : null,
             minutes: day["hrz_4_minutes"]
           };
           dataObject.steps = day["steps"];
@@ -177,6 +189,8 @@ export class FitbitDataComponent implements OnInit {
           return dataObject;
         });
     }
+
+    return [];
   }
 
   sortNull() {} //this is to make 'predefinedRanges' be rendered as ordered in the variable declaration
@@ -280,6 +294,7 @@ export class FitbitDataComponent implements OnInit {
       ...config
     });
   }
+
   applyFilter(filterValue: string) {
     this.interdayDataSource.filter = filterValue.trim().toLowerCase();
 
@@ -290,34 +305,34 @@ export class FitbitDataComponent implements OnInit {
 
   getIntraday(day, rowIndex) {
     if (this.chart) this.chart.removeSeries(0);
-    // if (this.test) {
-    console.log("in");
-    this.showIntradayData = true;
     this.highlightRow();
+    this.showIntradayData = true;
     this.heartRateIntradayLoading = true;
+    this.heartRateIntradayLoadingError = false;
     this.test = false;
+
     this.fitbitService
       .fetchHeartRateIntraday(this.fitbitAccount["id"], day.date)
       .subscribe(
         heartRateIntraday => {
-          const points = [],
-            dayMoment = moment.utc(heartRateIntraday["day"]);
+          if (heartRateIntraday) {
+            const points = [],
+              dayMoment = moment(heartRateIntraday["day"]);
 
-          for (const secondHeartBeatPair of (heartRateIntraday["data"] as Array<
-            Object
-          >).reverse()) {
-            points.push([
-              dayMoment
-                .clone()
-                .add(secondHeartBeatPair["second"], "seconds")
-                // .add(moment().utcOffset(), "minutes")
-                .valueOf(),
-              secondHeartBeatPair["heart_beat"]
-            ]);
-          }
+            for (const secondHeartBeatPair of (heartRateIntraday[
+              "data"
+            ] as Array<Object>).reverse()) {
+              points.push([
+                dayMoment
+                  .clone()
+                  .add(secondHeartBeatPair["second"], "seconds")
+                  // .add(moment().utcOffset(), "minutes")
+                  .valueOf(),
+                secondHeartBeatPair["heart_beat"]
+              ]);
+            }
 
-          this.initChart(
-            {
+            this.initChart({
               title: {
                 text: this.fitbitAccount.fullname
               },
@@ -337,26 +352,11 @@ export class FitbitDataComponent implements OnInit {
                   text: "Heart Rate"
                 }
               }
-            }
-
-            //   {
-            //   yAxis: {
-            //     title: {
-            //       text: this.fitbitAccount.fullname + " | Heart Rate Time Series"
-            //     },
-            //     subtitle: {
-            //       text: day.date
-            //     }
-            //   },
-            //   series: [
-            //     {
-            //       name: "Heart rate",
-            //       data: points,
-            //       showInLegend: false
-            //     }
-            //   ]
-            // }
-          );
+            });
+          } else {
+            //empty response
+            this.chart = null;
+          }
 
           this.highlightRow(rowIndex);
           this.heartRateIntradayLoading = false;
@@ -367,27 +367,26 @@ export class FitbitDataComponent implements OnInit {
           this.heartRateIntradayLoadingError = true;
         }
       );
-    // }
   }
 
   highlightRow(rowIndex = undefined) {
     this.selectedRowIndex = rowIndex;
   }
 
-  exportChart(event, format) {
-    const canvas = document.getElementById("chart") as HTMLCanvasElement;
-    if (format === "png") {
-      const anchor = event.target.parentNode;
-      anchor.href = canvas.toDataURL();
-      anchor.download = "test.png";
-    } else if (format === "pdf") {
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const pdf = new jsPDF();
+  // exportChart(event, format) {
+  //   const canvas = document.getElementById("chart") as HTMLCanvasElement;
+  //   if (format === "png") {
+  //     const anchor = event.target.parentNode;
+  //     anchor.href = canvas.toDataURL();
+  //     anchor.download = "test.png";
+  //   } else if (format === "pdf") {
+  //     const imgData = canvas.toDataURL("image/png", 1.0);
+  //     const pdf = new jsPDF();
 
-      pdf.addImage(imgData, "PNG", 0, 0);
-      pdf.save("test.pdf");
-    }
-  }
+  //     pdf.addImage(imgData, "PNG", 0, 0);
+  //     pdf.save("test.pdf");
+  //   }
+  // }
 
   /**
    * line, bar, radar, pie, polarArea, doughnut, bubble and scatter

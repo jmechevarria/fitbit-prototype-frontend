@@ -1,27 +1,121 @@
-<mat-list role="list">
-  <ng-container *ngFor="let notification of notifications | keyvalue">
-    <mat-list-item role="listitem">
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <h3>{{ "admin.users_panel.fitbit_accounts" | translate }}</h3>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <!-- <div fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%">
-          <div>
-            <label> {{ notification.value.fullname }} </label>
+<!-- Table  -->
+<div class="table-responsive z-depth-1">
+  <table mdbTable class="table" hover="true">
+    <!-- Table head -->
+    <thead class="black white-text">
+      <tr>
+        <th>
+          Severity
+        </th>
+        <th>Creada</th>
+        <th>Senior person</th>
+        <th>Message</th>
+        <th>
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <!-- Table head -->
+
+    <!-- Table body -->
+    <tbody>
+      <tr
+        *ngFor="let notification of notifications"
+        [routerLink]="['/notifications']"
+        class="{{ notification.severity }} notification"
+        [ngClass]="{
+          'green lighten-1': !notification.read,
+          'grey lighten-4': notification.read,
+          unread: !notification.read
+        }"
+        (click)="viewIncidentData(notification)"
+      >
+        <td>
+          <mdb-icon fas icon="{{ ICONS[notification.severity] }}"></mdb-icon>
+        </td>
+        <td>
+          {{ notification.created | replaceSubstring: "\\.\\d+$":"" }}
+        </td>
+        <td>
+          {{
+            notification.firstname +
+              " " +
+              notification.lastname +
+              " " +
+              (notification.lastname2 ? notification.lastname2 : "")
+          }}
+        </td>
+        <td>{{ notification.message }}</td>
+        <td scope="row">
+          <!-- Default unchecked -->
+          <!-- <div class="custom-control custom-checkbox"> -->
+          <!-- <mdb-checkbox default="true"></mdb-checkbox> -->
+          <mdb-icon
+            click-event
+            click-event-params="[stopPropagation]"
+            mdbTooltip="{{
+              'notifications_panel.' +
+                (notification.read ? 'mark_unread' : 'mark_read') | translate
+            }}"
+            placement="left"
+            far
+            icon="{{ notification.read ? 'envelope-open' : 'envelope' }}"
+            (click)="toggleRead(notification)"
+          ></mdb-icon>
+
+          <!-- </div> -->
+        </td>
+      </tr>
+      <tr *ngIf="notifications.length === 0">
+        <td colspan="5">
+          <div
+            class="alert alert-primary"
+            role="alert"
+            style="text-align: center;"
+          >
+            {{ "notifications_panel.no_notifications" | translate }}
           </div>
-          <div>
-            <button mat-icon-button>
-              <mat-icon click-stop-propagation color="warn" (click)="deletenotification(notification.key)">
-                delete
-              </mat-icon>
-            </button>
-          </div>
-        </div> -->
-    </mat-list-item>
-  </ng-container>
-</mat-list>
+        </td>
+      </tr>
+    </tbody>
+    <!-- Table body -->
+  </table>
+</div>
+<!-- Table  -->
+
+<!-- <div id="notifications-panel" fxLayout="column" style="overflow-y: scroll;">
+  <ul>
+    <li
+      *ngFor="let notification of notifications"
+      [routerLink]="['/notifications']"
+      class="notification"
+    >
+      <div fxLayout fxFlex class="{{ notification.severity }}">
+        <div
+          fxLayout
+          fxFlex="10"
+          fxLayoutAlign="center center"
+          class="left-panel"
+        >
+          <mdb-icon fas icon="{{ ICONS[notification.severity] }}"></mdb-icon>
+        </div>
+        <div
+          fxFlex="90"
+          fxLayoutAlign="center flex-start"
+          fxLayout="column"
+          class="right-panel"
+          [class.unread]="notification.read === false"
+        >
+          <label class="notification-moment ml-auto mb-auto">{{
+            notification.created | replaceSubstring: "\\.\\d\\d\\d":""
+          }}</label>
+
+          <label class="notification-subject">{{ notification.subject }}</label>
+          <p class="notification-payload">
+            {{ notification.payload }}
+          </p>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div> -->

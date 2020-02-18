@@ -1,0 +1,54 @@
+table {
+  margin: 0;
+}
+
+th,
+tr.notification td:not(:nth-of-type(4)) {
+  text-align: center;
+}
+
+th,
+td {
+  // padding-left: 0;
+}
+
+tr.warning td:first-of-type {
+  color: #ffd600 !important;
+}
+
+tr.warning td mdb-icon {
+  font-size: 1.2em;
+}
+
+tr.notification.unread td {
+  font-weight: 900;
+}
+
+mdb-icon {
+  cursor: pointer;
+}
+
+:host::ng-deep mdb-tooltip-container .arrow {
+  display: none;
+}
+
+// #notifications-panel {
+//   overflow: hidden !important;
+// }
+
+// #notifications-panel li:hover {
+//   background: #e4e6e8;
+// }
+
+// #notifications-panel div.notification {
+//   padding: 5px;
+//   border-bottom: 1px solid #eff0f1;
+// }
+
+// #notifications-panel .left-panel.unread {
+//   border-radius: 10px 0 0 10px;
+// }
+
+// #notifications-panel .right-panel p {
+//   margin: 0;
+// }

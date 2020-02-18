@@ -1,68 +1,160 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <!-- <button mat-icon-button>
-      <mat-icon (click)="sidenav.toggle()">menu</mat-icon>
-    </button> -->
-    <span class="menu-spacer"></span>
-    <!-- <a mat-button class="nav-item nav-link" routerLink="/">Home</a> -->
-    <a mat-button class="nav-item nav-link" routerLink="/">{{ "home.main_menu.home" | translate }}</a>
-    <a *ngIf="currentUser?.data.roleID === 2" mat-button class="nav-item nav-link" routerLink="/dashboard">
-      {{ "home.main_menu.dashboard" | translate }}
-    </a>
+<!--Navbar-->
+<mdb-navbar
+  SideClass="navbar navbar-expand-lg navbar-light blue-grey lighten-5"
+  mdbStickyHeader
+  [containerInside]="true"
+>
+  <!-- Navbar brand -->
+  <mdb-navbar-brand
+    ><a href="#" class="navbar-brand">Navbar</a></mdb-navbar-brand
+  >
 
-    <button
-      style="background: white; color: red; font-weight: bold"
-      *ngIf="currentUser?.data.roleID === 1"
-      mat-button
-      [routerLink]="'/admin'"
-    >
-      {{ "home.main_menu.administration" | translate }}
-    </button>
-    <span class="mat-toolbar-spacer"></span>
+  <!-- Collapsible content -->
+  <links>
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="nav-link waves-light" mdbWavesEffect routerLink="/">{{
+          "home.main_menu.home" | translate
+        }}</a>
+      </li>
+      <li
+        *ngIf="currentUser?.data.roleID === 2"
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a class="nav-link waves-light" mdbWavesEffect routerLink="/dashboard">
+          {{ "home.main_menu.dashboard" | translate }}
+        </a>
+      </li>
 
-    <button mat-button [matMenuTriggerFor]="menu">{{ "home.main_menu.language" | translate }}</button>
-    <mat-menu #menu="matMenu">
-      <button (click)="setLocale('es-MX')" mat-menu-item>
-        <label>Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-mexico-50.png"/></label>
-      </button>
-      <button (click)="setLocale('es-ES')" mat-menu-item>
-        Espa&ntilde;ol <img height="15" src="assets/images/flags/icons8-spain-50.png" />
-      </button>
-      <button (click)="setLocale('en-US')" mat-menu-item>
-        English <img height="15" src="assets/images/flags/icons8-usa-50.png" />
-      </button>
-    </mat-menu>
+      <li
+        *ngIf="currentUser?.data.roleID === 1"
+        class="nav-item"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <a
+          class="nav-link waves-light"
+          mdbWavesEffect
+          style="color: red;"
+          [routerLink]="'/admin'"
+        >
+          {{ "home.main_menu.administration" | translate }}
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
 
-    <div *ngIf="isAuthenticated">
-      <button mat-button [matMenuTriggerFor]="userMenu">{{ currentUser?.data.username }}</button>
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item class="nav-item nav-link" [routerLink]="['/notifications']">
-          {{ "home.main_menu.notifications" | translate }}
-        </button>
-        <button mat-menu-item class="nav-item nav-link" (click)="logout()">
-          {{ "home.main_menu.logout" | translate }}
-        </button>
-      </mat-menu>
-    </div>
-    <a *ngIf="!isAuthenticated" mat-button [routerLink]="['/login']">{{ "shared.login" | translate }}</a>
-    <!--<label *ngIf="isAuthenticated">{{ currentUser?.firstName }} |</label>
-    <a *ngIf="isAuthenticated" mat-button class="nav-item nav-link" (click)="logout()">Logout</a> -->
-  </mat-toolbar-row>
-</mat-toolbar>
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <!-- Language Dropdown -->
+      <li class="nav-item dropdown" dropdown>
+        <a
+          dropdownToggle
+          type="button"
+          class="nav-link dropdown-toggle waves-light"
+          mdbWavesEffect
+        >
+          {{ "home.main_menu.language" | translate }}<span class="caret"></span
+        ></a>
+        <div
+          *dropdownMenu
+          class="dropdown-menu dropdown dropdown-primary"
+          role="menu"
+        >
+          <a
+            (click)="setLocale('es-MX')"
+            class="dropdown-item waves-light"
+            mdbWavesEffect
+            >Espa&ntilde;ol
+            <img height="15" src="assets/images/flags/icons8-mexico-50.png"
+          /></a>
+          <a
+            (click)="setLocale('es-ES')"
+            class="dropdown-item waves-light"
+            mdbWavesEffect
+          >
+            Espa&ntilde;ol
+            <img height="15" src="assets/images/flags/icons8-spain-50.png"
+          /></a>
+          <a
+            (click)="setLocale('en-US')"
+            class="dropdown-item waves-light"
+            mdbWavesEffect
+          >
+            English <img height="15" src="assets/images/flags/icons8-usa-50.png"
+          /></a>
+        </div>
+      </li>
 
-<mat-sidenav-container>
-  <!-- <mat-sidenav #sidenav>
-    <mat-nav-list>
-      <a mat-list-item [routerLink]="'/accounts'"> Accounts </a>
-      <a mat-list-item [routerLink]="'/create-account'"> Create Account </a>
-    </mat-nav-list>
-  </mat-sidenav> -->
-  <mat-sidenav-content>
-    <alert></alert>
-    <div fxLayout="column">
-      <router-outlet></router-outlet>
-    </div>
+      <!-- Notifications Link -->
+      <li class="nav-item" fxShow fxHide.gt-xs>
+        <a
+          id="notifications-link"
+          type="button"
+          class="nav-link waves-light"
+          mdbWavesEffect
+          [routerLink]="['/notifications']"
+        >
+          <mdb-icon fas icon="bell"></mdb-icon>
+          <span class="counter">{{
+            notifications?.length ? notifications.length : 0
+          }}</span>
+        </a>
+      </li>
 
-    <!-- <button (click)="profiletest()">Revoke</button> -->
-  </mat-sidenav-content>
-</mat-sidenav-container>
+      <!-- Notifications Dropdown -->
+      <notifications-dropdown
+        fxHide.lt-sm
+        *ngIf="isAuthenticated"
+        [notifications$]="notifications$"
+      ></notifications-dropdown>
+
+      <!-- User Account Dropdown -->
+      <li *ngIf="isAuthenticated" class="nav-item dropdown" dropdown>
+        <a
+          dropdownToggle
+          type="button"
+          class="nav-link dropdown-toggle waves-light"
+          mdbWavesEffect
+        >
+          <mdb-icon far icon="user"></mdb-icon>
+        </a>
+        <div
+          *dropdownMenu
+          class="dropdown-menu dropdown dropdown-primary dropdown-menu-right"
+          role="menu"
+        >
+          <a [routerLink]="['/notifications']" class="dropdown-item" href="#">
+            {{ "home.main_menu.notifications" | translate }}</a
+          >
+          <a (click)="logout()" class="dropdown-item" href="#">{{
+            "home.main_menu.logout" | translate
+          }}</a>
+        </div>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li *ngIf="!isAuthenticated" class="nav-item">
+        <a
+          [routerLink]="['/login']"
+          class="nav-link waves-light"
+          mdbWavesEffect
+          >{{ "shared.login" | translate }}</a
+        >
+      </li>
+    </ul>
+  </links>
+  <!-- Collapsible content -->
+</mdb-navbar>
+
+<div ngClass.gt-xs="container" style="margin-top: 60px">
+  <router-outlet></router-outlet>
+</div>
+
+<button (click)="unsubscribe()">unsubscribe</button>

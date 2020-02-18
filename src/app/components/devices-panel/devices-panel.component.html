@@ -9,14 +9,17 @@
         {{ fitbitAccount.value.fullname }}
       </mat-panel-title>
       <mat-panel-description>
-        {{ "dashboard.devices_panel.age" | translate }}: {{ age(fitbitAccount.value.birthdate) }} |
-        {{ "dashboard.devices_panel.height" | translate }}: {{ fitbitAccount.value.height_cm }} |
+        {{ "dashboard.devices_panel.age" | translate }}:
+        {{ age(fitbitAccount.value.birthdate) }} |
+        {{ "dashboard.devices_panel.height" | translate }}:
+        {{ fitbitAccount.value.height_cm }} |
         {{ "dashboard.devices_panel.weight" | translate }}:
         {{ fitbitAccount.value.weight_kg }}
       </mat-panel-description>
       <button
         id="show-data"
-        click-stop-propagation
+        click-event
+        params="[stopPropagation]"
         mat-flat-button
         color="primary"
         (click)="getHeartRateData(fitbitAccount.value)"
@@ -25,7 +28,10 @@
       </button>
     </mat-expansion-panel-header>
     <mat-list role="list" id="devices">
-      <mat-list-item *ngFor="let device of fitbitAccount.value.devices | keyvalue" role="listitem">
+      <mat-list-item
+        *ngFor="let device of fitbitAccount.value.devices | keyvalue"
+        role="listitem"
+      >
         <span fxLayoutAlign="space-around center"
           ><img
             matListAvatar
@@ -45,5 +51,8 @@
   </mat-expansion-panel>
 </mat-accordion>
 <div *ngIf="(fitbitAccounts | json) === '{}'">
-  {{ "dashboard.devices_panel.this_user_has_no_active_fitbit_accounts_to_monitor" | translate }}
+  {{
+    "dashboard.devices_panel.this_user_has_no_active_fitbit_accounts_to_monitor"
+      | translate
+  }}
 </div>

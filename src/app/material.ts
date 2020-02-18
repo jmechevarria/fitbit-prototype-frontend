@@ -25,6 +25,7 @@ import { CUSTOM_DATE_DISPLAY_FORMAT } from "./helpers/custom-date-format";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material";
+import { MDBBootstrapModule } from "angular-bootstrap-md";
 
 @NgModule({
   imports: [
@@ -49,7 +50,8 @@ import { MatSnackBarModule } from "@angular/material";
     MatBadgeModule,
     MatExpansionModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MDBBootstrapModule.forRoot()
   ],
   exports: [
     MatDatepickerModule,
@@ -75,7 +77,8 @@ import { MatSnackBarModule } from "@angular/material";
     MatBadgeModule,
     MatExpansionModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MDBBootstrapModule
   ],
   providers: [
     { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_DISPLAY_FORMAT }

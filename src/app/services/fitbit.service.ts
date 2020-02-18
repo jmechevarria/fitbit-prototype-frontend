@@ -20,7 +20,12 @@ export class FitbitService {
   private configExpiresSec;
 
   constructor(private http: HttpClient) {
-    const { configExpiresSec, configOauthURL, configRedirectURI, configScope } = environment;
+    const {
+      configExpiresSec,
+      configOauthURL,
+      configRedirectURI,
+      configScope
+    } = environment;
 
     this.configExpiresSec = configExpiresSec;
     this.configOauthURL = configOauthURL;
@@ -45,7 +50,10 @@ export class FitbitService {
   // }
 
   set tempFitbitAccountID(value) {
-    localStorage.setItem(this.TEMP_FITBIT_ACCOUNT_ID, !!value ? value.toString() : null);
+    localStorage.setItem(
+      this.TEMP_FITBIT_ACCOUNT_ID,
+      value ? value.toString() : null
+    );
   }
 
   get tempFitbitAccountID() {
@@ -74,16 +82,19 @@ export class FitbitService {
   }
 
   private revokeAccess(fitbitAccountID) {
-    return this.http.patch(`http://localhost:3000/api/v1/FITBIT/oauth2/revoke`, {
-      values: {
-        user_id: null,
-        access_token: null,
-        token_expires_on: null
-      },
-      where: {
-        id: fitbitAccountID
+    return this.http.patch(
+      `http://localhost:3000/api/v1/FITBIT/oauth2/revoke`,
+      {
+        values: {
+          user_id: null,
+          access_token: null,
+          token_expires_on: null
+        },
+        where: {
+          id: fitbitAccountID
+        }
       }
-    });
+    );
   }
 
   // stateOfToken() {
@@ -100,7 +111,6 @@ export class FitbitService {
   //   });
   // }
 
- 
   fetchHeartRateIntraday(fitbitAccountID: number, day: string) {
     console.log(fitbitAccountID, day);
 
@@ -109,8 +119,28 @@ export class FitbitService {
     );
   }
 
-  fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string, clientOffset: string) {
-    return this.http.get(`http://localhost:3000/api/v1/daily-summary/${fitbitAccountID}/${from}/${to}/${clientOffset}`);
+  fetchHeartRateInterday(
+    fitbitAccountID: number,
+    from: string,
+    to: string,
+    clientOffset: string
+  ) {
+    return this.http.get(
+      `http://localhost:3000/api/v1/daily-summary/${fitbitAccountID}/${from}/${to}/${clientOffset}`
+    );
+    // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
+    // .pipe(delay(500))
+    // .pipe(dematerialize());
+  }
+
+  fetchIncidents(incidentIDs, fitbitAccountID: number) {
+    return this.http.get(
+      `http://localhost:3000/api/v1/incidents/${fitbitAccountID}/?incident_ids=${incidentIDs
+        .map(id => {
+          return id;
+        })
+        .join(",")}`
+    );
     // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
     // .pipe(delay(500))
     // .pipe(dematerialize());

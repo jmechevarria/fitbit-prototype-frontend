@@ -1,95 +1,110 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { User } from "./models/User";
 import { AuthenticationService } from "./services/authentication.service";
 import { DateAdapter } from "@angular/material/core";
 import { TranslateService } from "@ngx-translate/core";
-import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationService } from "./services/push-notification.service";
-import { MatSnackBar } from "@angular/material";
+import * as moment from "moment";
+import "moment/min/locales";
+import { BehaviorSubject, Observable } from "rxjs";
 
-const VAPID_PUBLIC =
-  "BCLqXPqZe-QWv8hQ-2RR9g5VKrhJnGHiM0PN0hs-xgka4inF2ylT5sjWd-8fyGT2OC1xagNR4D0SqgbDPjH8VD0";
-// "privateKey":"OkNDVpMzXz7CW_G7s07hxsogeh2XeJiOoogWfBLQRxw"
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title: string = "fitbit-app-proto";
+  notifications: any[] = []; //this is for usage within this component
+  private _notificationsSubject: BehaviorSubject<any[]>; //this is to be updated everytime 'notifications' changes
+  notifications$: Observable<any[]>; //this is to be "observed" by other components who need 'notifications'
+
+  pushMessages$;
 
   currentUser: User;
+  MENU_ITEMS_IDENTIFIERS = {
+    HOME: "HOME",
+    DASHBOARD: "DASHBOARD",
+    ADMINISTRATION: "ADMINISTRATION"
+  };
+
+  activeItem: string;
+  mobile: boolean;
+
   constructor(
-    private router: Router,
     private authenticationService: AuthenticationService,
     private adapter: DateAdapter<any>,
     private translate: TranslateService,
-    matSnackBar: MatSnackBar,
-    swPush: SwPush,
-    swUpdate: SwUpdate,
-    pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService
   ) {
-    if (swPush.isEnabled) {
-      swPush
-        .requestSubscription({
-          serverPublicKey: VAPID_PUBLIC
-        })
-        .then(subscription => {
-          // send subscription to the server
-          console.log("subscription object generated: ", subscription);
-          pushNotificationService
-            .sendSubscriptionToTheServer(subscription)
-            .subscribe();
-        })
-        .catch(console.error);
-
-      swUpdate.available.subscribe(update => {
-        matSnackBar
-          .open("Update Avaiblable", "Reload")
-          .onAction()
-          .subscribe(() => {
-            window.location.reload();
-          });
-      });
-
-      swPush.messages.subscribe(msg => {
-        console.log(JSON.stringify(msg));
-        matSnackBar.open(
-          `${JSON.stringify(msg["notification"])} 🔔`,
-          "Cerrar",
-          {
-            duration: 2000
-          }
-        );
-      });
-    }
-
-    console.log("out");
-
-    this.authenticationService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
     translate.setDefaultLang("en-US");
+    this.pushMessages$ = this.pushNotificationService.getMessages();
+    this._notificationsSubject = new BehaviorSubject<any[]>([]);
+    this.notifications$ = this._notificationsSubject.asObservable();
   }
 
   ngOnInit(): void {
     this.setLocale();
+    this.authenticationService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (this.currentUser) {
+        //fetch unread notifications from the db
+        try {
+          console.log(moment().format(), moment().unix(), moment());
+
+          this.pushNotificationService
+            .fetchFromDB(
+              this.currentUser.data.id,
+              5,
+
+              { to: moment().format("YYYY-MM-DD HH:mm:ss.SSSZ") }
+            )
+            .subscribe(notifications => {
+              this.notifications = Object.values(notifications);
+              this._notificationsSubject.next(this.notifications);
+
+              console.log(this.notifications);
+            });
+        } catch (error) {
+          console.log(error.toString());
+        }
+
+        this.pushNotificationService.subscribeToPN();
+        this.pushMessages$.subscribe(notification => {
+          this.notifications.push(notification);
+          // console.log(this.notifications);
+          this._notificationsSubject.next(this.notifications);
+        });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.pushMessages$.unsubscribe();
   }
 
   get isAuthenticated() {
+    return !!this.currentUser;
     return this.authenticationService.isAuthenticated;
   }
 
   logout() {
     this.authenticationService.logout();
-    this.router.navigate([""]);
   }
 
   setLocale(locale?: string) {
     if (!locale) locale = localStorage.getItem("locale") || "en-US";
     localStorage.setItem("locale", locale);
     this.adapter.setLocale(locale); //for date picker
+    moment.locale(locale); // for moment.js
     this.translate.use(locale); //whole site
+  }
+
+  unsubscribe() {
+    this.pushNotificationService.unsubscribeFromPN();
+  }
+
+  setActiveItem(itemIdentifier: string) {
+    this.activeItem = itemIdentifier;
   }
 }

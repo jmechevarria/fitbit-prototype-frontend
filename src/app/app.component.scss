@@ -1,22 +1,49 @@
-/** No CSS for this example */
-mat-toolbar,
-mat-toolbar-row {
-  height: 60px !important;
+// mat-toolbar,
+// mat-toolbar-row {
+//   height: 60px !important;
+// // }
+
+// .mat-toolbar-spacer {
+//   flex: 1 1 auto;
+// }
+
+// // mat-sidenav-container {
+// //   background: white;
+// // }
+
+// mat-sidenav {
+//   height: 100vh !important;
+// }
+
+// mat-sidenav-content {
+//   // min-height: calc(100vh - 60px) !important;
+//   padding: 0 10px 10px;
+// }
+
+mdb-navbar ul.navbar-nav li.active {
+  font-weight: bold;
 }
 
-.mat-toolbar-spacer {
-  flex: 1 1 auto;
+#notifications-link {
+  overflow: visible;
 }
 
-mat-sidenav-container {
-  background: white;
+#notifications-link span.counter {
+  position: relative;
+  padding: 0.3em 0.5em 0.3em;
+  top: -1em;
+  left: -1em;
+  z-index: 2;
+  font-size: 11px;
+  color: #fff;
+  background-color: #fe1212;
+  border-radius: 10em;
+  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-mat-sidenav {
-  height: 100vh !important;
-}
-
-mat-sidenav-content {
-  min-height: calc(100vh - 60px) !important;
-  padding: 0 10px 10px;
+#notifications-link mdb-icon {
+  font-size: 1.3em;
+  color: #616161;
 }

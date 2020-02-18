@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 import { User } from "../models/User";
+import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
@@ -14,7 +16,7 @@ export class AuthenticationService {
   private currentUserSubject$: BehaviorSubject<User>;
   public currentUser$: Observable<User>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.currentUserSubject$ = new BehaviorSubject<User>(this.currentUser);
     this.currentUser$ = this.currentUserSubject$.asObservable();
   }
@@ -40,9 +42,8 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-    // return this.http.post<any>(`${config.apiUrl}/users/authenticate`, { username, password }).pipe(
     return this.http
-      .post<any>("http://localhost:3000/api/v1/login", { username, password })
+      .post<any>(`${environment.apiURL}/login`, { username, password })
       .pipe(
         tap(response => {
           console.log(response);
@@ -64,5 +65,6 @@ export class AuthenticationService {
     this.currentUser = null;
     // this.token = null;
     this.currentUserSubject$.next(null);
+    this.router.navigate([""]);
   }
 }

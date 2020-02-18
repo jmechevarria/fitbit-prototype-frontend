@@ -9,7 +9,8 @@ export const environment = {
   configScope: "heartrate sleep activity profile weight settings",
   configExpiresSec: 30 * 24 * 60 * 60, // 30 days
   baseURL: "http://localhost:4200",
-  i18n: "/assets/i18n/"
+  i18n: "/assets/i18n/",
+  apiURL: "http://localhost:3000/api/v1"
 };
 
 /*

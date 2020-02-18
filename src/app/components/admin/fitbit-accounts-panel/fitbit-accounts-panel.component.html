@@ -1,4 +1,6 @@
-<h1 class="mat-headline">{{ "admin.users_panel.fitbit_accounts" | translate }}</h1>
+<h1 class="mat-headline">
+  {{ "admin.users_panel.fitbit_accounts" | translate }}
+</h1>
 
 <mat-accordion>
   <mat-expansion-panel>
@@ -10,23 +12,48 @@
     <mat-list role="list">
       <ng-container *ngFor="let fitbitAccount of fitbitAccounts | keyvalue">
         <mat-list-item role="listitem">
-          <div fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%">
+          <div
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            style="width: 100%"
+          >
             <div>
               <label> {{ fitbitAccount.value.fullname }} </label>
             </div>
             <div>
-              <a (click)="revokeAccessToken(fitbitAccount.value.id)" class="text-danger">
-                <button matTooltip="{{ 'admin.users_panel.revoke_access_token' | translate }}" mat-icon-button>
+              <a
+                (click)="revokeAccessToken(fitbitAccount.value.id)"
+                class="text-danger"
+              >
+                <button
+                  matTooltip="{{
+                    'admin.users_panel.revoke_access_token' | translate
+                  }}"
+                  mat-icon-button
+                >
                   <mat-icon>link_off</mat-icon>
                 </button>
               </a>
-              <a (click)="refreshAccessToken(fitbitAccount.value.id)" class="text-danger">
-                <button matTooltip="{{ 'admin.users_panel.refresh_access_token' | translate }}" mat-icon-button>
+              <a
+                (click)="refreshAccessToken(fitbitAccount.value.id)"
+                class="text-danger"
+              >
+                <button
+                  matTooltip="{{
+                    'admin.users_panel.refresh_access_token' | translate
+                  }}"
+                  mat-icon-button
+                >
                   <mat-icon>autorenew</mat-icon>
                 </button>
               </a>
               <button mat-icon-button>
-                <mat-icon click-stop-propagation color="warn" (click)="deleteFitbitAccount(fitbitAccount.key)">
+                <mat-icon
+                  click-event
+                  params="[stopPropagation]"
+                  color="warn"
+                  (click)="deleteFitbitAccount(fitbitAccount.key)"
+                >
                   delete
                 </mat-icon>
               </button>
