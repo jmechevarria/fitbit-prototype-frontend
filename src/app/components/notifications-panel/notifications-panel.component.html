@@ -2,16 +2,22 @@
 <div class="table-responsive z-depth-1">
   <table mdbTable class="table" hover="true">
     <!-- Table head -->
-    <thead class="black white-text">
+    <thead class="blue-grey darken-3 white-text">
       <tr>
         <th>
-          Severity
+          {{ "shared.severity" | translate }}
         </th>
-        <th>Creada</th>
-        <th>Senior person</th>
-        <th>Message</th>
         <th>
-          Actions
+          {{ "shared.date" | translate }}/{{
+            "notifications_panel.time" | translate
+          }}
+        </th>
+        <th>
+          {{ "notifications_panel.senior_person" | translate }}
+        </th>
+        <th>{{ "shared.message" | translate }}</th>
+        <th>
+          {{ "shared.actions" | translate }}
         </th>
       </tr>
     </thead>
@@ -22,44 +28,50 @@
       <tr
         *ngFor="let notification of notifications"
         [routerLink]="['/notifications']"
-        class="{{ notification.severity }} notification"
+        class="{{ notification?.severity }} notification"
         [ngClass]="{
-          'green lighten-1': !notification.read,
-          'grey lighten-4': notification.read,
-          unread: !notification.read
+          unread: !notification?.read
         }"
-        (click)="viewIncidentData(notification)"
+        (click)="viewIncidentDetails(notification)"
       >
         <td>
-          <mdb-icon fas icon="{{ ICONS[notification.severity] }}"></mdb-icon>
+          <mdb-icon fas icon="{{ ICONS[notification?.severity] }}"></mdb-icon>
         </td>
         <td>
-          {{ notification.created | replaceSubstring: "\\.\\d+$":"" }}
+          {{ notification?.localeFormat }}
         </td>
+
         <td>
-          {{
-            notification.firstname +
-              " " +
-              notification.lastname +
-              " " +
-              (notification.lastname2 ? notification.lastname2 : "")
-          }}
+          {{ notification?.senior_person?.fullname }}
         </td>
-        <td>{{ notification.message }}</td>
+        <td class="message">
+          {{ "notifications_panel.accident_probability" | translate }}:
+          <span>{{ notification?.message | translate }}</span>
+        </td>
         <td scope="row">
           <!-- Default unchecked -->
           <!-- <div class="custom-control custom-checkbox"> -->
           <!-- <mdb-checkbox default="true"></mdb-checkbox> -->
+          <!-- <mdb-icon
+            click-event
+            click-event-params="[stopPropagation]"
+            mdbTooltip="{{ 'notifications_panel.notify' | translate }}"
+            placement="left"
+            fas
+            icon="bullhorn"
+            class="mr-1 red-text"
+            (click)="getContacts(notification.senior_person, notification)"
+          ></mdb-icon> -->
           <mdb-icon
             click-event
             click-event-params="[stopPropagation]"
             mdbTooltip="{{
               'notifications_panel.' +
-                (notification.read ? 'mark_unread' : 'mark_read') | translate
+                (notification?.read ? 'mark_unread' : 'mark_read') | translate
             }}"
             placement="left"
             far
-            icon="{{ notification.read ? 'envelope-open' : 'envelope' }}"
+            icon="{{ notification?.read ? 'envelope-open' : 'envelope' }}"
             (click)="toggleRead(notification)"
           ></mdb-icon>
 
@@ -73,7 +85,7 @@
             role="alert"
             style="text-align: center;"
           >
-            {{ "notifications_panel.no_notifications" | translate }}
+            {{ "notifications_panel.no_new_notifications" | translate }}
           </div>
         </td>
       </tr>
@@ -81,41 +93,5 @@
     <!-- Table body -->
   </table>
 </div>
+
 <!-- Table  -->
-
-<!-- <div id="notifications-panel" fxLayout="column" style="overflow-y: scroll;">
-  <ul>
-    <li
-      *ngFor="let notification of notifications"
-      [routerLink]="['/notifications']"
-      class="notification"
-    >
-      <div fxLayout fxFlex class="{{ notification.severity }}">
-        <div
-          fxLayout
-          fxFlex="10"
-          fxLayoutAlign="center center"
-          class="left-panel"
-        >
-          <mdb-icon fas icon="{{ ICONS[notification.severity] }}"></mdb-icon>
-        </div>
-        <div
-          fxFlex="90"
-          fxLayoutAlign="center flex-start"
-          fxLayout="column"
-          class="right-panel"
-          [class.unread]="notification.read === false"
-        >
-          <label class="notification-moment ml-auto mb-auto">{{
-            notification.created | replaceSubstring: "\\.\\d\\d\\d":""
-          }}</label>
-
-          <label class="notification-subject">{{ notification.subject }}</label>
-          <p class="notification-payload">
-            {{ notification.payload }}
-          </p>
-        </div>
-      </div>
-    </li>
-  </ul>
-</div> -->

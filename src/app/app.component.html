@@ -4,11 +4,6 @@
   mdbStickyHeader
   [containerInside]="true"
 >
-  <!-- Navbar brand -->
-  <mdb-navbar-brand
-    ><a href="#" class="navbar-brand">Navbar</a></mdb-navbar-brand
-  >
-
   <!-- Collapsible content -->
   <links>
     <!-- Links -->
@@ -93,7 +88,7 @@
       </li>
 
       <!-- Notifications Link -->
-      <li class="nav-item" fxShow fxHide.gt-xs>
+      <li *ngIf="isAuthenticated" class="nav-item" fxShow fxHide.gt-xs>
         <a
           id="notifications-link"
           type="button"
@@ -102,9 +97,12 @@
           [routerLink]="['/notifications']"
         >
           <mdb-icon fas icon="bell"></mdb-icon>
-          <span class="counter">{{
-            notifications?.length ? notifications.length : 0
-          }}</span>
+          <span
+            class="counter"
+            *ngIf="showCounter && notifications$ | async as notifications"
+          >
+            {{ notifications.length ? notifications.length : "" }}
+          </span>
         </a>
       </li>
 
@@ -112,7 +110,9 @@
       <notifications-dropdown
         fxHide.lt-sm
         *ngIf="isAuthenticated"
-        [notifications$]="notifications$"
+        [notifications]="notifications$ | async"
+        [showCounter]="showCounter"
+        (click)="showCounter = false"
       ></notifications-dropdown>
 
       <!-- User Account Dropdown -->
@@ -157,4 +157,4 @@
   <router-outlet></router-outlet>
 </div>
 
-<button (click)="unsubscribe()">unsubscribe</button>
+<!-- <button (click)="unsubscribe()">unsubscribe</button> -->

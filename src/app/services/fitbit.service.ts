@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { tap } from "rxjs/operators";
-import { of } from "rxjs";
+import { of, Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root"
@@ -64,9 +64,9 @@ export class FitbitService {
     this.tempFitbitAccountID = fitbitAccount.id;
     console.log(fitbitAccount);
     const clientID = fitbitAccount.client_id;
-    window.location.href = `${this.configOauthURL}?response_type=token&scope=${this.configScope}&redirect_url=${this.configRedirectURI}
-      &expires_in=${this.configExpiresSec}&client_id=${clientID}&state=test_state`;
+    window.location.href = `${this.configOauthURL}?response_type=token&scope=${this.configScope}&redirect_uri=${this.configRedirectURI}&expires_in=${this.configExpiresSec}&client_id=${clientID}&state=test_state`;
   }
+  // }&redirect_uri=${encodeURIComponent(this.configRedirectURI)}&expires_in=${
 
   relinquishAccess(fitbitAccountID) {
     return this.revokeAccess(fitbitAccountID).pipe(
@@ -144,5 +144,17 @@ export class FitbitService {
     // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
     // .pipe(delay(500))
     // .pipe(dematerialize());
+  }
+
+  fetchLatestRecordedStates(personsIDs: any, clientMoment): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${environment.apiURL}/latest_recorded_states/`,
+      {
+        params: {
+          personsIDs,
+          clientMomentString: clientMoment.format()
+        }
+      }
+    );
   }
 }

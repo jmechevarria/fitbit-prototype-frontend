@@ -13,9 +13,21 @@ import { NotificationsPanelComponent } from "./components/notifications-panel/no
 
 const routes: Routes = [
   { path: "", component: FitbitClientIDFormComponent },
-  { path: "login", component: LoginComponent, canActivate: [LoginRegisterGuard] },
-  { path: "register", component: RegisterComponent, canActivate: [LoginRegisterGuard] },
-  { path: "admin", component: AdminComponent, canActivate: [UserAuthenticationGuard, AdminGuard] },
+  {
+    path: "login",
+    component: LoginComponent,
+    canActivate: [LoginRegisterGuard]
+  },
+  {
+    path: "register",
+    component: RegisterComponent,
+    canActivate: [LoginRegisterGuard]
+  },
+  {
+    path: "admin",
+    component: AdminComponent,
+    canActivate: [UserAuthenticationGuard, AdminGuard]
+  },
   {
     path: "dashboard",
     component: DashboardComponent,
@@ -24,7 +36,7 @@ const routes: Routes = [
   {
     path: "notifications",
     component: NotificationsPanelComponent,
-    canActivate: [UserAuthenticationGuard, CaregiverGuard]
+    canActivate: [UserAuthenticationGuard]
   },
 
   // otherwise redirect to home

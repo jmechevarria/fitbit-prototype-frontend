@@ -1,8 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy
+} from "@angular/core";
 import { DialogService } from "src/app/services/dialog.service";
 import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
 import { TranslateService } from "@ngx-translate/core";
-import { forkJoin } from "rxjs";
+import { forkJoin, Subscription } from "rxjs";
 import { switchMap, filter, tap } from "rxjs/operators";
 
 @Component({
@@ -13,16 +20,8 @@ import { switchMap, filter, tap } from "rxjs/operators";
     "./fitbit-accounts-panel.component.scss"
   ]
 })
-export class FitbitAccountsPanelComponent implements OnInit {
+export class FitbitAccountsPanelComponent implements OnInit, OnDestroy {
   private _fitbitAccounts: [] = [];
-
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService
-  ) {}
-
-  ngOnInit() {}
-
   @Input()
   set fitbitAccounts(value) {
     this._fitbitAccounts = value;
@@ -33,18 +32,28 @@ export class FitbitAccountsPanelComponent implements OnInit {
   }
 
   @Output() refreshAccessToken_EE = new EventEmitter();
+  @Output() revokeAccessToken_EE = new EventEmitter();
+  @Output() deleteFitbitAccount_EE = new EventEmitter();
+
+  private subscriptions: Subscription[];
+
+  constructor(
+    private dialogService: DialogService,
+    private translate: TranslateService
+  ) {}
+
+  ngOnInit() {}
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   refreshAccessToken(fitbitAccountID) {
     if (fitbitAccountID) this.refreshAccessToken_EE.emit(fitbitAccountID);
   }
 
-  @Output() revokeAccessToken_EE = new EventEmitter();
-
   revokeAccessToken(fitbitAccountID) {
     if (fitbitAccountID) this.revokeAccessToken_EE.emit(fitbitAccountID);
   }
-
-  @Output() deleteFitbitAccount_EE = new EventEmitter();
 
   deleteFitbitAccount(id: number) {
     const title$ = this.translate.get(
@@ -58,7 +67,7 @@ export class FitbitAccountsPanelComponent implements OnInit {
     );
     const warning$ = this.translate.get("shared.warning");
 
-    forkJoin([title$, body$, warning$])
+    const sub = forkJoin([title$, body$, warning$])
       .pipe(
         switchMap(([title, body, warning]) => {
           let bodyText = `<p class='mat-h4'>${body}
@@ -82,5 +91,7 @@ export class FitbitAccountsPanelComponent implements OnInit {
         })
       )
       .subscribe();
+
+    this.subscriptions.push(sub);
   }
 }

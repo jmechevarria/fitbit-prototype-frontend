@@ -7,7 +7,9 @@
     id="notifications-toggle"
   >
     <mdb-icon fas icon="bell"></mdb-icon>
-    <span *ngIf="unread" class="counter">{{ unread }}</span>
+    <span *ngIf="showCounter" class="counter">
+      <mdb-icon fas icon="exclamation-circle"></mdb-icon>
+    </span>
   </a>
   <div
     *dropdownMenu
@@ -19,21 +21,19 @@
       fxLayout
       fxLayoutAlign="space-between center"
       id="notifications-header"
-      class="blue accent-1"
+      class="elegant-color white-text"
       [routerLink]="['/notifications']"
     >
       <h6>
         {{ "home.main_menu.notifications_dropdown.inbox" | translate }}
       </h6>
       <div>
-        <!-- <a href="#"> -->
         <label>
           {{
-            "home.main_menu.notifications_dropdown.all_notifications"
+            "home.main_menu.notifications_dropdown.view_all_notifications"
               | translate
           }}
         </label>
-        <!-- </a> -->
       </div>
     </div>
     <div
@@ -46,6 +46,9 @@
           *ngFor="let notification of notifications"
           [routerLink]="['/notifications']"
           class="notification"
+          [ngClass]="{
+            'light-green lighten-5 unread': !notification.read
+          }"
         >
           <div fxLayout fxFlex class="{{ notification.severity }}">
             <div
@@ -66,17 +69,42 @@
               class="right-panel"
               [class.unread]="notification.read === false"
             >
-              <label class="notification-moment ml-auto mb-auto">{{
-                notification.created | replaceSubstring: "\\.\\d\\d\\d":""
-              }}</label>
+              <label class="notification-moment ml-auto mb-auto">
+                {{ notification.localeFormat + " " + notification.id }}
+              </label>
 
-              <label class="notification-subject mb-auto">{{
-                notification.subject
-              }}</label>
+              <label class="mb-auto">{{ notification.fullname }}</label>
               <p class="notification-payload">
-                {{ notification.payload }}
+                {{ notification.message }}
               </p>
+              <div class="actions">
+                <mdb-icon
+                  click-event
+                  click-event-params="[stopPropagation]"
+                  mdbTooltip="{{
+                    'notifications_dropdown.' +
+                      (notification.read ? 'mark_unread' : 'mark_read')
+                      | translate
+                  }}"
+                  placement="left"
+                  far
+                  icon="{{ notification.read ? 'envelope-open' : 'envelope' }}"
+                  (click)="toggleRead(notification)"
+                ></mdb-icon>
+              </div>
             </div>
+          </div>
+        </li>
+        <li *ngIf="notifications?.length === 0">
+          <div
+            class="alert alert-primary"
+            role="alert"
+            style="text-align: center;"
+          >
+            {{
+              "home.main_menu.notifications_dropdown.no_new_notifications"
+                | translate
+            }}
           </div>
         </li>
       </ul>

@@ -1,12 +1,16 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { User } from "./models/User";
+import "moment/min/locales";
+
+import * as moment from "moment";
+
+import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { map, tap } from "rxjs/operators";
+
 import { AuthenticationService } from "./services/authentication.service";
 import { DateAdapter } from "@angular/material/core";
+import { SubscriptionNotificationService } from "./services/subscription.notification.service";
 import { TranslateService } from "@ngx-translate/core";
-import { PushNotificationService } from "./services/push-notification.service";
-import * as moment from "moment";
-import "moment/min/locales";
-import { BehaviorSubject, Observable } from "rxjs";
+import { User } from "./models/User";
 
 @Component({
   selector: "app-root",
@@ -15,76 +19,63 @@ import { BehaviorSubject, Observable } from "rxjs";
 })
 export class AppComponent implements OnInit, OnDestroy {
   title: string = "fitbit-app-proto";
-  notifications: any[] = []; //this is for usage within this component
-  private _notificationsSubject: BehaviorSubject<any[]>; //this is to be updated everytime 'notifications' changes
-  notifications$: Observable<any[]>; //this is to be "observed" by other components who need 'notifications'
 
-  pushMessages$;
+  notifications$: Observable<any[]>;
+
+  messagesSubscription: Subscription;
+  showCounter: boolean = false;
 
   currentUser: User;
-  MENU_ITEMS_IDENTIFIERS = {
-    HOME: "HOME",
-    DASHBOARD: "DASHBOARD",
-    ADMINISTRATION: "ADMINISTRATION"
-  };
 
-  activeItem: string;
-  mobile: boolean;
-
+  private subscriptions: Subscription[];
   constructor(
     private authenticationService: AuthenticationService,
     private adapter: DateAdapter<any>,
     private translate: TranslateService,
-    private pushNotificationService: PushNotificationService
+    private subscriptionNotificationService: SubscriptionNotificationService
   ) {
     translate.setDefaultLang("en-US");
-    this.pushMessages$ = this.pushNotificationService.getMessages();
-    this._notificationsSubject = new BehaviorSubject<any[]>([]);
-    this.notifications$ = this._notificationsSubject.asObservable();
   }
 
   ngOnInit(): void {
     this.setLocale();
-    this.authenticationService.currentUser$.subscribe(user => {
+
+    this.notifications$ = this.subscriptionNotificationService.notifications$.pipe(
+      // map(notifications => notifications.map(n => this.processNotification(n)))
+      map(notifications =>
+        notifications.map(notification => {
+          console.log("init processNotification", notification);
+          const localeFormat = moment(notification.created).format("LLL");
+
+          const accidentProbability = notification.payload.accident_probability;
+
+          let message = "notifications_panel.";
+
+          if (accidentProbability > 0.9) message += "very_high";
+          else if (accidentProbability > 0.8) message += "high";
+          else message += "moderate";
+
+          this.showCounter = true;
+          return { ...notification, message, localeFormat };
+        })
+      )
+    );
+
+    const sub = this.authenticationService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      if (this.currentUser) {
-        //fetch unread notifications from the db
-        try {
-          console.log(moment().format(), moment().unix(), moment());
-
-          this.pushNotificationService
-            .fetchFromDB(
-              this.currentUser.data.id,
-              5,
-
-              { to: moment().format("YYYY-MM-DD HH:mm:ss.SSSZ") }
-            )
-            .subscribe(notifications => {
-              this.notifications = Object.values(notifications);
-              this._notificationsSubject.next(this.notifications);
-
-              console.log(this.notifications);
-            });
-        } catch (error) {
-          console.log(error.toString());
-        }
-
-        this.pushNotificationService.subscribeToPN();
-        this.pushMessages$.subscribe(notification => {
-          this.notifications.push(notification);
-          // console.log(this.notifications);
-          this._notificationsSubject.next(this.notifications);
-        });
+      if (user) {
+        this.subscriptionNotificationService.subscribeToPN();
       }
     });
+
+    this.subscriptions.push(sub);
   }
 
   ngOnDestroy(): void {
-    this.pushMessages$.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   get isAuthenticated() {
-    return !!this.currentUser;
     return this.authenticationService.isAuthenticated;
   }
 
@@ -101,10 +92,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   unsubscribe() {
-    this.pushNotificationService.unsubscribeFromPN();
-  }
-
-  setActiveItem(itemIdentifier: string) {
-    this.activeItem = itemIdentifier;
+    this.subscriptionNotificationService.unsubscribeFromPN();
   }
 }

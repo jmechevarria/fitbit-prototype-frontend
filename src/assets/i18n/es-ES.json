@@ -6,7 +6,12 @@
       "administration": "Administración",
       "language": "Lenguaje",
       "logout": "Cerrar sesión",
-      "notifications": "Notificaciones"
+      "notifications": "Notificaciones",
+      "notifications_dropdown": {
+        "view_all_notifications": "ver todas",
+        "inbox": "buzón",
+        "no_new_notifications": "sin notificaciones nuevas"
+      }
     }
   },
   "admin": {
@@ -42,7 +47,13 @@
       "height": "Altura",
       "weight": "Peso",
       "show_data": "Mostrar datos",
-      "this_user_has_no_active_fitbit_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa"
+      "this_user_has_no_active_fitbit_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa",
+      "hbpm": "latidos por minuto",
+      "sleep_quality": "calidad de sueño",
+      "steps_today": "pasos en el día",
+      "floors": "pisos en el día",
+      "good": "buena",
+      "bad": "mala"
     },
     "fitbit_data": {
       "heart_rate_time_series_for_user": "Series de tiempo del ritmo cardíaco del usuario",
@@ -52,7 +63,6 @@
       "to": "Hasta",
       "interday": {
         "filter": "Filtrar",
-        "date": "Fecha",
         "out_of_range": "Fuera de Rango",
         "fat_burn": "Quemar Grasa",
         "cardio": "Cardio",
@@ -63,8 +73,28 @@
         "no_activity_perceived": "Sin actividad percibida",
         "no_results_for_selected_interval": "Sin resultados para el intervalo seleccionado"
       },
-      "intraday": { "options": "Opciones", "select_type": "Seleccionar tipo", "download": "Descargar" }
+      "intraday": {
+        "options": "Opciones",
+        "select_type": "Seleccionar tipo"
+      }
     }
+  },
+  "notifications_panel": {
+    "mark_read": "Marcar como leído",
+    "mark_unread": "Marcar como no leído",
+    "accident_probability": "probabilidad de accidente",
+    "very_high": "muy alta",
+    "high": "alta",
+    "moderate": "moderada",
+    "time": "hora",
+    "senior_person": "adulto mayor",
+    "dialog": {
+      "email_confirmation": {
+        "body": "Se enviarán correos electrónicos a las siguientes direcciones: {{ emails }}",
+        "title": "diálogo de confirmación"
+      }
+    },
+    "no_notifications": "sin notificaciones"
   },
   "login": {
     "welcome": "Bienvenido",
@@ -87,7 +117,12 @@
     "today": "Hoy",
     "last_7_days": "Últimos 7 días",
     "last_30_days": "Últimos 30 días",
-    "warning": "Esta acción es irreversible"
+    "warning": "Esta acción es irreversible",
+    "heart_rate": "ritmo cardíaco",
+    "severity": "severidad",
+    "date": "fecha",
+    "message": "mensaje",
+    "actions": "acciones"
   },
   "dialog": {
     "default_body": "Confirmar o cancelar la acción",

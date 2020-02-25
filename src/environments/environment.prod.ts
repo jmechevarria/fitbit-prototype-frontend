@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  configRedirectURI: "http://localhost:8080/dashboard/",
+  configRedirectURI: "http://localhost:8080/admin/",
   configOauthURL: "https://www.fitbit.com/oauth2/authorize",
   configScope: "heartrate sleep activity profile weight settings",
   configExpiresSec: 30 * 24 * 60 * 60, // 30 days

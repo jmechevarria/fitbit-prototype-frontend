@@ -6,10 +6,11 @@
       "administration": "Administration",
       "language": "Language",
       "logout": "Logout",
+      "notifications": "Notifications",
       "notifications_dropdown": {
-        "notifications": "Notifications",
-        "all_notifications": "All Notifications",
-        "inbox": "inbox"
+        "view_all_notifications": "All Notifications",
+        "inbox": "inbox",
+        "no_new_notifications": "no new notifications"
       }
     }
   },
@@ -46,7 +47,13 @@
       "height": "Height",
       "weight": "Weight",
       "show_data": "Show data",
-      "this_user_has_no_active_fitbit_accounts_to_monitor": "This user has no active fitbit accounts to monitor"
+      "this_user_has_no_active_fitbit_accounts_to_monitor": "This user has no active fitbit accounts to monitor",
+      "hbpm": "heartbeats per minute",
+      "sleep_quality": "sleep quality",
+      "steps_today": "steps today",
+      "floors": "floors today",
+      "good": "good",
+      "bad": "bad"
     },
     "fitbit_data": {
       "heart_rate_time_series_for_user": "Heart rate time series for user",
@@ -56,7 +63,6 @@
       "to": "To",
       "interday": {
         "filter": "Filter",
-        "date": "Date",
         "out_of_range": "Out of Range",
         "fat_burn": "Fat Burn",
         "cardio": "Cardio",
@@ -69,14 +75,26 @@
       },
       "intraday": {
         "options": "Options",
-        "select_type": "Select type",
-        "download": "Download"
+        "select_type": "Select type"
       }
     }
   },
   "notifications_panel": {
     "mark_read": "Mark read",
-    "mark_unread": "Mark unread"
+    "mark_unread": "Mark unread",
+    "accident_probability": "accident probability",
+    "very_high": "very high",
+    "high": "high",
+    "moderate": "moderate",
+    "time": "time",
+    "senior_person": "senior person",
+    "dialog": {
+      "email_confirmation": {
+        "body": "Emails will be sent to: {{ emails }}",
+        "title": "confirmation dialog"
+      }
+    },
+    "no_notifications": "no notifications"
   },
   "login": {
     "welcome": "Welcome",
@@ -99,7 +117,12 @@
     "today": "Today",
     "last_7_days": "Last 7 Days",
     "last_30_days": "Last 30 Days",
-    "warning": "This action is irreversible"
+    "warning": "This action is irreversible",
+    "heart_rate": "heart rate",
+    "severity": "severity",
+    "date": "date",
+    "message": "message",
+    "actions": "actions"
   },
   "dialog": {
     "default_body": "Confirm or cancel the action",

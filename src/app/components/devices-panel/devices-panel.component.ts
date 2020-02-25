@@ -1,12 +1,19 @@
+import * as moment from "moment";
+
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
   ViewEncapsulation
 } from "@angular/core";
-import * as moment from "moment";
+import { filter, map, switchMap, tap } from "rxjs/operators";
+
+import { AuthenticationService } from "src/app/services/authentication.service";
+import { FitbitService } from "src/app/services/fitbit.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "devices-panel",
@@ -14,11 +21,57 @@ import * as moment from "moment";
   styleUrls: ["./devices-panel.component.scss"],
   encapsulation: ViewEncapsulation.None
 })
-export class DevicesPanelComponent implements OnInit {
+export class DevicesPanelComponent implements OnInit, OnDestroy {
   _fitbitAccounts;
-  constructor() {}
+  private currentUser;
+  states: Object;
+  showStates: boolean = false;
 
-  ngOnInit() {}
+  subscriptions: Subscription[] = [];
+
+  constructor(
+    private authenticationService: AuthenticationService,
+    private fitbitService: FitbitService
+  ) {}
+
+  ngOnInit() {
+    this.showStates = false;
+    console.log("devices oninit");
+
+    const sub$ = this.authenticationService.currentUser$
+      .pipe(
+        tap(user => (this.currentUser = user)),
+        filter(user => !!user),
+        map((user: any) => Object.keys(user.data.fitbitAccounts).join(",")),
+        switchMap(ids =>
+          this.fitbitService.fetchLatestRecordedStates(ids, moment())
+        ),
+        map(states => {
+          if (states.length) {
+            this.showStates = true;
+            this.states = states.reduce((acc, state) => {
+              state["moment"] = moment
+                .parseZone(state["week"])
+                .add(state["second"], "s")
+                .format("LLL");
+
+              state["sleep_quality"] =
+                state["sleep_status"] > 85 ? "good" : "bad";
+
+              acc[state["person_id"]] = state;
+              return acc;
+            }, {});
+          }
+        })
+      )
+      .subscribe();
+
+    this.subscriptions.push(sub$);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s$ => s$.unsubscribe());
+  }
 
   age(birthdate) {
     if (birthdate) {

@@ -1,3 +1,17 @@
 #show-data {
   right: 60px;
 }
+
+#devices h5 {
+  margin: 0;
+}
+
+.state-container {
+  padding: 3px;
+  box-shadow: 0px 0px 5px black;
+}
+
+.state-container .badge {
+  box-shadow: none;
+  border-radius: 5px;
+}

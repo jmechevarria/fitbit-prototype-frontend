@@ -1,24 +1,6 @@
-// mat-toolbar,
-// mat-toolbar-row {
-//   height: 60px !important;
-// // }
-
-// .mat-toolbar-spacer {
-//   flex: 1 1 auto;
-// }
-
-// // mat-sidenav-container {
-// //   background: white;
-// // }
-
-// mat-sidenav {
-//   height: 100vh !important;
-// }
-
-// mat-sidenav-content {
-//   // min-height: calc(100vh - 60px) !important;
-//   padding: 0 10px 10px;
-// }
+::ng-deep div.navbar-collapse {
+  height: unset !important; /*to counter height: 0*/
+}
 
 mdb-navbar ul.navbar-nav li.active {
   font-weight: bold;

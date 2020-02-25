@@ -1,55 +1,81 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Subscription } from "rxjs";
+import { Component, Input, OnChanges, OnDestroy, OnInit } from "@angular/core";
+
+import { FitbitService } from "src/app/services/fitbit.service";
+import { SubscriptionNotificationService } from "src/app/services/subscription.notification.service";
 
 @Component({
   selector: "notifications-dropdown",
   templateUrl: "./notifications-dropdown.component.html",
   styleUrls: ["./notifications-dropdown.component.scss"]
 })
-export class NotificationComponent implements OnInit, OnChanges {
+export class NotificationsDropdownComponent
+  implements OnInit, OnChanges, OnDestroy {
   ICONS = {
     warning: "exclamation-triangle"
   };
 
-  private _notifications$: Observable<any[]>;
+  unread: number = 0;
+  // showCounter: boolean = false;
+
+  private subscriptions: Subscription[] = [];
+
+  @Input()
   notifications: any[];
 
   @Input()
-  set notifications$(notifications: Observable<any[]>) {
-    // this._notificationsSubject.next(notifications);
-    this._notifications$ = notifications;
-    this._notifications$.subscribe(x => {
-      this.notifications = x;
-      this.unread = this.notifications.filter(n => !n.read).length;
-    });
-    // this.read = this._notificationsSubject
-    //   .getValue()
-    console.log(this.unread);
-  }
+  showCounter: boolean;
 
-  get notifications$() {
-    return this._notifications$;
-  }
+  constructor(
+    private subscriptionNotificationService: SubscriptionNotificationService,
+    private fitbitService: FitbitService
+  ) {}
 
-  unread: number = 0;
-  constructor() {
-    // this._notificationsSubject = new BehaviorSubject<any[]>(this.notifications);
-    // this.notifications$ = this._notificationsSubject.asObservable();
-    console.log(this.notifications);
-  }
-
-  ngOnInit() {
-    // this._notificationsSubject.subscribe();
-    // console.log(this.notifications);
-    // this.read = this.notifications.filter(n => n.read).length;
-  }
+  ngOnInit() {}
 
   ngOnChanges() {
-    // this._notifications.subscribe(x => {
-    //   this.notifications = x;
-    //   console.log(this.notifications);
-    // });
-    // console.log(this.notifications);
-    // this.read = this.notifications.filter(n => n.read).length;
+    console.log("notif dropdown", this.notifications);
+
+    // if (this.notifications && this.notifications.length) {
+    //   this.showCounter = true;
+    // }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s$ => s$.unsubscribe());
+  }
+
+  toggleRead(notification) {
+    notification.read = !notification.read;
+    console.log(notification.read, notification.id);
+
+    const sub$ = this.subscriptionNotificationService
+      .update(
+        { read: notification.read },
+        {
+          id: notification.id
+        }
+      )
+      .subscribe(
+        response => {
+          if (response) console.log(response);
+        },
+        error => {
+          notification.read = !notification.read;
+          this.unread;
+        }
+      );
+
+    this.subscriptions.push(sub$);
+  }
+
+  viewIncidentData(notification) {
+    const sub$ = this.fitbitService
+      .fetchIncidents([notification.incident_id], notification.senior_person.id)
+      .subscribe(res => {
+        console.log(res);
+      });
+
+    this.subscriptions.push(sub$);
   }
 }

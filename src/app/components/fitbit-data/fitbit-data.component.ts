@@ -5,6 +5,7 @@ import * as moment from "moment";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
 import { Chart } from "angular-highcharts";
+import { TranslateService } from "@ngx-translate/core";
 
 export interface InterdayDataSource {
   date: string;
@@ -25,7 +26,8 @@ export class FitbitDataComponent implements OnInit {
   constructor(
     private fitbitService: FitbitService,
     // private dailySummaryService: DailySummaryService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private translate: TranslateService
   ) {}
   test: boolean = true;
 
@@ -154,11 +156,10 @@ export class FitbitDataComponent implements OnInit {
       return Object.values(this.heartRateInterday)
         .reverse()
         .map(day => {
-
           console.log(day["date"], moment.parseZone(day["date"]));
-          
+
           let dataObject = {} as InterdayDataSource;
-          dataObject.date = moment.parseZone(day["date"]).format('YYYY-MM-DD');
+          dataObject.date = moment.parseZone(day["date"]).format("YYYY-MM-DD");
 
           dataObject.hrz_1 = {
             caloriesOut: day["hrz_1_calories"]
@@ -235,16 +236,22 @@ export class FitbitDataComponent implements OnInit {
   chart: Chart;
 
   initChart(config) {
+    let time;
+    this.translate.get("shared.time").subscribe(t => {
+      time = t;
+    });
+
     this.chart = new Chart({
       ...{
         chart: {
           type: "line",
           zoomType: "x"
+
           // renderTo: 'container'
         },
         xAxis: {
           title: {
-            text: "Time"
+            text: time
           },
           type: "datetime",
           dateTimeLabelFormats: {
@@ -252,11 +259,11 @@ export class FitbitDataComponent implements OnInit {
             minute: "%I:%M %p"
           }
         },
-        yAxis: {
-          title: {
-            text: "Heart rate"
-          }
-        },
+        // yAxis: {
+        //   title: {
+        //     text: "Heartd rate"
+        //   }
+        // },
         credits: {
           enabled: false
         },
@@ -342,14 +349,14 @@ export class FitbitDataComponent implements OnInit {
               series: [
                 {
                   type: "line",
-                  name: "Heart Rate",
+                  name: this.translate.stream("shared.heart_rate"),
                   data: points,
                   showInLegend: false
                 }
               ],
               yAxis: {
                 title: {
-                  text: "Heart Rate"
+                  text: this.translate.stream("shared.heart_rate")
                 }
               }
             });

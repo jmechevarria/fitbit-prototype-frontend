@@ -39,8 +39,8 @@ import { SharedModule } from "./shared/shared.module";
 import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { PushNotificationService } from "./services/push-notification.service";
-import { NotificationComponent } from "./components/notification/notifications-dropdown.component";
+import { SubscriptionNotificationService } from "./services/subscription.notification.service";
+import { NotificationsDropdownComponent } from "./components/notification/notifications-dropdown.component";
 import { ReplaceSubstring } from "./helpers/ReplaceSubstringPipe";
 // import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
 
@@ -68,7 +68,7 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     FitbitAccountsPanelComponent,
     ClickEventDirective,
     NotificationsPanelComponent,
-    NotificationComponent,
+    NotificationsDropdownComponent,
     ReplaceSubstring
   ],
   imports: [
@@ -100,7 +100,7 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    PushNotificationService
+    SubscriptionNotificationService
   ],
   bootstrap: [AppComponent]
 })

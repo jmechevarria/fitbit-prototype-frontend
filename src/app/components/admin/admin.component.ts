@@ -36,6 +36,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log(window.location);
+
     const hash = window.location.hash;
     const search = window.location.search;
 
