@@ -1,9 +1,39 @@
-<h1 class="mat-headline">{{ "admin.users_panel.users" | translate }}</h1>
+<div fxLayout fxLayoutAlign="space-between center" style="width: 100%">
+  <h1 class="mat-headline">{{ "shared.users" | translate }}</h1>
+  <div>
+    <button
+      click-event
+      click-event-params="[stopPropagation]"
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="'admin.users_panel.caregiver_options_menu' | translate"
+    >
+      <mdb-icon
+        matTooltip="{{ 'shared.new_user' | translate }}"
+        fas
+        icon="user-plus"
+        class="blue-text"
+      ></mdb-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <a
+        *ngFor="let role of roles"
+        mat-menu-item
+        [routerLink]="['/user/new', role.id]"
+      >
+        {{ role.name }}
+      </a>
+    </mat-menu>
+  </div>
+</div>
 
+<!-- ADMINS -->
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>{{ "admin.users_panel.administrators" | translate }}</h3>
+      <mat-panel-title>
+        <h3>{{ "shared.administrators" | translate }}</h3>
+      </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-list role="list">
       <ng-container *ngFor="let user of users | keyvalue">
@@ -14,35 +44,66 @@
             style="width: 100%"
           >
             <div>
-              <label>
-                {{ user.value.fullname }} ({{ user.value.username }})
-              </label>
+              <a
+                [routerLink]="[
+                  '/user/edit/',
+                  user.value.role_id,
+                  user.value.id
+                ]"
+              >
+                {{
+                  user.value.firstname +
+                    " " +
+                    user.value.lastname +
+                    " " +
+                    (user.value.lastname2 ? user.value.lastname2 : "")
+                }}
+                ({{ user.value.username }})
+              </a>
             </div>
-            <!-- <div>
-                <button mat-icon-button>
-                  <mat-icon color="warn" (click)="deleteUser($event, user.id)">delete</mat-icon>
-                </button>
-              </div> -->
+            <div>
+              <button mat-icon-button>
+                <mat-icon color="warn" (click)="deleteUser(user.key)"
+                  >delete</mat-icon
+                >
+              </button>
+            </div>
           </div>
         </mat-list-item>
       </ng-container>
     </mat-list>
   </mat-expansion-panel>
 
+  <!-- CAREGIVERS -->
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>{{ "admin.users_panel.caregivers" | translate }}</h3>
+      <h3>{{ "shared.caregivers" | translate }}</h3>
     </mat-expansion-panel-header>
     <mat-accordion>
       <ng-container *ngFor="let user of users | keyvalue">
         <mat-expansion-panel *ngIf="user.value.role_id === 2" role="listitem">
           <mat-expansion-panel-header>
             <mat-panel-title fxLayoutAlign="space-between center">
-              {{ user.value.fullname }} ({{ user.value.username }})
+              <a
+                [routerLink]="[
+                  '/user/edit/',
+                  user.value.role_id,
+                  user.value.id
+                ]"
+              >
+                {{
+                  user.value.firstname +
+                    " " +
+                    user.value.lastname +
+                    " " +
+                    (user.value.lastname2 ? user.value.lastname2 : "")
+                }}
+                ({{ user.value.username }})
+              </a>
             </mat-panel-title>
             <mat-panel-description fxLayoutAlign="space-between center">
               {{
-                "admin.users_panel.fitbit_accounts_attended_by_this_caregiver"
+                "admin.users_panel.client_accounts_attended_by_this_user"
                   | translate
               }}
               <button
@@ -55,10 +116,110 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="linkToFitbitAccount(user.value)">
+                <button mat-menu-item (click)="linkToClientAccount(user.value)">
                   <mat-icon>add_circle</mat-icon>
                   <span>{{
-                    "admin.users_panel.link_to_fitbit_accounts" | translate
+                    "admin.users_panel.link_to_client_accounts" | translate
+                  }}</span>
+                </button>
+                <button mat-menu-item (click)="deleteUser(user.key)">
+                  <mat-icon color="warn">delete</mat-icon>
+                  <span>{{ "admin.users_panel.delete_user" | translate }}</span>
+                </button>
+              </mat-menu>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-list role="list">
+            <ng-container
+              *ngFor="let clientAccount of user.value.client_account_ids"
+            >
+              <mat-list-item role="listitem">
+                <div
+                  fxLayout="row"
+                  fxLayoutAlign="space-between center"
+                  style="width: 100%"
+                >
+                  <div>
+                    <label>{{
+                      clientAccounts[clientAccount]?.firstname +
+                        " " +
+                        clientAccounts[clientAccount]?.lastname +
+                        " " +
+                        (clientAccounts[clientAccount]?.lastname2
+                          ? clientAccounts[clientAccount]?.lastname2
+                          : "")
+                    }}</label>
+                  </div>
+                  <div>
+                    <a
+                      (click)="unlinkFromClientAccount(user.key, clientAccount)"
+                      class="text-danger"
+                    >
+                      <button
+                        matTooltip="{{
+                          'admin.users_panel.unlink' | translate
+                        }}"
+                        mat-icon-button
+                      >
+                        <mat-icon>clear</mat-icon>
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              </mat-list-item>
+            </ng-container>
+          </mat-list>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </mat-expansion-panel>
+
+  <!-- CONTACTS -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <h3>{{ "shared.contacts" | translate }}</h3>
+    </mat-expansion-panel-header>
+    <mat-accordion>
+      <ng-container *ngFor="let user of users | keyvalue">
+        <mat-expansion-panel *ngIf="user.value.role_id === 3" role="listitem">
+          <mat-expansion-panel-header>
+            <mat-panel-title fxLayoutAlign="space-between center">
+              <a
+                [routerLink]="[
+                  '/user/edit/',
+                  user.value.role_id,
+                  user.value.id
+                ]"
+              >
+                {{
+                  user.value.firstname +
+                    " " +
+                    user.value.lastname +
+                    " " +
+                    (user.value.lastname2 ? user.value.lastname2 : "")
+                }}
+                ({{ user.value.username }})
+              </a>
+            </mat-panel-title>
+            <mat-panel-description fxLayoutAlign="space-between center">
+              {{
+                "admin.users_panel.client_accounts_attended_by_this_user"
+                  | translate
+              }}
+              <button
+                click-event
+                click-event-params="[stopPropagation]"
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                aria-label="'admin.users_panel.caregiver_options_menu' | translate"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="linkToClientAccount(user.value)">
+                  <mat-icon>add_circle</mat-icon>
+                  <span>{{
+                    "admin.users_panel.link_to_client_accounts" | translate
                   }}</span>
                 </button>
                 <button mat-menu-item (click)="deleteUser(user.key)">
@@ -73,7 +234,7 @@
               <mat-list-item
                 role="listitem"
                 *ngFor="
-                  let fitbitAccount of user.value.fitbitAccounts | keyvalue
+                  let clientAccount of user.value.clientAccounts | keyvalue
                 "
               >
                 <div
@@ -82,22 +243,23 @@
                   style="width: 100%"
                 >
                   <div>
-                    <label>{{ fitbitAccount.value.fullname }}</label>
+                    <label>{{
+                      clientAccount.value.firstname +
+                        " " +
+                        clientAccount.value.lastname +
+                        " " +
+                        (clientAccount.value.lastname2
+                          ? clientAccount.value.lastname2
+                          : "")
+                    }}</label>
                   </div>
                   <div>
-                    <!-- <a (click)="revokeAccessToken(fitbitAccount.value.id)" class="text-danger">
-                      <button matTooltip="{{ 'admin.users_panel.revoke_access_token' | translate }}" mat-icon-button>
-                        <mat-icon>link_off</mat-icon>
-                      </button>
-                    </a>
-                    <a (click)="refreshAccessToken(fitbitAccount.value.id)" class="text-danger">
-                      <button matTooltip="{{ 'admin.users_panel.refresh_access_token' | translate }}" mat-icon-button>
-                        <mat-icon>autorenew</mat-icon>
-                      </button>
-                    </a> -->
                     <a
                       (click)="
-                        unlinkFromFitbitAccount(user.key, fitbitAccount.key)
+                        unlinkFromClientAccount(
+                          user.key,
+                          clientAccount.value.id
+                        )
                       "
                       class="text-danger"
                     >

@@ -3,21 +3,21 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Observable } from "rxjs";
 import { tap } from "rxjs/operators";
-import { User } from "../models/User";
+import { IUser } from "../models/IUser";
 import { environment } from "src/environments/environment";
+import { User } from "../models/User";
+import { JWTToken } from "../models/JWTToken";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
   private _CURRENT_USER = "current-user";
-  //holds info about fitbit accounts not related to the current user/caregiver
-  private _OTHER_FITBIT_ACCOUNTS = "other-fitbit-accounts";
-  // private JWT = "own-token";
+  private _TOKEN = "token";
 
-  private currentUserSubject$: BehaviorSubject<User>;
-  public currentUser$: Observable<User>;
+  private currentUserSubject$: BehaviorSubject<IUser>;
+  public currentUser$: Observable<IUser>;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.currentUserSubject$ = new BehaviorSubject<User>(this.currentUser);
+    this.currentUserSubject$ = new BehaviorSubject<IUser>(this.currentUser);
     this.currentUser$ = this.currentUserSubject$.asObservable();
   }
 
@@ -29,12 +29,12 @@ export class AuthenticationService {
     localStorage.setItem(this._CURRENT_USER, JSON.stringify(value));
   }
 
-  get otherFitbitAccounts() {
-    return JSON.parse(localStorage.getItem(this._OTHER_FITBIT_ACCOUNTS));
+  get token() {
+    return JSON.parse(localStorage.getItem(this._TOKEN));
   }
 
-  set otherFitbitAccounts(value) {
-    localStorage.setItem(this._OTHER_FITBIT_ACCOUNTS, JSON.stringify(value));
+  set token(value) {
+    localStorage.setItem(this._TOKEN, JSON.stringify(value));
   }
 
   get isAuthenticated() {
@@ -43,27 +43,26 @@ export class AuthenticationService {
 
   login(username: string, password: string) {
     return this.http
-      .post<any>(`${environment.apiURL}/login`, { username, password })
+      .post<{ user: User; jwtToken: JWTToken }>(`${environment.apiURL}login`, {
+        username,
+        password
+      })
       .pipe(
         tap(response => {
           console.log(response);
-          // login successful if there's a jwt token in the response
-          if (response && response.token) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-            this.currentUser = response;
+          if (response.user && response.jwtToken) {
+            // persist user details and jwt token in local storage
+            this.currentUser = response.user;
+            this.token = response.jwtToken;
             this.currentUserSubject$.next(this.currentUser);
           }
         })
       );
   }
 
-  // saveInfoInLocalStorage(user: any) {
-  //   this.currentUser = user;
-  // }
-
   logout() {
     this.currentUser = null;
-    // this.token = null;
+    this.token = null;
     this.currentUserSubject$.next(null);
     this.router.navigate([""]);
   }

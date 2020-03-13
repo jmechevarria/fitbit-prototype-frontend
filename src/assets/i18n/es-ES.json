@@ -6,7 +6,6 @@
       "administration": "Administración",
       "language": "Lenguaje",
       "logout": "Cerrar sesión",
-      "notifications": "Notificaciones",
       "notifications_dropdown": {
         "view_all_notifications": "ver todas",
         "inbox": "buzón",
@@ -17,12 +16,9 @@
   "admin": {
     "users_panel": {
       "fitbit_accounts": "Cuentas Fitbit",
-      "users": "Usuarios",
-      "administrators": "Administradores",
-      "caregivers": "Cuidadores",
-      "fitbit_accounts_attended_by_this_caregiver": "Cuentas Fitbit atendidas por este cuidador",
+      "client_accounts_attended_by_this_user": "Cuentas Fitbit atendidas por este cuidador",
       "caregiver_options_menu": "Menú de opciones del cuidador",
-      "link_to_fitbit_accounts": "Vincular a cuentas Fitbit",
+      "link_to_client_accounts": "Vincular a cuentas Fitbit",
       "delete_user": "Eliminar usuario",
       "revoke_access_token": "Revocar token de acceso",
       "refresh_access_token": "Renovar token de acceso",
@@ -30,14 +26,14 @@
       "dialog": {
         "delete_user": "Eliminar usuario",
         "delete_user_body_msg": "El usuario {{ name }} será eliminado del sistema.",
-        "unlink_caregiver_from_fitbit_account": "Desvincular cuidador de cuenta Fitbit",
-        "unlink_caregiver_from_fitbit_account_body": "El(la) cuidador(a) {{userFullname}} ya no podrá monitorizar la cuenta Fitbit {{fitbitAccountFullname}} (ID: {{fitbitAccountID}})"
+        "unlink_user_from_client_account": "Desvincular cuidador de cuenta Fitbit",
+        "unlink_user_from_client_account_body": "El(la) cuidador(a) {{userFullname}} ya no podrá monitorizar la cuenta Fitbit {{clientAccountFullname}} (ID: {{clientAccountID}})"
       }
     },
-    "fitbit_accounts_panel": {
+    "client_accounts_panel": {
       "dialog": {
-        "delete_fitbit_account": "Eliminar cuenta Fitbit",
-        "delete_fitbit_account_body_msg": "La cuenta Fitbit {{ name }} será eliminada del sistema."
+        "delete_client_account": "Eliminar cuenta Fitbit",
+        "delete_client_account_body_msg": "La cuenta Fitbit {{ name }} será eliminada del sistema."
       }
     }
   },
@@ -47,9 +43,7 @@
       "height": "Altura",
       "weight": "Peso",
       "show_data": "Mostrar datos",
-      "this_user_has_no_active_fitbit_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa",
-      "hbpm": "latidos por minuto",
-      "sleep_quality": "calidad de sueño",
+      "this_user_has_no_active_client_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa",
       "steps_today": "pasos en el día",
       "floors": "pisos en el día",
       "good": "buena",
@@ -67,7 +61,6 @@
         "fat_burn": "Quemar Grasa",
         "cardio": "Cardio",
         "peak": "Tope",
-        "steps": "Pasos",
         "calories": "cal",
         "minutes": "min",
         "no_activity_perceived": "Sin actividad percibida",
@@ -87,11 +80,9 @@
     "high": "alta",
     "moderate": "moderada",
     "time": "hora",
-    "senior_person": "adulto mayor",
     "dialog": {
-      "email_confirmation": {
-        "body": "Se enviarán correos electrónicos a las siguientes direcciones: {{ emails }}",
-        "title": "diálogo de confirmación"
+      "incident_details": {
+        "title": "detalles de incidente"
       }
     },
     "no_notifications": "sin notificaciones"
@@ -106,10 +97,25 @@
   "widgets": {
     "selection_list_dialog": {
       "accounts_selected": "Cuentas seleccionadas",
-      "link_caregiver_to_fitbit_accounts": "Vincular cuidador con cuenta Fitbit"
+      "link_user_to_client_accounts": "Vincular cuidador con cuenta Fitbit"
+    }
+  },
+  "forms": {
+    "user": {
+      "role_specific_information": "Datos específicos de {{role}}"
     }
   },
   "shared": {
+    "user": "usuario",
+    "administrator": "administrador",
+    "admin": "administrador",
+    "caregiver": "cuidador",
+    "contact": "contacto",
+    "users": "usuarios",
+    "administrators": "administradores",
+    "admins": "administradores",
+    "caregivers": "cuidadores",
+    "contacts": "contactos",
     "login": "Iniciar sesión",
     "cancel": "Cancelar",
     "proceed": "Proceder",
@@ -122,10 +128,16 @@
     "severity": "severidad",
     "date": "fecha",
     "message": "mensaje",
-    "actions": "acciones"
-  },
-  "dialog": {
-    "default_body": "Confirmar o cancelar la acción",
-    "confirmation_dialog": "Confirmación"
+    "actions": "acciones",
+    "hbpm": "latidos por minuto",
+    "sleep_status": "calidad de sueño",
+    "steps": "pasos",
+    "floors": "pisos",
+    "account": "cuenta",
+    "dialog": {
+      "title": "título",
+      "body": "contenido",
+      "close": "cerrar"
+    }
   }
 }

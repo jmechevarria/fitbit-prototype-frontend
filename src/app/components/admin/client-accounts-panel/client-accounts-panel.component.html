@@ -1,0 +1,112 @@
+<div fxLayout fxLayoutAlign="space-between center" style="width: 100%">
+  <h1 class="mat-headline">{{ "shared.accounts" | translate }}</h1>
+  <div>
+    <button
+      click-event
+      click-event-params="[stopPropagation]"
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="'admin.users_panel.caregiver_options_menu' | translate"
+    >
+      <mdb-icon
+        matTooltip="{{ 'shared.new_client_account' | translate }}"
+        fas
+        icon="user-plus"
+        class="green-text"
+      ></mdb-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <a
+        *ngFor="let accountType of accountTypes"
+        mat-menu-item
+        [routerLink]="['/client-account/new', accountType.id]"
+      >
+        {{ accountType.name }}
+      </a>
+    </mat-menu>
+  </div>
+</div>
+
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let accountType of accountTypes">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h3>{{ accountType.name }}</h3>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-list role="list">
+      <ng-container *ngFor="let clientAccount of clientAccounts | keyvalue">
+        <mat-list-item
+          role="listitem"
+          *ngIf="clientAccount.value.type_id === accountType.id"
+        >
+          <div
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            style="width: 100%"
+          >
+            <div>
+              <a
+                [routerLink]="[
+                  '/client-account/edit',
+                  clientAccount.value.type_id,
+                  clientAccount.key
+                ]"
+              >
+                {{
+                  clientAccount.value.firstname +
+                    " " +
+                    clientAccount.value.lastname +
+                    " " +
+                    (clientAccount.value.lastname2
+                      ? clientAccount.value.lastname2
+                      : "")
+                }}
+              </a>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <div *ngIf="clientAccount.value.type_id === 1">
+                <a
+                  (click)="revokeAccessToken(clientAccount.value)"
+                  class="text-danger"
+                >
+                  <button
+                    matTooltip="{{
+                      'admin.users_panel.revoke_access_token' | translate
+                    }}"
+                    mat-icon-button
+                  >
+                    <mat-icon>link_off</mat-icon>
+                  </button>
+                </a>
+                <a
+                  (click)="refreshAccessToken(clientAccount.value)"
+                  class="text-danger"
+                >
+                  <button
+                    matTooltip="{{
+                      'admin.users_panel.refresh_access_token' | translate
+                    }}"
+                    mat-icon-button
+                  >
+                    <mat-icon>autorenew</mat-icon>
+                  </button>
+                </a>
+              </div>
+              <button mat-icon-button>
+                <mat-icon
+                  click-event
+                  click-event-params="[stopPropagation]"
+                  color="warn"
+                  (click)="deleteClientAccount(clientAccount.key)"
+                >
+                  delete
+                </mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -6,5 +6,5 @@ export const environment = {
   configExpiresSec: 30 * 24 * 60 * 60, // 30 days
   baseURL: "http://localhost:8080",
   i18n: "/assets/i18n/",
-  apiURL: "http://localhost:3000/api/v1"
+  apiURL: "http://localhost:3000/api/v1/"
 };

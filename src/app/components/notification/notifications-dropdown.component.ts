@@ -1,7 +1,7 @@
 import { Subscription } from "rxjs";
 import { Component, Input, OnChanges, OnDestroy, OnInit } from "@angular/core";
 
-import { FitbitService } from "src/app/services/fitbit.service";
+// import { FitbitService } from "src/app/services/fitbit.service";
 import { SubscriptionNotificationService } from "src/app/services/subscription.notification.service";
 
 @Component({
@@ -9,8 +9,9 @@ import { SubscriptionNotificationService } from "src/app/services/subscription.n
   templateUrl: "./notifications-dropdown.component.html",
   styleUrls: ["./notifications-dropdown.component.scss"]
 })
-export class NotificationsDropdownComponent
-  implements OnInit, OnChanges, OnDestroy {
+export class NotificationsDropdownComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
+
   ICONS = {
     warning: "exclamation-triangle"
   };
@@ -18,64 +19,46 @@ export class NotificationsDropdownComponent
   unread: number = 0;
   // showCounter: boolean = false;
 
-  private subscriptions: Subscription[] = [];
-
   @Input()
   notifications: any[];
 
   @Input()
-  showCounter: boolean;
+  newNotifications: boolean;
 
   constructor(
-    private subscriptionNotificationService: SubscriptionNotificationService,
-    private fitbitService: FitbitService
+    private subscriptionNotificationService: SubscriptionNotificationService // private fitbitService: FitbitService
   ) {}
 
   ngOnInit() {}
 
-  ngOnChanges() {
-    console.log("notif dropdown", this.notifications);
+  // ngOnChanges() {
+  //   // console.log("notif dropdown", this.notifications);
 
-    // if (this.notifications && this.notifications.length) {
-    //   this.showCounter = true;
-    // }
-  }
+  //   // if (this.notifications && this.notifications.length) {
+  //   //   this.showCounter = true;
+  //   // }
+  // }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s$ => s$.unsubscribe());
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   toggleRead(notification) {
     notification.read = !notification.read;
     console.log(notification.read, notification.id);
 
-    const sub$ = this.subscriptionNotificationService
-      .update(
-        { read: notification.read },
-        {
-          id: notification.id
-        }
-      )
+    const sub = this.subscriptionNotificationService
+      .update({ read: notification.read })
       .subscribe(
         response => {
           if (response) console.log(response);
         },
-        error => {
+        () => {
           notification.read = !notification.read;
           this.unread;
         }
       );
 
-    this.subscriptions.push(sub$);
-  }
-
-  viewIncidentData(notification) {
-    const sub$ = this.fitbitService
-      .fetchIncidents([notification.incident_id], notification.senior_person.id)
-      .subscribe(res => {
-        console.log(res);
-      });
-
-    this.subscriptions.push(sub$);
+    this.subscriptions.push(sub);
   }
 }

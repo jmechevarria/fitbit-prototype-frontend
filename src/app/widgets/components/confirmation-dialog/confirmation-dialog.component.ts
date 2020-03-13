@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
-import { SelectionListDialogComponent } from "../selection-list-dialog/selection-list-dialog.component";
 import { TranslateService } from "@ngx-translate/core";
 
 @Component({
@@ -10,7 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 })
 export class ConfirmationDialogComponent implements OnInit {
   constructor(
-    public dialogRef: MatDialogRef<SelectionListDialogComponent>,
+    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private translate: TranslateService
   ) {}

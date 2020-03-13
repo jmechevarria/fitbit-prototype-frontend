@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { tap } from "rxjs/operators";
-import { of, Observable } from "rxjs";
+import { Observable } from "rxjs";
+import { FitbitAccount } from "../models/FitbitAccount";
 
 @Injectable({
   providedIn: "root"
@@ -33,22 +34,6 @@ export class FitbitService {
     this.configScope = configScope;
   }
 
-  // get accessToken() {
-  //   return localStorage.getItem(this.ACCESS_TOKEN);
-  // }
-
-  // set accessToken(value) {
-  //   localStorage.setItem(this.ACCESS_TOKEN, value);
-  // }
-
-  // set fitbitUserID(value) {
-  //   localStorage.setItem(this.FITBIT_USER_ID, value);
-  // }
-
-  // get fitbitUserID() {
-  //   return localStorage.getItem(this.FITBIT_USER_ID);
-  // }
-
   set tempFitbitAccountID(value) {
     localStorage.setItem(
       this.TEMP_FITBIT_ACCOUNT_ID,
@@ -62,38 +47,14 @@ export class FitbitService {
 
   requestAccess(fitbitAccount) {
     this.tempFitbitAccountID = fitbitAccount.id;
-    console.log(fitbitAccount);
-    const clientID = fitbitAccount.client_id;
+    const clientID = fitbitAccount.fitbit_app_id;
     window.location.href = `${this.configOauthURL}?response_type=token&scope=${this.configScope}&redirect_uri=${this.configRedirectURI}&expires_in=${this.configExpiresSec}&client_id=${clientID}&state=test_state`;
   }
-  // }&redirect_uri=${encodeURIComponent(this.configRedirectURI)}&expires_in=${
 
-  relinquishAccess(fitbitAccountID) {
-    return this.revokeAccess(fitbitAccountID).pipe(
-      tap(
-        () => {},
-        response => {
-          //on error
-          console.log(response);
-          //maybe redirect home
-        }
-      )
-    );
-  }
-
-  private revokeAccess(fitbitAccountID) {
-    return this.http.patch(
-      `http://localhost:3000/api/v1/FITBIT/oauth2/revoke`,
-      {
-        values: {
-          user_id: null,
-          access_token: null,
-          token_expires_on: null
-        },
-        where: {
-          id: fitbitAccountID
-        }
-      }
+  relinquishAccess(fitbitAccountID: number): Observable<FitbitAccount> {
+    return this.http.patch<FitbitAccount>(
+      `${environment.apiURL}FITBIT/oauth2/revoke/${fitbitAccountID}`,
+      {} //encoded_id and access_token are to be set to null
     );
   }
 
@@ -128,30 +89,27 @@ export class FitbitService {
     return this.http.get(
       `http://localhost:3000/api/v1/daily-summary/${fitbitAccountID}/${from}/${to}/${clientOffset}`
     );
-    // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
-    // .pipe(delay(500))
-    // .pipe(dematerialize());
   }
 
-  fetchIncidents(incidentIDs, fitbitAccountID: number) {
-    return this.http.get(
+  fetchIncidents(incidentIDs, fitbitAccountID: number): Observable<any[]> {
+    return this.http.get<any[]>(
       `http://localhost:3000/api/v1/incidents/${fitbitAccountID}/?incident_ids=${incidentIDs
         .map(id => {
           return id;
         })
         .join(",")}`
     );
-    // .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
-    // .pipe(delay(500))
-    // .pipe(dematerialize());
   }
 
-  fetchLatestRecordedStates(personsIDs: any, clientMoment): Observable<any[]> {
+  fetchLatestRecordedStates(
+    clientAccountsIDs: number[],
+    clientMoment
+  ): Observable<any[]> {
     return this.http.get<any[]>(
-      `${environment.apiURL}/latest_recorded_states/`,
+      `${environment.apiURL}latest_recorded_states/`,
       {
         params: {
-          personsIDs,
+          clientAccountsIDs: clientAccountsIDs.join(","),
           clientMomentString: clientMoment.format()
         }
       }

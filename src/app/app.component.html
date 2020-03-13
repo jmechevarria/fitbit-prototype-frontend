@@ -1,4 +1,5 @@
 <!--Navbar-->
+
 <mdb-navbar
   SideClass="navbar navbar-expand-lg navbar-light blue-grey lighten-5"
   mdbStickyHeader
@@ -7,6 +8,7 @@
   <!-- Collapsible content -->
   <links>
     <!-- Links -->
+
     <ul class="navbar-nav mr-auto">
       <li
         class="nav-item"
@@ -17,8 +19,9 @@
           "home.main_menu.home" | translate
         }}</a>
       </li>
+
       <li
-        *ngIf="currentUser?.data.roleID === 2"
+        *ngIf="currentUser?.role_id === 2"
         class="nav-item"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
@@ -29,7 +32,7 @@
       </li>
 
       <li
-        *ngIf="currentUser?.data.roleID === 1"
+        *ngIf="currentUser?.role_id === 1"
         class="nav-item"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
@@ -62,28 +65,30 @@
           class="dropdown-menu dropdown dropdown-primary"
           role="menu"
         >
-          <a
+          <button
             (click)="setLocale('es-MX')"
             class="dropdown-item waves-light"
             mdbWavesEffect
-            >Espa&ntilde;ol
-            <img height="15" src="assets/images/flags/icons8-mexico-50.png"
-          /></a>
-          <a
+          >
+            Espa&ntilde;ol
+            <img height="15" src="assets/images/flags/icons8-mexico-50.png" />
+          </button>
+          <button
             (click)="setLocale('es-ES')"
             class="dropdown-item waves-light"
             mdbWavesEffect
           >
             Espa&ntilde;ol
-            <img height="15" src="assets/images/flags/icons8-spain-50.png"
-          /></a>
-          <a
+            <img height="15" src="assets/images/flags/icons8-spain-50.png" />
+          </button>
+          <button
             (click)="setLocale('en-US')"
             class="dropdown-item waves-light"
             mdbWavesEffect
           >
-            English <img height="15" src="assets/images/flags/icons8-usa-50.png"
-          /></a>
+            English
+            <img height="15" src="assets/images/flags/icons8-usa-50.png" />
+          </button>
         </div>
       </li>
 
@@ -96,13 +101,19 @@
           mdbWavesEffect
           [routerLink]="['/notifications']"
         >
-          <mdb-icon fas icon="bell"></mdb-icon>
+          <mdb-icon
+            *ngIf="newNotifications"
+            fas
+            icon="exclamation-circle"
+            class="counter"
+          ></mdb-icon>
+          <!-- <mdb-icon fas icon="bell"></mdb-icon>
           <span
             class="counter"
-            *ngIf="showCounter && notifications$ | async as notifications"
+            *ngIf="newNotifications && notifications$ | async as notifications"
           >
             {{ notifications.length ? notifications.length : "" }}
-          </span>
+          </span> -->
         </a>
       </li>
 
@@ -111,8 +122,8 @@
         fxHide.lt-sm
         *ngIf="isAuthenticated"
         [notifications]="notifications$ | async"
-        [showCounter]="showCounter"
-        (click)="showCounter = false"
+        [newNotifications]="newNotifications"
+        (click)="newNotifications = false"
       ></notifications-dropdown>
 
       <!-- User Account Dropdown -->
@@ -130,9 +141,9 @@
           class="dropdown-menu dropdown dropdown-primary dropdown-menu-right"
           role="menu"
         >
-          <a [routerLink]="['/notifications']" class="dropdown-item" href="#">
+          <!-- <a [routerLink]="['/notifications']" class="dropdown-item" href="#">
             {{ "home.main_menu.notifications" | translate }}</a
-          >
+          > -->
           <a (click)="logout()" class="dropdown-item" href="#">{{
             "home.main_menu.logout" | translate
           }}</a>
@@ -153,8 +164,84 @@
   <!-- Collapsible content -->
 </mdb-navbar>
 
-<div ngClass.gt-xs="container" style="margin-top: 60px">
+<main ngClass.gt-xs="container" style="margin-top: 60px;">
+  <!-- style="margin-top: 60px; height: calc(100vh - 265px); overflow: auto;" -->
   <router-outlet></router-outlet>
-</div>
+</main>
+<!-- Footer -->
+<footer class="page-footer font-small blue pt-4 mt-3">
+  <!-- Footer Links -->
+  <div class="container-fluid text-center text-md-left">
+    <!-- Grid row -->
+    <div class="row">
+      <!-- Grid column -->
+      <div class="col-md-6 mt-md-0 mt-3">
+        <!-- Content -->
+        <h5 class="text-uppercase">Footer Content</h5>
+        <p>
+          Here you can use rows and columns here to organize your footer
+          content.
+        </p>
+      </div>
+      <!-- Grid column -->
 
+      <hr class="clearfix w-100 d-md-none pb-3" />
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+        <!-- Links -->
+        <h5 class="text-uppercase">Links</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="#!">Link 1</a>
+          </li>
+          <li>
+            <a href="#!">Link 2</a>
+          </li>
+          <li>
+            <a href="#!">Link 3</a>
+          </li>
+          <li>
+            <a href="#!">Link 4</a>
+          </li>
+        </ul>
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+        <!-- Links -->
+        <h5 class="text-uppercase">Links</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="#!">Link 1</a>
+          </li>
+          <li>
+            <a href="#!">Link 2</a>
+          </li>
+          <li>
+            <a href="#!">Link 3</a>
+          </li>
+          <li>
+            <a href="#!">Link 4</a>
+          </li>
+        </ul>
+      </div>
+      <!-- Grid column -->
+    </div>
+    <!-- Grid row -->
+  </div>
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">
+    © 2020 Copyright:
+    <a href="https://mdbootstrap.com/"> MDBootstrap.com</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
 <!-- <button (click)="unsubscribe()">unsubscribe</button> -->
+<!-- <button (click)="playAudio()">unsubscribe</button> -->

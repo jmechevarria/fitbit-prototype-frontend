@@ -2,15 +2,15 @@ import "moment/min/locales";
 
 import * as moment from "moment";
 
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { map, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 
 import { AuthenticationService } from "./services/authentication.service";
 import { DateAdapter } from "@angular/material/core";
 import { SubscriptionNotificationService } from "./services/subscription.notification.service";
 import { TranslateService } from "@ngx-translate/core";
-import { User } from "./models/User";
+import { IUser } from "./models/IUser";
 
 @Component({
   selector: "app-root",
@@ -23,11 +23,11 @@ export class AppComponent implements OnInit, OnDestroy {
   notifications$: Observable<any[]>;
 
   messagesSubscription: Subscription;
-  showCounter: boolean = false;
+  newNotifications: boolean = false;
+  audio;
+  currentUser: IUser;
 
-  currentUser: User;
-
-  private subscriptions: Subscription[];
+  private subscriptions: Subscription[] = [];
   constructor(
     private authenticationService: AuthenticationService,
     private adapter: DateAdapter<any>,
@@ -45,18 +45,27 @@ export class AppComponent implements OnInit, OnDestroy {
       map(notifications =>
         notifications.map(notification => {
           console.log("init processNotification", notification);
-          const localeFormat = moment(notification.created).format("LLL");
+          // const localeFormat = moment(notification.created).format("LLL");
+          const clientAccountFullname = `${
+            notification.client_account.firstname
+          } ${notification.client_account.lastname}${
+            notification.client_account.lastname2
+              ? ` ${notification.client_account.lastname2}`
+              : ""
+          }`;
 
-          const accidentProbability = notification.payload.accident_probability;
+          // const accidentProbability = notification.payload.accident_probability;
 
-          let message = "notifications_panel.";
+          // let message = "notifications_panel.";
 
-          if (accidentProbability > 0.9) message += "very_high";
-          else if (accidentProbability > 0.8) message += "high";
-          else message += "moderate";
+          // if (accidentProbability > 0.9) message += "very_high";
+          // else if (accidentProbability > 0.8) message += "high";
+          // else message += "moderate";
 
-          this.showCounter = true;
-          return { ...notification, message, localeFormat };
+          this.newNotifications = true;
+
+          return { ...notification, clientAccountFullname };
+          // return { ...notification, message, localeFormat };
         })
       )
     );
@@ -75,6 +84,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  // playAudio() {
+  //   this.audio = new Audio();
+  //   this.audio.src = "../assets/sounds/notification.mp3";
+  //   this.audio.load();
+  //   this.audio.play();
+  // }
+
   get isAuthenticated() {
     return this.authenticationService.isAuthenticated;
   }
@@ -86,7 +102,7 @@ export class AppComponent implements OnInit, OnDestroy {
   setLocale(locale?: string) {
     if (!locale) locale = localStorage.getItem("locale") || "en-US";
     localStorage.setItem("locale", locale);
-    this.adapter.setLocale(locale); //for date picker
+    this.adapter.setLocale(locale); //for matDatepicker's
     moment.locale(locale); // for moment.js
     this.translate.use(locale); //whole site
   }

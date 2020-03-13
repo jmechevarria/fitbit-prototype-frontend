@@ -9,9 +9,9 @@ import { FitbitDataComponent } from "../fitbit-data/fitbit-data.component";
 })
 export class DashboardComponent implements OnInit {
   currentUser;
-  otherFitbitAccounts;
 
-  @ViewChild(FitbitDataComponent, { static: false }) fitbitDataComponent: FitbitDataComponent;
+  @ViewChild(FitbitDataComponent, { static: false })
+  fitbitDataComponent: FitbitDataComponent;
 
   constructor(
     // private fitbitService: FitbitService,
@@ -20,7 +20,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = this.authenticationService.currentUser;
-    // this.otherFitbitAccounts = this.authenticationService.otherFitbitAccounts;
   }
 
   getHeartRateData(fitbitAccount) {

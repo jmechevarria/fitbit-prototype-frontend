@@ -1,0 +1,12 @@
+.form-control.ng-valid[required],
+.ng-valid.required {
+  border-left: 5px solid #42a948; /* green */
+}
+
+.form-control.ng-invalid:not(form) {
+  border-left: 5px solid #a94442; /* red */
+}
+
+#role_id {
+  text-transform: uppercase;
+}

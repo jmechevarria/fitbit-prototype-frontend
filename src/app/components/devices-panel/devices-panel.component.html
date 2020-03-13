@@ -2,11 +2,17 @@
   <mat-expansion-panel
     fxLayout="column"
     [expanded]="isFirst"
-    *ngFor="let fitbitAccount of fitbitAccounts | keyvalue; first as isFirst"
+    *ngFor="let fitbitAccount of clientAccounts | keyvalue; first as isFirst"
   >
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{ fitbitAccount.value.fullname }}
+        {{
+          fitbitAccount.value.firstname +
+            " " +
+            fitbitAccount.value.lastname +
+            " " +
+            (fitbitAccount.value.lastname2 ? fitbitAccount.value.lastname2 : "")
+        }}
       </mat-panel-title>
       <mat-panel-description fxLayout>
         <div fxLayout>
@@ -54,7 +60,7 @@
             <div fxLayout fxLayoutGap="10px">
               <h5>
                 <mdb-badge
-                  mdbTooltip="{{ 'dashboard.devices_panel.hbpm' | translate }}"
+                  mdbTooltip="{{ 'shared.hbpm' | translate }}"
                   placement="top"
                   color="pink"
                 >
@@ -64,16 +70,14 @@
               </h5>
               <h5>
                 <mdb-badge
-                  mdbTooltip="{{
-                    'dashboard.devices_panel.sleep_quality' | translate
-                  }}"
+                  mdbTooltip="{{ 'shared.sleep_status' | translate }}"
                   placement="top"
                   color="indigo"
                 >
                   <mdb-icon fas icon="bed" class="mr-1"></mdb-icon>
                   {{
                     "dashboard.devices_panel." +
-                      states[fitbitAccount.value.id]["sleep_quality"]
+                      states[fitbitAccount.value.id]["sleep_classification"]
                       | translate
                   }}
                 </mdb-badge>
@@ -110,7 +114,11 @@
             <div fxLayout fxLayoutAlign="end center">
               <h5>
                 <mdb-badge style="color:black !important">
-                  {{ states[fitbitAccount.value.id]["moment"] }}
+                  {{
+                    states[fitbitAccount.value.id]["moment"]
+                      | dynamicMoment: "LLL"
+                      | async
+                  }}
                 </mdb-badge>
               </h5>
             </div>
@@ -125,9 +133,9 @@
     </mat-list>
   </mat-expansion-panel>
 </mat-accordion>
-<div *ngIf="(fitbitAccounts | json) === '{}'">
+<div *ngIf="(clientAccounts | json) === '{}'">
   {{
-    "dashboard.devices_panel.this_user_has_no_active_fitbit_accounts_to_monitor"
+    "dashboard.devices_panel.this_user_has_no_active_client_accounts_to_monitor"
       | translate
   }}
 </div>

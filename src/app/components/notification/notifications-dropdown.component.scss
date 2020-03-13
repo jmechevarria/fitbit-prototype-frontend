@@ -11,19 +11,13 @@
   content: none;
 }
 
-#notifications-toggle span.counter {
-  position: relative;
-  padding: 0.3em 0.5em 0.3em;
-  top: -1em;
-  left: -1em;
+#notifications-toggle .counter {
+  position: absolute;
+  top: 0;
+  right: 2px;
   z-index: 2;
-  font-size: 11px;
-  color: #fff;
-  background-color: #fe1212;
-  border-radius: 10em;
-  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16),
-    0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  color: red;
 }
 
 #notifications-toggle {
@@ -82,6 +76,14 @@
 
 #notifications-dropdown .right-panel p {
   margin: 0;
+}
+
+#notifications-dropdown .right-panel .message::first-letter {
+  text-transform: capitalize;
+}
+
+#notifications-dropdown .right-panel .message span {
+  text-transform: uppercase;
 }
 
 #notifications-dropdown .actions {

@@ -153,42 +153,46 @@ export class FitbitDataComponent implements OnInit {
     if (response) {
       console.log(response);
       this.heartRateInterday = response;
-      return Object.values(this.heartRateInterday)
-        .reverse()
-        .map(day => {
-          console.log(day["date"], moment.parseZone(day["date"]));
+      return (
+        Object.values(this.heartRateInterday)
+          // .reverse()
+          .map(day => {
+            console.log(day["date"], moment.parseZone(day["date"]));
 
-          let dataObject = {} as InterdayDataSource;
-          dataObject.date = moment.parseZone(day["date"]).format("YYYY-MM-DD");
+            let dataObject = {} as InterdayDataSource;
+            dataObject.date = moment
+              .parseZone(day["date"])
+              .format("YYYY-MM-DD");
 
-          dataObject.hrz_1 = {
-            caloriesOut: day["hrz_1_calories"]
-              ? day["hrz_1_calories"].toFixed(2)
-              : null,
-            minutes: day["hrz_1_minutes"]
-          };
-          dataObject.hrz_2 = {
-            caloriesOut: day["hrz_2_calories"]
-              ? day["hrz_2_calories"].toFixed(2)
-              : null,
-            minutes: day["hrz_2_minutes"]
-          };
-          dataObject.hrz_3 = {
-            caloriesOut: day["hrz_3_calories"]
-              ? day["hrz_3_calories"].toFixed(2)
-              : null,
-            minutes: day["hrz_3_minutes"]
-          };
-          dataObject.hrz_4 = {
-            caloriesOut: day["hrz_4_calories"]
-              ? day["hrz_4_calories"].toFixed(2)
-              : null,
-            minutes: day["hrz_4_minutes"]
-          };
-          dataObject.steps = day["steps"];
+            dataObject.hrz_1 = {
+              caloriesOut: day["hrz_1_calories"]
+                ? day["hrz_1_calories"].toFixed(2)
+                : null,
+              minutes: day["hrz_1_minutes"]
+            };
+            dataObject.hrz_2 = {
+              caloriesOut: day["hrz_2_calories"]
+                ? day["hrz_2_calories"].toFixed(2)
+                : null,
+              minutes: day["hrz_2_minutes"]
+            };
+            dataObject.hrz_3 = {
+              caloriesOut: day["hrz_3_calories"]
+                ? day["hrz_3_calories"].toFixed(2)
+                : null,
+              minutes: day["hrz_3_minutes"]
+            };
+            dataObject.hrz_4 = {
+              caloriesOut: day["hrz_4_calories"]
+                ? day["hrz_4_calories"].toFixed(2)
+                : null,
+              minutes: day["hrz_4_minutes"]
+            };
+            dataObject.steps = day["steps"];
 
-          return dataObject;
-        });
+            return dataObject;
+          })
+      );
     }
 
     return [];
@@ -341,7 +345,14 @@ export class FitbitDataComponent implements OnInit {
 
             this.initChart({
               title: {
-                text: this.fitbitAccount.fullname
+                text:
+                  this.fitbitAccount.firstname +
+                  " " +
+                  this.fitbitAccount.lastname +
+                  " " +
+                  (this.fitbitAccount.lastname2
+                    ? this.fitbitAccount.lastname2
+                    : "")
               },
               subtitle: {
                 text: day.date
@@ -349,14 +360,16 @@ export class FitbitDataComponent implements OnInit {
               series: [
                 {
                   type: "line",
-                  name: this.translate.stream("shared.heart_rate"),
+                  // name: this.translate.stream("shared.heart_rate"),
+                  name: "Heart rate",
                   data: points,
                   showInLegend: false
                 }
               ],
               yAxis: {
                 title: {
-                  text: this.translate.stream("shared.heart_rate")
+                  text: "Heart rate"
+                  // text: this.translate.stream("shared.heart_rate")
                 }
               }
             });

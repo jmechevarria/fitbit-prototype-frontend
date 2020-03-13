@@ -22,8 +22,13 @@ import { Subscription } from "rxjs";
   encapsulation: ViewEncapsulation.None
 })
 export class DevicesPanelComponent implements OnInit, OnDestroy {
-  _fitbitAccounts;
-  private currentUser;
+  @Input()
+  clientAccounts;
+
+  @Output() showHeartRateData_EE = new EventEmitter();
+
+  // _clientAccounts;
+  // private currentUser;
   states: Object;
   showStates: boolean = false;
 
@@ -40,22 +45,28 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
 
     const sub$ = this.authenticationService.currentUser$
       .pipe(
-        tap(user => (this.currentUser = user)),
+        // tap(user => (this.currentUser = user)),
         filter(user => !!user),
-        map((user: any) => Object.keys(user.data.fitbitAccounts).join(",")),
-        switchMap(ids =>
-          this.fitbitService.fetchLatestRecordedStates(ids, moment())
-        ),
+        map((user: any) => user.clientAccounts),
+        switchMap(clientAccounts => {
+          const clientAccountsIDs = clientAccounts.map(
+            clientAccount => clientAccount.id
+          );
+
+          return this.fitbitService.fetchLatestRecordedStates(
+            clientAccountsIDs,
+            moment()
+          );
+        }),
         map(states => {
           if (states.length) {
             this.showStates = true;
             this.states = states.reduce((acc, state) => {
               state["moment"] = moment
                 .parseZone(state["week"])
-                .add(state["second"], "s")
-                .format("LLL");
+                .add(state["second"], "s");
 
-              state["sleep_quality"] =
+              state["sleep_classification"] =
                 state["sleep_status"] > 85 ? "good" : "bad";
 
               acc[state["person_id"]] = state;
@@ -78,17 +89,6 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
       return moment().diff(birthdate, "years");
     }
   }
-
-  @Input()
-  set fitbitAccounts(fitbitAccounts) {
-    this._fitbitAccounts = fitbitAccounts;
-  }
-
-  get fitbitAccounts() {
-    return this._fitbitAccounts;
-  }
-
-  @Output() showHeartRateData_EE = new EventEmitter();
 
   // callParent() {
   //   this.someEvent.next("somePhone");

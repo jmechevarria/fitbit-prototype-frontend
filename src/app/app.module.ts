@@ -16,7 +16,6 @@ import { LoginComponent } from "./components/login/login.component";
 import { AppRoutingModule } from "./app.routing";
 
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { FitbitClientIDFormComponent } from "./components/fitbit-client-idform/fitbit-client-idform.component";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { DatePipe } from "@angular/common";
 
@@ -32,7 +31,6 @@ import { MatButtonToggleModule } from "@angular/material";
 import { DecisionTreeComponent } from "./components/decision-tree/decision-tree.component";
 import { DevicesPanelComponent } from "./components/devices-panel/devices-panel.component";
 import { UsersPanelComponent } from "./components/admin/users-panel/users-panel.component";
-import { FitbitAccountsPanelComponent } from "./components/admin/fitbit-accounts-panel/fitbit-accounts-panel.component";
 import { ClickEventDirective } from "./directives/click-event.directive";
 import { WidgetsModule } from "./widgets/widgets.module";
 import { SharedModule } from "./shared/shared.module";
@@ -42,6 +40,15 @@ import { environment } from "../environments/environment";
 import { SubscriptionNotificationService } from "./services/subscription.notification.service";
 import { NotificationsDropdownComponent } from "./components/notification/notifications-dropdown.component";
 import { ReplaceSubstring } from "./helpers/ReplaceSubstringPipe";
+import { MomentPipe } from "./helpers/MomentPipe";
+import { RoleNamePipe } from "./helpers/RoleNamePipe";
+import { IncidentDetailsDialogComponent } from "./components/notifications-panel/incident-details-dialog/incident-details-dialog.component";
+import { ClientAccountsPanelComponent } from "./components/admin/client-accounts-panel/client-accounts-panel.component";
+import { ClientAccountFormComponent } from "./components/admin/client-account-form/client-account-form.component";
+import { FitbitAccountFormComponent } from "./components/admin/fitbit-account-form/fitbit-account-form.component";
+import { UserFormComponent } from "./components/admin/user-form/user-form.component";
+import { CastPipe } from './helpers/cast.pipe';
+import { AccountTypeNamePipe } from './helpers/account-type-name.pipe';
 // import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
@@ -55,7 +62,6 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    FitbitClientIDFormComponent,
     DashboardComponent,
     LoginComponent,
     AlertComponent,
@@ -65,11 +71,19 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     DecisionTreeComponent,
     DevicesPanelComponent,
     UsersPanelComponent,
-    FitbitAccountsPanelComponent,
+    ClientAccountsPanelComponent,
     ClickEventDirective,
     NotificationsPanelComponent,
     NotificationsDropdownComponent,
-    ReplaceSubstring
+    ReplaceSubstring,
+    MomentPipe,
+    RoleNamePipe,
+    IncidentDetailsDialogComponent,
+    ClientAccountFormComponent,
+    FitbitAccountFormComponent,
+    UserFormComponent,
+    CastPipe,
+    AccountTypeNamePipe
   ],
   imports: [
     BrowserModule,
@@ -96,6 +110,7 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
 
     // ChartsModule
   ],
+  entryComponents: [IncidentDetailsDialogComponent],
   providers: [
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

@@ -25,7 +25,13 @@
 // gt-md 	'screen and (min-width: 1280px)'
 // gt-lg 	'screen and (min-width: 1920px)'
 
-body {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   // font-family: "Roboto", "Helvetica Neue, Helvetica, Arial";
   // -webkit-font-smoothing: antialiased;

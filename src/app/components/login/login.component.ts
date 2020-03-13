@@ -54,13 +54,11 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.authenticationService
       .login(this.formFields.username.value, this.formFields.password.value)
-      .pipe(first())
       .subscribe(
-        authenticatedUser => {
-          console.log(authenticatedUser);
-          // this.router.navigate([this.returnUrl]);
-          // const roleID = response.authenticatedUser.data.roleID;
-          const roleID = authenticatedUser.data.roleID;
+        response => {
+          console.log(response);
+
+          const roleID = response.user.role_id;
           if (roleID === 1) this.router.navigate(["/admin"]);
           else if (roleID === 2) this.router.navigate(["/dashboard"]);
           else this.router.navigate([""]);

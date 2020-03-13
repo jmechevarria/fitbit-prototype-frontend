@@ -1,22 +1,38 @@
-<!-- <h1 mat-dialog-title>Link caregiver to Fitbit account</h1> -->
-<h1 mat-dialog-title>{{ "widgets.selection_list_dialog.link_caregiver_to_fitbit_accounts" | translate }}</h1>
+<h1 mat-dialog-title>
+  {{ "widgets.selection_list_dialog.link_user_to_client_accounts" | translate }}
+</h1>
 <div mat-dialog-content>
-  <mat-selection-list #fitbitAccountsList [(ngModel)]="data.selected">
-    <ng-container *ngFor="let fa of data.fitbitAccounts | keyvalue; let i = index">
-      <mat-list-option *ngIf="fa.value.show" [value]="fa">
-        {{ i + 1 }}. {{ fa.value.fullname }} (ID: {{ fa.key }})
+  <mat-selection-list #itemsList [(ngModel)]="data.selected">
+    <ng-container *ngFor="let item of data.items | keyvalue; let i = index">
+      <mat-list-option *ngIf="item.value.show" [value]="item">
+        {{ i + 1 }}.
+        {{
+          item.value.firstname +
+            " " +
+            item.value.lastname +
+            " " +
+            (item.value.lastname2 ? item.value.lastname2 : "")
+        }}
+        (ID: {{ item.key }})
       </mat-list-option>
     </ng-container>
   </mat-selection-list>
 
   <p class="mat-caption">
     {{ "widgets.selection_list_dialog.accounts_selected" | translate }}
-    {{ fitbitAccountsList.selectedOptions.selected.length }}
+    {{ itemsList.selectedOptions.selected.length }}
   </p>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="close()">{{ "shared.cancel" | translate }}</button>
-  <button mat-raised-button [mat-dialog-close]="data.selected" color="warn" cdkFocusInitial>
+  <button mat-button (click)="close()">
+    {{ "shared.cancel" | translate }}
+  </button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="data.selected"
+    color="warn"
+    cdkFocusInitial
+  >
     {{ "shared.proceed" | translate }}
   </button>
 </div>

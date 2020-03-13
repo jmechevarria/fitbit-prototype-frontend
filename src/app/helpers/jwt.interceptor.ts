@@ -1,5 +1,10 @@
 import { Injectable } from "@angular/core";
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from "@angular/common/http";
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor
+} from "@angular/common/http";
 import { Observable } from "rxjs";
 import { AuthenticationService } from "../services/authentication.service";
 
@@ -7,10 +12,16 @@ import { AuthenticationService } from "../services/authentication.service";
 export class JwtInterceptor implements HttpInterceptor {
   constructor(private authenticationService: AuthenticationService) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     let token = null;
-    if (request.url.match("localhost:3000") && this.authenticationService.currentUser) {
-      token = this.authenticationService.currentUser.token;
+    if (
+      request.url.match("localhost:3000") &&
+      this.authenticationService.currentUser
+    ) {
+      token = this.authenticationService.token;
     }
 
     if (token) {

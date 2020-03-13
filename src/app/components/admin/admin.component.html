@@ -1,20 +1,23 @@
-<div id="admin-component-container" fxLayout fxLayout.lt-md="column" fxLayoutGap="10px">
-  <!-- (refreshAccessToken_EE)="refreshAccessToken($event)"
-    (revokeAccessToken_EE)="revokeAccessToken($event)" -->
+<div
+  id="admin-component-container"
+  fxLayout
+  fxLayout.lt-lg="column"
+  fxLayoutGap="10px"
+>
   <users-panel
     [users]="users"
-    [fitbitAccounts]="fitbitAccounts"
+    [clientAccounts]="clientAccounts"
     (deleteUser_EE)="deleteUser($event)"
-    (unlinkFromFitbitAccount_EE)="unlinkFromFitbitAccount($event)"
-    (linkToFitbitAccount_EE)="linkToFitbitAccount($event)"
+    (unlinkFromClientAccount_EE)="unlinkFromClientAccount($event)"
+    (linkToClientAccount_EE)="linkToClientAccount($event)"
   >
   </users-panel>
 
   <mat-divider vertical="true"></mat-divider>
-  <fitbit-accounts-panel
-    [fitbitAccounts]="fitbitAccounts"
+  <client-accounts-panel
+    [clientAccounts]="clientAccounts"
     (refreshAccessToken_EE)="refreshAccessToken($event)"
     (revokeAccessToken_EE)="revokeAccessToken($event)"
     (deleteFitbitAccount_EE)="deleteFitbitAccount($event)"
-  ></fitbit-accounts-panel>
+  ></client-accounts-panel>
 </div>

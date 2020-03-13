@@ -27,15 +27,17 @@ export class CaregiverGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    let userRole: number;
+    if (!this.authenticationService.isAuthenticated) {
+      // not logged in so redirect to login page with the return url
+      this.router.navigate(["/login"], {
+        queryParams: { returnUrl: state.url }
+      });
+      return false;
+    }
+
     return this.authenticationService.currentUser$.pipe(
       map(user => {
-        //there has to be a user logged in for this to work, we make sure of that by
-        //running the 'user-authenticatioin' guard before this one
-        userRole = user.data.roleID;
-        console.log("guard", user);
-
-        if (userRole !== 2) {
+        if (user.role_id !== 2) {
           this.router.navigate([""]);
           return false;
         }

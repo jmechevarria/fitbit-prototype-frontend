@@ -11,58 +11,66 @@ import { ConfirmationDialogComponent } from "src/app/widgets/components/confirma
 import { TranslateService } from "@ngx-translate/core";
 import { forkJoin, Subscription } from "rxjs";
 import { switchMap, filter, tap } from "rxjs/operators";
+import { AccountTypeService } from "src/app/services/account-type.service";
 
 @Component({
-  selector: "fitbit-accounts-panel",
-  templateUrl: "./fitbit-accounts-panel.component.html",
-  styleUrls: [
-    "../admin.component.scss",
-    "./fitbit-accounts-panel.component.scss"
-  ]
+  selector: "client-accounts-panel",
+  templateUrl: "./client-accounts-panel.component.html",
+  styleUrls: ["./client-accounts-panel.component.scss"]
 })
-export class FitbitAccountsPanelComponent implements OnInit, OnDestroy {
-  private _fitbitAccounts: [] = [];
+export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
   @Input()
-  set fitbitAccounts(value) {
-    this._fitbitAccounts = value;
-  }
+  clientAccounts;
 
-  get fitbitAccounts(): any {
-    return this._fitbitAccounts;
-  }
+  accountTypes;
 
   @Output() refreshAccessToken_EE = new EventEmitter();
   @Output() revokeAccessToken_EE = new EventEmitter();
   @Output() deleteFitbitAccount_EE = new EventEmitter();
 
-  private subscriptions: Subscription[];
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private dialogService: DialogService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private accountTypeService: AccountTypeService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const sub = this.accountTypeService.get().subscribe(response => {
+      this.accountTypes = response;
+      console.log(this.accountTypes);
+    });
+
+    this.subscriptions.push(sub);
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  refreshAccessToken(fitbitAccountID) {
-    if (fitbitAccountID) this.refreshAccessToken_EE.emit(fitbitAccountID);
+  refreshAccessToken(fitbitAccount) {
+    if (fitbitAccount) this.refreshAccessToken_EE.emit(fitbitAccount);
   }
 
-  revokeAccessToken(fitbitAccountID) {
-    if (fitbitAccountID) this.revokeAccessToken_EE.emit(fitbitAccountID);
+  revokeAccessToken(fitbitAccount) {
+    if (fitbitAccount) this.revokeAccessToken_EE.emit(fitbitAccount);
   }
 
-  deleteFitbitAccount(id: number) {
+  deleteClientAccount(id: number) {
     const title$ = this.translate.get(
-      "admin.fitbit_accounts_panel.dialog.delete_fitbit_account"
+      "admin.client_accounts_panel.dialog.delete_client_account"
     );
     const body$ = this.translate.get(
-      "admin.fitbit_accounts_panel.dialog.delete_fitbit_account_body_msg",
+      "admin.client_accounts_panel.dialog.delete_client_account_body_msg",
       {
-        name: `<b>${this.fitbitAccounts[id].fullname}</b>`
+        name: `<b>${this.clientAccounts[id].firstname +
+          " " +
+          this.clientAccounts[id].lastname +
+          " " +
+          (this.clientAccounts[id].lastname2
+            ? this.clientAccounts[id].lastname2
+            : "")}</b>`
       }
     );
     const warning$ = this.translate.get("shared.warning");

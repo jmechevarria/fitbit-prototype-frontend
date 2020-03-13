@@ -7,9 +7,12 @@
     id="notifications-toggle"
   >
     <mdb-icon fas icon="bell"></mdb-icon>
-    <span *ngIf="showCounter" class="counter">
-      <mdb-icon fas icon="exclamation-circle"></mdb-icon>
-    </span>
+    <mdb-icon
+      *ngIf="newNotifications"
+      fas
+      icon="exclamation-circle"
+      class="counter"
+    ></mdb-icon>
   </a>
   <div
     *dropdownMenu
@@ -70,12 +73,17 @@
               [class.unread]="notification.read === false"
             >
               <label class="notification-moment ml-auto mb-auto">
-                {{ notification.localeFormat + " " + notification.id }}
+                <!-- {{ notification.localeFormat }} -->
+                {{ notification.created | dynamicMoment: "LLL" | async }}
               </label>
 
-              <label class="mb-auto">{{ notification.fullname }}</label>
-              <p class="notification-payload">
-                {{ notification.message }}
+              <label class="mb-auto">{{
+                notification.clientAccountFullname
+              }}</label>
+              <!-- <label class="mb-auto">{{ notification.client_account }}</label> -->
+              <p class="message">
+                <!-- {{ "notifications_panel.accident_probability" | translate }}: -->
+                {{ notification.content | translate }}
               </p>
               <div class="actions">
                 <mdb-icon

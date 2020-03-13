@@ -1,13 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChild } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
-import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
-import { FitbitAccountService } from "src/app/services/fitbit-account.service";
+import { ClientAccountService } from "src/app/services/client-account.service";
 import { UserService } from "src/app/services/user.service";
 import { FitbitService } from "src/app/services/fitbit.service";
 import { Router } from "@angular/router";
 import { parseWindowHash } from "../../helpers/parseWindowHash";
 import { ImplicitGrantFlowResponse } from "../../models/ImplicitGrantFlowResponse";
+import { FitbitAccountService } from "src/app/services/fitbit-account.service";
+import { FitbitAccount } from "src/app/models/FitbitAccount";
 
 @Component({
   selector: "admin",
@@ -15,24 +16,25 @@ import { ImplicitGrantFlowResponse } from "../../models/ImplicitGrantFlowRespons
   styleUrls: ["admin.component.scss"]
 })
 export class AdminComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
   currentUser;
-  currentUserSubscription: Subscription;
 
-  users;
-  fitbitAccounts;
+  users: any = {};
+  clientAccounts: any = {};
 
   constructor(
     private authenticationService: AuthenticationService,
     private fitbitAccountService: FitbitAccountService,
+    private clientAccountService: ClientAccountService,
     private userService: UserService,
     private fitbitService: FitbitService,
     private router: Router
   ) {
-    this.currentUserSubscription = this.authenticationService.currentUser$.subscribe(
-      user => {
-        this.currentUser = user;
-      }
-    );
+    const sub = this.authenticationService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
+    this.subscriptions.push(sub);
   }
 
   ngOnInit() {
@@ -49,118 +51,131 @@ export class AdminComponent implements OnInit, OnDestroy {
           ImplicitGrantFlowResponse
         >(hash);
 
-        this.fitbitAccountService
+        const sub = this.fitbitAccountService
           .patch(this.fitbitService.tempFitbitAccountID, {
-            user_id: implicitGrantFlowResponse.user_id,
-            access_token: implicitGrantFlowResponse.access_token,
-            expires_in: implicitGrantFlowResponse.expires_in
+            encoded_id: implicitGrantFlowResponse.user_id,
+            access_token: implicitGrantFlowResponse.access_token
           })
           .subscribe(
             () => {
               //on success, we remove tempFitbitAccountID from local storage since it's not needed anymore
               this.fitbitService.tempFitbitAccountID = null;
               window.location.hash = "";
-              window.location.search = "";
+              // window.location.search = "";
             },
             error => {
               console.log(error);
             }
           );
+
+        this.subscriptions.push(sub);
       }
     }
 
     this.loadUsers();
-    this.loadFitbitAccounts();
+    this.loadClientAccounts();
   }
 
   ngOnDestroy() {
-    // unsubscribe to ensure no memory leaks
-    this.currentUserSubscription.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  unlinkFromFitbitAccount(params) {
-    this.userService
-      .unlinkFromFitbitAccount(params.userID, params.fitbitAccountID)
-      .pipe(first())
+  unlinkFromClientAccount(params) {
+    const sub = this.userService
+      .unlinkFromClientAccount(params.userID, params.clientAccountID)
       .subscribe(response => {
-        const userID = response["caregiver_id"],
-          fitbitAccountID = response["fitbit_account_id"];
+        response = response["rows"][0];
+        if (response) {
+          const indexOf = this.users[params.userID].client_account_ids.indexOf(
+            params.clientAccountID
+          );
 
-        delete this.users[userID].fitbitAccounts[fitbitAccountID];
+          this.users[params.userID].client_account_ids.splice(indexOf, 1);
+        }
       });
+
+    this.subscriptions.push(sub);
   }
 
-  linkToFitbitAccount(params) {
-    this.userService
-      .linkToFitbitAccount(params.userID, params.selectedFAIDs)
-      .pipe(first())
+  linkToClientAccount({ userID, clientAccountsIDs }) {
+    const sub = this.userService
+      .linkToClientAccount(userID, clientAccountsIDs)
       .subscribe(response => {
-        (response as Array<any>).forEach(row => {
-          const userID = row.caregiver_id,
-            fitbitAccountID = row.fitbit_account_id;
-
-          this.users[userID].fitbitAccounts[
-            fitbitAccountID
-          ] = this.fitbitAccounts[fitbitAccountID];
-        });
+        response = response["rows"];
+        if (response) {
+          response.forEach(row => {
+            const { user_id, client_account_id } = row;
+            this.users[user_id].client_account_ids.push(client_account_id);
+          });
+        }
       });
+
+    this.subscriptions.push(sub);
   }
 
   private loadUsers() {
-    this.userService
-      .getAll()
-      .pipe(first())
-      .subscribe(response => {
-        this.users = response;
-      });
+    const sub = this.userService.get().subscribe(users => {
+      console.log(users);
+
+      this.users = users.reduce((acc, user) => {
+        acc[user.id] = user;
+
+        return acc;
+      }, {});
+
+      console.log(this.users);
+    });
+
+    this.subscriptions.push(sub);
   }
 
-  private loadFitbitAccounts() {
-    this.fitbitAccountService
-      .getAll()
-      .pipe(first())
-      .subscribe(response => {
-        this.fitbitAccounts = response;
-      });
+  private loadClientAccounts() {
+    const sub = this.clientAccountService.get().subscribe(clientAccounts => {
+      for (const clientAccount of clientAccounts) {
+        this.clientAccounts[clientAccount.id] = clientAccount;
+      }
+      console.log(this.clientAccounts);
+    });
+
+    this.subscriptions.push(sub);
   }
 
   deleteUser(id: number) {
-    console.log("show modal");
-    // this.userService
-    //   .delete(id)
-    //   .pipe(first())
-    //   .subscribe(() => {
-    //     this.loadUsers();
-    //   });
+    const sub = this.userService.delete(id).subscribe(response => {
+      const deletedID = response.id;
+      delete this.users[deletedID];
+    });
+
+    this.subscriptions.push(sub);
   }
 
   deleteFitbitAccount(id: number) {
-    console.log("show modal");
-    // this.fitbitAccountService
-    //   .delete(id)
-    //   .pipe(first())
-    //   .subscribe(response => {
-    //     const deletedID = response["rows"][0].id;
-    //     delete this.fitbitAccounts[deletedID];
-    //     this.users.forEach(user => {
-    //       delete user.fitbitAccounts[deletedID];
-    //     });
-    //   });
+    const sub = this.clientAccountService.delete(id).subscribe(response => {
+      const deletedID = response.id;
+      delete this.clientAccounts[deletedID];
+
+      Object.values<any>(this.users).forEach(user => {
+        const indexOf = user.client_account_ids.indexOf(deletedID);
+
+        user.client_account_ids.splice(indexOf, 1);
+        console.log(deletedID, indexOf, user.client_account_ids);
+      });
+    });
+
+    this.subscriptions.push(sub);
   }
 
-  refreshAccessToken(fitbitAccountID: number) {
-    if (fitbitAccountID) {
-      this.fitbitAccountService
-        .get(fitbitAccountID)
-        .pipe(first())
-        .subscribe(fitbitAccount => {
-          if (fitbitAccount[fitbitAccountID]["client_id"])
-            this.fitbitService.requestAccess(fitbitAccount[fitbitAccountID]);
-        });
-    }
+  refreshAccessToken(fitbitAccount) {
+    this.fitbitService.requestAccess(fitbitAccount);
   }
 
-  revokeAccessToken(fitbitAccountID: number) {
-    this.fitbitService.relinquishAccess(fitbitAccountID).subscribe();
+  revokeAccessToken(fitbitAccount: FitbitAccount) {
+    const sub = this.fitbitService
+      .relinquishAccess(fitbitAccount.id)
+      .subscribe(response => {
+        console.log(response, "revoked");
+      });
+
+    this.subscriptions.push(sub);
   }
 }

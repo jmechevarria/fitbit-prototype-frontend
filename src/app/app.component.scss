@@ -10,22 +10,29 @@ mdb-navbar ul.navbar-nav li.active {
   overflow: visible;
 }
 
-#notifications-link span.counter {
-  position: relative;
-  padding: 0.3em 0.5em 0.3em;
-  top: -1em;
-  left: -1em;
+#notifications-link .counter {
+  position: absolute;
+  top: 0;
+  right: 2px;
   z-index: 2;
-  font-size: 11px;
-  color: #fff;
-  background-color: #fe1212;
-  border-radius: 10em;
-  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16),
-    0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  color: red;
 }
 
 #notifications-link mdb-icon {
   font-size: 1.3em;
   color: #616161;
 }
+
+// footer {
+//   z-index: -1;
+// }
+
+// @media (min-width: 768px) {
+//   footer {
+//     position: fixed;
+//     right: 0;
+//     bottom: 0;
+//     left: 0;
+//   }
+// }

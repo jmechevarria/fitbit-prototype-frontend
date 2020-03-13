@@ -45,6 +45,7 @@
     "live-server": "^1.2.1",
     "marked": "^0.5.0",
     "marked-terminal": "^3.1.1",
+    "mdbootstrap": "^4.14.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
     "ngx-facebook": "^2.4.0",

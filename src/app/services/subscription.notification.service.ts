@@ -23,16 +23,15 @@ export class SubscriptionNotificationService {
     any[]
   > = this._notificationSubject$.asObservable().pipe(
     map(messages => {
-      console.log(
-        "pass filter",
-        this.currentUser && messages["userID"] === this.currentUser.data.id
-      );
-      console.log("message", messages, this.currentUser);
+      // console.log(
+      //   "pass filter",
+      //   this.currentUser && messages["userID"] === this.currentUser.id
+      // );
+      // console.log("message", messages, this.currentUser);
 
       return messages.filter(m => {
-        return this.currentUser && m["userID"] === this.currentUser.data.id;
+        return this.currentUser && m["userID"] === this.currentUser.id;
       });
-      // this.currentUser && messages["userID"] === this.currentUser.data.id;
     })
   );
 
@@ -76,21 +75,20 @@ export class SubscriptionNotificationService {
       //   tap(user => {
       //     this.allMessages$ = this.swPush.messages.pipe(
       //       filter(message => {
-      //         console.log("filter message", user.data.id, message["userID"]);
+      //         console.log("filter message", user.id, message["userID"]);
 
-      //         return user && message["userID"] === user.data.id;
+      //         return user && message["userID"] === user.id;
       //       })
       //     );
       //   })
       // )
       .subscribe(user => {
         this.currentUser = user;
-        console.log("here we set this.currentUser", this.currentUser);
       });
   }
 
   public subscribeToPN() {
-    console.log("subscribe to pn");
+    // console.log("subscribe to pn");
 
     if (this.swPush.isEnabled) {
       try {
@@ -144,9 +142,9 @@ export class SubscriptionNotificationService {
 
   private createSubscription(subscription: PushSubscription) {
     console.log("here we use this.currentUser", this.currentUser);
-    return this.http.post(`${environment.apiURL}/subscribe_to_pn`, {
+    return this.http.post(`${environment.apiURL}subscribe_to_pn`, {
       subscription,
-      userID: this.currentUser.data.id
+      userID: this.currentUser.id
     });
   }
 
@@ -159,12 +157,12 @@ export class SubscriptionNotificationService {
       // this.subscription
       //   .unsubscribe()
       const endpoint = this.subscription.endpoint;
-      console.log(endpoint, this.currentUser.data.id);
+      console.log(endpoint, this.currentUser.id);
       this.http
         .delete(
-          `${environment.apiURL}/unsubscribe_from_pn/${encodeURIComponent(
+          `${environment.apiURL}unsubscribe_from_pn/${encodeURIComponent(
             endpoint
-          )}/${this.currentUser.data.id}`
+          )}/${this.currentUser.id}`
         )
         .subscribe(response => {
           console.log("response", response);
@@ -181,7 +179,7 @@ export class SubscriptionNotificationService {
   //   const allMessagesForCurrentUser$ = this.swPush.messages.pipe(
   //     filter(
   //       message =>
-  //         this.currentUser && message["userID"] === this.currentUser.data.id
+  //         this.currentUser && message["userID"] === this.currentUser.id
   //     )
   //   );
 
@@ -194,29 +192,26 @@ export class SubscriptionNotificationService {
    * @param limit
    * @param param2
    */
-  fetchFromDB(userID, limit, queryParams): Observable<any[]> {
+  fetchFromDB(userID, queryParams): Observable<any[]> {
     // console.log(range);
 
-    return this.http.get<any[]>(
-      `${environment.apiURL}/notifications/${userID}/?limit=${limit}`,
-      {
-        params: queryParams
-      }
-    );
+    return this.http.get<any[]>(`${environment.apiURL}messages/1/${userID}`, {
+      params: queryParams
+    });
   }
 
-  update(values, where) {
-    console.log(values, where);
+  update(values) {
+    console.log(values);
 
-    return this.http.patch(`${environment.apiURL}/notifications/`, {
-      values,
-      where
-    });
+    return this.http.patch(
+      `${environment.apiURL}messages/${values.id}/${values.type}`,
+      values
+    );
   }
 
   sendEmail(addresses: any, subject: any, body: any) {
     return this.http.post(
-      `${environment.apiURL}/notifications/notify_contacts/email`,
+      `${environment.apiURL}notifications/notify_contacts/email`,
       {
         addresses,
         subject,

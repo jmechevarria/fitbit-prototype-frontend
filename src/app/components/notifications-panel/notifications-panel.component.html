@@ -7,13 +7,9 @@
         <th>
           {{ "shared.severity" | translate }}
         </th>
+        <th>{{ "shared.date" | translate }}/{{ "shared.time" | translate }}</th>
         <th>
-          {{ "shared.date" | translate }}/{{
-            "notifications_panel.time" | translate
-          }}
-        </th>
-        <th>
-          {{ "notifications_panel.senior_person" | translate }}
+          {{ "shared.name" | translate }}
         </th>
         <th>{{ "shared.message" | translate }}</th>
         <th>
@@ -38,20 +34,16 @@
           <mdb-icon fas icon="{{ ICONS[notification?.severity] }}"></mdb-icon>
         </td>
         <td>
-          {{ notification?.localeFormat }}
+          {{ notification?.created | dynamicMoment: "LLL" | async }}
         </td>
 
         <td>
-          {{ notification?.senior_person?.fullname }}
+          {{ notification?.clientAccountFullname }}
         </td>
         <td class="message">
-          {{ "notifications_panel.accident_probability" | translate }}:
-          <span>{{ notification?.message | translate }}</span>
+          {{ notification.content }}
         </td>
         <td scope="row">
-          <!-- Default unchecked -->
-          <!-- <div class="custom-control custom-checkbox"> -->
-          <!-- <mdb-checkbox default="true"></mdb-checkbox> -->
           <!-- <mdb-icon
             click-event
             click-event-params="[stopPropagation]"
@@ -60,7 +52,7 @@
             fas
             icon="bullhorn"
             class="mr-1 red-text"
-            (click)="getContacts(notification.senior_person, notification)"
+            (click)="getContacts(notification.client_account, notification)"
           ></mdb-icon> -->
           <mdb-icon
             click-event
@@ -74,8 +66,6 @@
             icon="{{ notification?.read ? 'envelope-open' : 'envelope' }}"
             (click)="toggleRead(notification)"
           ></mdb-icon>
-
-          <!-- </div> -->
         </td>
       </tr>
       <tr *ngIf="notifications.length === 0">
@@ -85,7 +75,7 @@
             role="alert"
             style="text-align: center;"
           >
-            {{ "notifications_panel.no_new_notifications" | translate }}
+            {{ "notifications_panel.no_notifications" | translate }}
           </div>
         </td>
       </tr>

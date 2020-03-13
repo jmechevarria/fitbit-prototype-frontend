@@ -4,17 +4,19 @@ import {
   Input,
   Output,
   EventEmitter,
-  Inject
+  OnDestroy
 } from "@angular/core";
 import { DialogService } from "src/app/services/dialog.service";
 import { SelectionListDialogComponent } from "src/app/widgets/components/selection-list-dialog/selection-list-dialog.component";
 import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
 import { TranslateService } from "@ngx-translate/core";
-import { forkJoin } from "rxjs";
+import { forkJoin, Subscription } from "rxjs";
 import { switchMap, tap, filter } from "rxjs/operators";
+import { Role } from "src/app/models/Role";
+import { RoleService } from "src/app/services/role.service";
 
 export interface DialogData {
-  fitbitAccounts: {};
+  clientAccounts: {};
   selected: Array<any>;
 }
 
@@ -23,35 +25,55 @@ export interface DialogData {
   templateUrl: "./users-panel.component.html",
   styleUrls: ["../admin.component.scss", "./users-panel.component.scss"]
 })
-export class UsersPanelComponent implements OnInit {
+export class UsersPanelComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
+
   @Input()
   users: any;
 
   @Input()
-  fitbitAccounts: any;
+  clientAccounts: any;
+
+  roles: Role[] = [];
 
   @Output() deleteUser_EE = new EventEmitter();
-  @Output() unlinkFromFitbitAccount_EE = new EventEmitter();
-  @Output() linkToFitbitAccount_EE = new EventEmitter();
+  @Output() unlinkFromClientAccount_EE = new EventEmitter();
+  @Output() linkToClientAccount_EE = new EventEmitter();
 
   constructor(
     private dialogService: DialogService,
+    private roleService: RoleService,
     private translate: TranslateService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const sub = this.roleService.get().subscribe(response => {
+      if (response) this.roles = response;
+
+      console.log(this.roles);
+    });
+
+    this.subscriptions.push(sub);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   deleteUser(id: number) {
     const title$ = this.translate.get("admin.users_panel.dialog.delete_user");
+    const user = this.users[id];
     const body$ = this.translate.get(
       "admin.users_panel.dialog.delete_user_body_msg",
       {
-        name: `<b>${this.users[id].fullname}</b>`
+        name: `<b>${user.firstname} ${user.lastname} ${
+          user.lastname2 ? user.lastname2 : ""
+        }</b>`
       }
     );
     const warning$ = this.translate.get("shared.warning");
 
-    forkJoin([title$, body$, warning$])
+    const sub = forkJoin([title$, body$, warning$])
       .pipe(
         switchMap(([title, body, warning]) => {
           const bodyText = `<p class='mat-h4'>${body}
@@ -75,22 +97,31 @@ export class UsersPanelComponent implements OnInit {
         })
       )
       .subscribe();
+
+    this.subscriptions.push(sub);
   }
 
-  unlinkFromFitbitAccount(userID, fitbitAccountID) {
+  unlinkFromClientAccount(userID, clientAccountID) {
     const title$ = this.translate.get(
-      "admin.users_panel.dialog.unlink_caregiver_from_fitbit_account"
+      "admin.users_panel.dialog.unlink_user_from_client_account"
     );
     const body$ = this.translate.get(
-      "admin.users_panel.dialog.unlink_caregiver_from_fitbit_account_body",
+      "admin.users_panel.dialog.unlink_user_from_client_account_body",
       {
         userFullname: `<b>${this.users[userID].fullname}</b>`,
-        fitbitAccountFullname: `<b>${this.fitbitAccounts[fitbitAccountID].fullname}</b>`,
-        fitbitAccountID: fitbitAccountID
+        clientAccountFullname: `<b>${this.clientAccounts[clientAccountID]
+          .firstname +
+          " " +
+          this.clientAccounts[clientAccountID].lastname +
+          " " +
+          (this.clientAccounts[clientAccountID].lastname2
+            ? this.clientAccounts[clientAccountID].lastname2
+            : "")}</b>`,
+        clientAccountID
       }
     );
 
-    forkJoin([title$, body$])
+    const sub = forkJoin([title$, body$])
       .pipe(
         switchMap(([title, body]) => {
           const bodyText = `<p class='mat-h4'>${body}</p>`;
@@ -109,19 +140,23 @@ export class UsersPanelComponent implements OnInit {
         }),
         filter(reply => reply),
         tap(() => {
-          this.unlinkFromFitbitAccount_EE.next({ userID, fitbitAccountID });
+          this.unlinkFromClientAccount_EE.next({ userID, clientAccountID });
         })
       )
       .subscribe();
+
+    this.subscriptions.push(sub);
   }
 
-  linkToFitbitAccount(user) {
-    const fitbitAccounts = Object.keys(this.fitbitAccounts).reduce(
+  linkToClientAccount(user) {
+    const clientAccounts = Object.keys(this.clientAccounts).reduce(
       (acc, key) => {
         acc[key] = {
-          ...this.fitbitAccounts[key],
-          show: !user.fitbitAccounts[key]
+          ...this.clientAccounts[key],
+          // show: !user.clientAccounts[key]
+          show: !user.client_account_ids.includes(parseInt(key))
         };
+
         return acc;
       },
       {}
@@ -130,16 +165,21 @@ export class UsersPanelComponent implements OnInit {
     const dialogRef = this.dialogService.customDialogComponent(
       SelectionListDialogComponent,
       {
-        data: { fitbitAccounts: fitbitAccounts, selected: [] }
+        data: { clientAccounts, selected: [] }
       }
     );
 
-    dialogRef.afterClosed().subscribe(selected => {
+    const sub = dialogRef.afterClosed().subscribe(selected => {
       if (selected && selected.length) {
-        const selectedFAIDs = selected.map(element => element.key);
+        const clientAccountsIDs = selected.map(element => element.key);
 
-        this.linkToFitbitAccount_EE.emit({ userID: user.id, selectedFAIDs });
+        this.linkToClientAccount_EE.emit({
+          userID: user.id,
+          clientAccountsIDs
+        });
       }
     });
+
+    this.subscriptions.push(sub);
   }
 }

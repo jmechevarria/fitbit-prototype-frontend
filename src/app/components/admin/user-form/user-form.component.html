@@ -1,0 +1,258 @@
+<h1>
+  {{ formHeader }} ({{
+    "shared." + (user.role_id | roleName: roles) | translate
+  }})
+</h1>
+
+<div [hidden]="!serverSideError || inReview" class="alert alert-danger">
+  {{ serverSideErrorMessage }}
+</div>
+
+<form
+  #userForm="ngForm"
+  (ngSubmit)="onSubmit()"
+  (keydown.enter)="!inReview && $event.preventDefault()"
+>
+  <div [hidden]="inReview">
+    <!-- email -->
+    <div class="form-group">
+      <label for="email">{{ "forms.field_names.email" | translate }}</label>
+      <input
+        [(ngModel)]="user.email"
+        name="email"
+        type="email"
+        class="form-control"
+        id="email"
+        required
+        #email="ngModel"
+        ngControl="email"
+      />
+      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- username -->
+    <div class="form-group">
+      <label for="username">{{
+        "forms.field_names.username" | translate
+      }}</label>
+      <input
+        [(ngModel)]="user.username"
+        name="username"
+        type="text"
+        class="form-control"
+        id="username"
+        required
+        #username="ngModel"
+      />
+      <div
+        [hidden]="username.valid || username.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- password -->
+
+    <div class="form-group">
+      <label for="password">{{ "shared.password" | translate }}</label>
+      <input
+        [(ngModel)]="user.password"
+        name="password"
+        type="password"
+        class="form-control"
+        id="password"
+        [required]="!editForm || !password.pristine"
+        #password="ngModel"
+      />
+      <div
+        [hidden]="password.valid || password.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- firstname -->
+    <div class="form-group">
+      <label for="firstname">{{ "shared.firstname" | translate }}</label>
+      <input
+        [(ngModel)]="user.firstname"
+        name="firstname"
+        type="text"
+        class="form-control"
+        id="firstname"
+        required
+        #firstname="ngModel"
+      />
+      <div
+        [hidden]="firstname.valid || firstname.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- lastname -->
+    <div class="form-group">
+      <label for="lastname">{{ "shared.lastname" | translate }}</label>
+      <input
+        [(ngModel)]="user.lastname"
+        name="lastname"
+        type="text"
+        class="form-control"
+        id="lastname"
+        required
+        #lastname="ngModel"
+      />
+      <div
+        [hidden]="lastname.valid || lastname.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- lastname2 -->
+    <div class="form-group">
+      <label for="lastname2">{{ "shared.lastname2" | translate }}</label>
+      <input
+        [(ngModel)]="user.lastname2"
+        name="lastname2"
+        type="text"
+        class="form-control"
+        id="lastname2"
+      />
+    </div>
+
+    <!-- receive_emails -->
+    <div class="form-group">
+      <mdb-checkbox
+        [(ngModel)]="user.receive_emails"
+        name="receive_emails"
+        class="form-control"
+        #receive_emails="ngModel"
+        [default]="true"
+        >{{ "forms.user.receive_emails" | translate }}</mdb-checkbox
+      >
+
+      <div
+        [hidden]="receive_emails.valid || receive_emails.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- receive_text_messages -->
+    <div class="form-group">
+      <mdb-checkbox
+        [(ngModel)]="user.receive_text_messages"
+        name="receive_text_messages"
+        class="form-control"
+        #receive_text_messages="ngModel"
+        [default]="true"
+        >{{ "forms.user.receive_text_messages" | translate }}</mdb-checkbox
+      >
+
+      <div
+        [hidden]="receive_text_messages.valid || receive_text_messages.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- <div *ngFor="let role of roles">
+      <div *ngIf="role.id == user.role_id">
+        <h3>
+          {{
+            "forms.user.role_specific_information"
+              | translate
+                : {
+                    role:
+                      "shared." + (user.role_id | roleName: roles) | translate
+                  }
+          }}
+        </h3>
+      </div>
+    </div> -->
+
+    <button
+      type="button"
+      (click)="inReview = true"
+      class="btn btn-primary"
+      [disabled]="!userForm.form.valid"
+    >
+      {{ "shared.review" | translate }}
+    </button>
+    <button type="button" [routerLink]="'/admin'" class="btn">
+      {{ "shared.cancel" | translate }}
+    </button>
+  </div>
+
+  <!-- {{ inReview }} -->
+  <div *ngIf="inReview">
+    <h4>{{ "forms.please_review_the_data" | translate }}</h4>
+
+    <table mdbTable bordered="true">
+      <tbody>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.role" | translate }}</th>
+          <!-- <td>{{ roles[user.role_id]?.name }}</td> -->
+          <td>{{ user.role_id | roleName: roles | translate }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "forms.field_names.email" | translate }}</th>
+          <td>{{ user.email }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "forms.field_names.username" | translate }}</th>
+          <td>{{ user.username }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.password" | translate }}</th>
+          <td>{{ user.password }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.firstname" | translate }}</th>
+          <td>{{ user.firstname }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <td>{{ user.lastname }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <td>{{ user.lastname2 }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "forms.user.receive_emails" | translate }}</th>
+          <td>
+            {{ (user.receive_emails ? "shared.yes" : "shared.no") | translate }}
+          </td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">
+            {{ "forms.user.receive_text_messages" | translate }}
+          </th>
+          <td>
+            {{
+              (user.receive_text_messages ? "shared.yes" : "shared.no")
+                | translate
+            }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="btn btn-success" [disabled]="!userForm.form.valid">
+      {{ "shared.submit" | translate }}
+    </button>
+    <button type="button" (click)="inReview = false" class="btn">
+      {{ "shared.edit" | translate }}
+    </button>
+  </div>
+</form>

@@ -1,45 +1,38 @@
-/////////////INTERFACE BETWEEN FRONTEND AND BACKEND
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { FitbitAccount } from "../models/FitbitAccount";
+import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class FitbitAccountService {
   constructor(private http: HttpClient) {}
 
-  getAll() {
-    return this.http.get("http://localhost:3000/api/v1/fitbit-accounts");
-  }
-
-  get(id: number) {
-    return this.http.get(`http://localhost:3000/api/v1/fitbit-accounts/${id}`);
-  }
-
-  delete(id: number) {
-    return this.http.delete(`http://localhost:3000/api/v1/fitbit-accounts/${id}`);
-  }
-
-  patch(id: number, data) {
-    return this.http.patch(`http://localhost:3000/api/v1/fitbit-account`, {
-      values: data,
-      where: {
-        id: id
-      }
-    });
-  }
-
-  // getAll() {
-  //   return this.http.get<FitbitAccount[]>("http://localhost:3000/api/v1/users");
+  // getAll(): Observable<any[]> {
+  //   return this.http.get<any[]>(`${environment.apiURL}fitbit-accounts`);
   // }
 
-  // register(user: User) {
-  //   return this.http.post("http://localhost:3000/api/v1/users/register", user);
+  getByID(id: number): Observable<any[]> {
+    return this.http.get<FitbitAccount[]>(
+      `${environment.apiURL}fitbit-accounts/${id}`
+    );
+  }
+
+  // create(fitbitAccount: FitbitAccount): Observable<any[]> {
+  //   return this.http.post<any[]>(
+  //     `${environment.apiURL}fitbit-accounts/new/`,
+  //     fitbitAccount
+  //   );
   // }
 
-  // update(user: User) {
-  //   return this.http.put(`http://localhost:3000/api/v1/users/${user.data.id}`, user);
-  // }
+  patch(id: number, values) {
+    return this.http.patch(
+      `${environment.apiURL}fitbit-accounts/${id}`,
+      values
+    );
+  }
 
   // delete(id: number) {
-  //   return this.http.delete(`http://localhost:3000/api/v1/users/${id}`);
+  //   return this.http.delete(`${environment.apiURL}fitbit-accounts/${id}`);
   // }
 }

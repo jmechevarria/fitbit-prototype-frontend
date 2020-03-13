@@ -1,0 +1,362 @@
+<h1>
+  {{ formHeader }} ({{ clientAccount.type_id | accountTypeName: accountTypes }})
+</h1>
+<div [hidden]="!serverSideError || inReview" class="alert alert-danger">
+  {{ serverSideErrorMessage }}
+</div>
+
+<form
+  #clientAccountForm="ngForm"
+  (ngSubmit)="onSubmit()"
+  (keydown.enter)="!inReview && $event.preventDefault()"
+>
+  <div [hidden]="inReview">
+    <!-- email -->
+    <div class="form-group">
+      <label for="email">{{ "forms.field_names.email" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.email"
+        name="email"
+        type="email"
+        class="form-control"
+        id="email"
+        required
+        #email="ngModel"
+        ngControl="email"
+      />
+      <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- firstname -->
+    <div class="form-group">
+      <label for="firstname">{{ "shared.firstname" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.firstname"
+        name="firstname"
+        type="text"
+        class="form-control"
+        id="firstname"
+        required
+        #firstname="ngModel"
+      />
+      <div
+        [hidden]="firstname.valid || firstname.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- lastname -->
+    <div class="form-group">
+      <label for="lastname">{{ "shared.lastname" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.lastname"
+        name="lastname"
+        type="text"
+        class="form-control"
+        id="lastname"
+        required
+        #lastname="ngModel"
+      />
+      <div
+        [hidden]="lastname.valid || lastname.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- lastname2 -->
+    <div class="form-group">
+      <label for="lastname2">{{ "shared.lastname2" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.lastname2"
+        name="lastname2"
+        type="text"
+        class="form-control"
+        id="lastname2"
+      />
+    </div>
+
+    <!-- height_cm -->
+    <div class="form-group">
+      <label for="height_cm">{{ "shared.height_cm" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.height_cm"
+        name="height_cm"
+        type="number"
+        class="form-control"
+        id="height_cm"
+        required
+        [min]="100"
+        #height_cm="ngModel"
+      />
+      <div
+        [hidden]="height_cm.valid || height_cm.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- weight_kg -->
+    <div class="form-group">
+      <label for="weight_kg">{{ "shared.weight_kg" | translate }}</label>
+      <input
+        [(ngModel)]="clientAccount.weight_kg"
+        name="weight_kg"
+        type="number"
+        class="form-control"
+        id="weight_kg"
+        required
+        [min]="20"
+        #weight_kg="ngModel"
+      />
+      <div
+        [hidden]="weight_kg.valid || weight_kg.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- birthdate -->
+    <div class="form-group">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="birthdate_picker"
+          placeholder="{{ 'shared.birthdate' | translate }}"
+          [(ngModel)]="clientAccount.birthdate"
+          #birthdate="ngModel"
+          required
+          name="birthdate"
+          id="birthdate"
+          [max]="BIRTHDATE_MAX"
+        />
+
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="birthdate_picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #birthdate_picker></mat-datepicker>
+      </mat-form-field>
+      <div
+        [hidden]="birthdate.valid || birthdate.pristine"
+        class="alert alert-danger"
+      >
+        {{ "forms.errors.this_field_is_required" | translate }}
+      </div>
+    </div>
+
+    <!-- fitbit -->
+    <div *ngIf="clientAccount.type_id === 1">
+      <h3>
+        {{
+          "forms.client_account.account_type_specific_information"
+            | translate
+              : { account_type: accountTypes[clientAccount.type_id - 1]?.name }
+        }}
+      </h3>
+
+      <!-- encoded_id -->
+      <div class="form-group" [hidden]="!editForm">
+        <label for="encoded_id">{{
+          "forms.field_names.encoded_id" | translate
+        }}</label>
+        <input
+          [(ngModel)]="clientAccount.encoded_id"
+          name="encoded_id"
+          type="text"
+          class="form-control"
+          id="encoded_id"
+          required
+          #encoded_id="ngModel"
+          disabled
+        />
+        <div
+          [hidden]="encoded_id.valid || encoded_id.pristine"
+          class="alert alert-danger"
+        >
+          {{ "forms.errors.this_field_is_required" | translate }}
+        </div>
+      </div>
+
+      <!-- secret -->
+      <div class="form-group">
+        <label for="secret">{{ "forms.field_names.secret" | translate }}</label>
+        <input
+          [(ngModel)]="clientAccount.secret"
+          name="secret"
+          type="text"
+          class="form-control"
+          id="secret"
+          required
+          #secret="ngModel"
+        />
+        <div
+          [hidden]="secret.valid || secret.pristine"
+          class="alert alert-danger"
+        >
+          {{ "forms.errors.this_field_is_required" | translate }}
+        </div>
+      </div>
+
+      <!-- fitbit_app_id -->
+      <div class="form-group">
+        <label for="fitbit_app_id">{{
+          "forms.field_names.fitbit_app_id" | translate
+        }}</label>
+        <input
+          [(ngModel)]="clientAccount.fitbit_app_id"
+          name="fitbit_app_id"
+          type="text"
+          class="form-control"
+          id="fitbit_app_id"
+          required
+          #fitbit_app_id="ngModel"
+        />
+        <div
+          [hidden]="fitbit_app_id.valid || fitbit_app_id.pristine"
+          class="alert alert-danger"
+        >
+          {{ "forms.errors.this_field_is_required" | translate }}
+        </div>
+      </div>
+
+      <!-- access_token -->
+      <div class="form-group" [hidden]="!editForm">
+        <label for="access_token">{{
+          "forms.field_names.access_token" | translate
+        }}</label>
+        <textarea
+          [(ngModel)]="clientAccount.access_token"
+          name="access_token"
+          type="text"
+          class="form-control"
+          id="access_token"
+          required
+          #access_token="ngModel"
+          disabled
+        ></textarea>
+        <div
+          [hidden]="access_token.valid || access_token.pristine"
+          class="alert alert-danger"
+        >
+          {{ "forms.errors.this_field_is_required" | translate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- garmin -->
+    <div *ngIf="clientAccount.type_id === 2">
+      <h3>
+        {{
+          "forms.client_account.account_type_specific_information"
+            | translate
+              : { account_type: accountTypes[clientAccount.type_id - 1]?.name }
+        }}
+      </h3>
+
+      <!-- test -->
+      <div class="form-group">
+        <label for="test">{{ "forms.field_names.test" | translate }}</label>
+        <input
+          [(ngModel)]="clientAccount.test"
+          name="test"
+          type="text"
+          class="form-control"
+          id="test"
+          required
+          #test="ngModel"
+        />
+        <div [hidden]="test.valid || test.pristine" class="alert alert-danger">
+          {{ "forms.errors.this_field_is_required" | translate }}
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      (click)="inReview = true; showFrm()"
+      class="btn btn-primary"
+      [disabled]="!clientAccountForm.form.valid"
+    >
+      {{ "shared.review" | translate }}
+    </button>
+    <button type="button" [routerLink]="'/admin'" class="btn">
+      {{ "shared.cancel" | translate }}
+    </button>
+  </div>
+
+  <div [hidden]="!inReview">
+    <h4>{{ "forms.please_review_the_data" | translate }}</h4>
+
+    <table mdbTable bordered="true" responsive="true">
+      <tbody>
+        <tr mdbTableCol>
+          <th scope="row">{{ "forms.field_names.email" | translate }}</th>
+          <td>{{ clientAccount.email }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.firstname" | translate }}</th>
+          <td>{{ clientAccount.firstname }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <td>{{ clientAccount.lastname }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <td>{{ clientAccount.lastname2 }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.height_cm" | translate }}</th>
+          <td>{{ clientAccount.height_cm }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.weight_kg" | translate }}</th>
+          <td>{{ clientAccount.weight_kg }}</td>
+        </tr>
+        <tr mdbTableCol>
+          <th scope="row">{{ "shared.birthdate" | translate }}</th>
+          <td>{{ clientAccount.birthdate | dynamicMoment: "LLL" | async }}</td>
+        </tr>
+        <ng-container *ngIf="clientAccount.type_id === 1">
+          <tr mdbTableCol>
+            <th scope="row">
+              {{ "forms.field_names.encoded_id" | translate }}
+            </th>
+            <td>{{ clientAccount.encoded_id }}</td>
+          </tr>
+          <tr mdbTableCol>
+            <th scope="row">{{ "forms.field_names.secret" | translate }}</th>
+            <td>{{ clientAccount.secret }}</td>
+          </tr>
+          <tr mdbTableCol>
+            <th scope="row">
+              {{ "forms.field_names.fitbit_app_id" | translate }}
+            </th>
+            <td>{{ clientAccount.fitbit_app_id }}</td>
+          </tr>
+          <tr mdbTableCol>
+            <th scope="row">
+              {{ "forms.field_names.access_token" | translate }}
+            </th>
+            <td>{{ clientAccount.access_token }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+
+    <button class="btn btn-success" [disabled]="!clientAccountForm.form.valid">
+      {{ "shared.submit" | translate }}
+    </button>
+    <button type="button" (click)="inReview = false" class="btn">
+      {{ "shared.edit" | translate }}
+    </button>
+  </div>
+</form>
