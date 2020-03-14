@@ -24,7 +24,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { AlertComponent } from "./components/alert/alert.component";
-import { RegisterComponent } from "./components/register/register.component";
 import { FitbitDataComponent } from "./components/fitbit-data/fitbit-data.component";
 
 import { MatButtonToggleModule } from "@angular/material";
@@ -45,10 +44,8 @@ import { RoleNamePipe } from "./helpers/RoleNamePipe";
 import { IncidentDetailsDialogComponent } from "./components/notifications-panel/incident-details-dialog/incident-details-dialog.component";
 import { ClientAccountsPanelComponent } from "./components/admin/client-accounts-panel/client-accounts-panel.component";
 import { ClientAccountFormComponent } from "./components/admin/client-account-form/client-account-form.component";
-import { FitbitAccountFormComponent } from "./components/admin/fitbit-account-form/fitbit-account-form.component";
 import { UserFormComponent } from "./components/admin/user-form/user-form.component";
-import { CastPipe } from './helpers/cast.pipe';
-import { AccountTypeNamePipe } from './helpers/account-type-name.pipe';
+import { AccountTypeNamePipe } from "./helpers/account-type-name.pipe";
 // import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
@@ -66,7 +63,6 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     AlertComponent,
     AdminComponent,
-    RegisterComponent,
     FitbitDataComponent,
     DecisionTreeComponent,
     DevicesPanelComponent,
@@ -80,9 +76,7 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     RoleNamePipe,
     IncidentDetailsDialogComponent,
     ClientAccountFormComponent,
-    FitbitAccountFormComponent,
     UserFormComponent,
-    CastPipe,
     AccountTypeNamePipe
   ],
   imports: [

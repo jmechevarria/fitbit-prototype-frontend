@@ -4,7 +4,6 @@ import { LoginComponent } from "./components/login/login.component";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { UserAuthenticationGuard } from "./guards/user-authentication.guard";
 import { AdminComponent } from "./components/admin/admin.component";
-import { RegisterComponent } from "./components/register/register.component";
 import { LoginRegisterGuard } from "./guards/login-register.guard";
 import { AdminGuard } from "./guards/admin.guard";
 import { CaregiverGuard } from "./guards/caregiver.guard";
@@ -16,11 +15,6 @@ const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
-    canActivate: [LoginRegisterGuard]
-  },
-  {
-    path: "register",
-    component: RegisterComponent,
     canActivate: [LoginRegisterGuard]
   },
   {

@@ -166,9 +166,11 @@ export class UserService {
 
   private subscribeToPN(subscription: PushSubscription) {
     console.log("here we use this.currentUser", this.currentUser);
-    return this.http.post(`${environment.apiURL}subscribe-to-pn`, {
-      subscription,
-      userID: this.currentUser.id
-    });
+    return this.http.post(
+      `${environment.apiURL}users/${this.currentUser.id}/subscribe-to-pn`,
+      {
+        subscription
+      }
+    );
   }
 }
