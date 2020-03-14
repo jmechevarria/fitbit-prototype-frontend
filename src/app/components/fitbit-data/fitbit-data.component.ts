@@ -106,8 +106,7 @@ export class FitbitDataComponent implements OnInit {
         // !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
         // !!to ? to : this.selectedPredefinedRange,
         from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
-        to ? to : this.selectedPredefinedRange,
-        moment().format("Z")
+        to ? to : this.selectedPredefinedRange
       )
       .subscribe(
         response => {

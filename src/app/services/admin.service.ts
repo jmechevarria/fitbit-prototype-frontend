@@ -1,4 +1,3 @@
-/////////////INTERFACE BETWEEN FRONTEND AND BACKEND
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -14,13 +13,13 @@ export class AdminService {
   }
 
   get(where: {}): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiURL}users/`, {
+    return this.http.get<any[]>(`${environment.apiURL}users`, {
       params: where
     });
   }
 
   create(user: User): Observable<any[]> {
-    return this.http.post<any[]>(`${environment.apiURL}users/new/`, user);
+    return this.http.post<any[]>(`${environment.apiURL}users/new`, user);
   }
 
   patch(where, values) {
@@ -29,17 +28,6 @@ export class AdminService {
       where
     });
   }
-
-  // register(user) {
-  //   return this.http.post("http://localhost:3000/api/v1/users/register", user);
-  // }
-
-  // update(user) {
-  //   return this.http.put(
-  //     `http://localhost:3000/api/v1/users/${user.data.id}`,
-  //     user
-  //   );
-  // }
 
   delete(id: number) {
     return this.http.delete(`${environment.apiURL}users/${id}`);
@@ -50,7 +38,7 @@ export class AdminService {
     clientAccountIDs: number[]
   ): Observable<any[]> {
     return this.http.post<any[]>(
-      `${environment.apiURL}users/link/user/client-account/`,
+      `${environment.apiURL}users/link/user/client-account`,
       {
         userID,
         clientAccountIDs
@@ -63,10 +51,4 @@ export class AdminService {
       `${environment.apiURL}users/unlink/user/${userID}/client-account/${clientAccountID}`
     );
   }
-
-  // getContacts(client_account) {
-  //   return this.http.get(
-  //     `${environment.apiURL}client_account/${client_account.id}/contacts`
-  //   );
-  // }
 }

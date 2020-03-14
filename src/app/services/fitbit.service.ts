@@ -76,24 +76,21 @@ export class FitbitService {
     console.log(fitbitAccountID, day);
 
     return this.http.get(
-      `http://localhost:3000/api/v1/fitbit-account/${fitbitAccountID}/activities/heart/intraday/${day}`
+      `${environment.apiURL}fitbit-accounts/${fitbitAccountID}/activities/heart/intraday/${day}`
     );
   }
 
-  fetchHeartRateInterday(
-    fitbitAccountID: number,
-    from: string,
-    to: string,
-    clientOffset: string
-  ) {
+  fetchHeartRateInterday(fitbitAccountID: number, from: string, to: string) {
     return this.http.get(
-      `http://localhost:3000/api/v1/daily-summary/${fitbitAccountID}/${from}/${to}/${clientOffset}`
+      `${environment.apiURL}daily-summary/${fitbitAccountID}/${from}/${to}`
     );
   }
 
   fetchIncidents(incidentIDs, fitbitAccountID: number): Observable<any[]> {
     return this.http.get<any[]>(
-      `http://localhost:3000/api/v1/incidents/${fitbitAccountID}/?incident_ids=${incidentIDs
+      `${
+        environment.apiURL
+      }incidents/${fitbitAccountID}/?incident_ids=${incidentIDs
         .map(id => {
           return id;
         })
@@ -106,7 +103,7 @@ export class FitbitService {
     clientMoment
   ): Observable<any[]> {
     return this.http.get<any[]>(
-      `${environment.apiURL}latest_recorded_states/`,
+      `${environment.apiURL}client-accounts/latest-recorded-states`,
       {
         params: {
           clientAccountsIDs: clientAccountsIDs.join(","),

@@ -27,7 +27,7 @@ export class ClientAccountService {
 
   create(ClientAccount: ClientAccount): Observable<ClientAccount> {
     return this.http.post<ClientAccount>(
-      `${environment.apiURL}client-accounts/new/`,
+      `${environment.apiURL}client-accounts/new`,
       ClientAccount
     );
   }

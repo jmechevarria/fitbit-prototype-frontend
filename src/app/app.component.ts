@@ -11,6 +11,7 @@ import { DateAdapter } from "@angular/material/core";
 import { SubscriptionNotificationService } from "./services/subscription.notification.service";
 import { TranslateService } from "@ngx-translate/core";
 import { IUser } from "./models/IUser";
+import { UserService } from "./services/user.service";
 
 @Component({
   selector: "app-root",
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private adapter: DateAdapter<any>,
     private translate: TranslateService,
+    private userService: UserService,
     private subscriptionNotificationService: SubscriptionNotificationService
   ) {
     translate.setDefaultLang("en-US");
@@ -73,7 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const sub = this.authenticationService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user) {
-        this.subscriptionNotificationService.subscribeToPN();
+        this.userService.requestPNSubscription();
       }
     });
 
@@ -108,6 +110,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   unsubscribe() {
-    this.subscriptionNotificationService.unsubscribeFromPN();
+    this.userService.unsubscribeFromPN();
   }
 }

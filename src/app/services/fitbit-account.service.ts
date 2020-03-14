@@ -12,15 +12,15 @@ export class FitbitAccountService {
   //   return this.http.get<any[]>(`${environment.apiURL}fitbit-accounts`);
   // }
 
-  getByID(id: number): Observable<any[]> {
-    return this.http.get<FitbitAccount[]>(
-      `${environment.apiURL}fitbit-accounts/${id}`
-    );
-  }
+  // getByID(id: number): Observable<any[]> {
+  //   return this.http.get<FitbitAccount[]>(
+  //     `${environment.apiURL}fitbit-accounts/${id}`
+  //   );
+  // }
 
   // create(fitbitAccount: FitbitAccount): Observable<any[]> {
   //   return this.http.post<any[]>(
-  //     `${environment.apiURL}fitbit-accounts/new/`,
+  //     `${environment.apiURL}fitbit-accounts/new`,
   //     fitbitAccount
   //   );
   // }

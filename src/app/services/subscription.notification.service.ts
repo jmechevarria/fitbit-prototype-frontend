@@ -8,13 +8,9 @@ import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { environment } from "src/environments/environment.prod";
 
-const VAPID_PUBLIC =
-  "BCLqXPqZe-QWv8hQ-2RR9g5VKrhJnGHiM0PN0hs-xgka4inF2ylT5sjWd-8fyGT2OC1xagNR4D0SqgbDPjH8VD0";
-
 @Injectable({ providedIn: "root" })
 export class SubscriptionNotificationService {
   private currentUser;
-  private subscription: PushSubscription;
   private _notificationSubject$: BehaviorSubject<any[]> = new BehaviorSubject(
     []
   );
@@ -87,94 +83,6 @@ export class SubscriptionNotificationService {
       });
   }
 
-  public subscribeToPN() {
-    // console.log("subscribe to pn");
-
-    if (this.swPush.isEnabled) {
-      try {
-        this.swPush
-          .requestSubscription({
-            serverPublicKey: VAPID_PUBLIC
-          })
-          .then(subscription => {
-            // this.subscription = subscription;
-
-            //create subscription in our backend
-            this.createSubscription(subscription).subscribe();
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      } catch (error) {
-        console.log("error processing subscription on the frontend", error);
-      }
-      // this.swPush.subscription.subscribe(subscription => {
-      // console.log("triggered");
-
-      // // if (this.subscription) {
-      // //<-------- here we check if this device is already subscribed
-      // console.log("device already subscribed", this.subscription);
-
-      // // this.subscription = subscription;
-
-      // //the device is already subscribed, but we still need to check if the user is subscribed
-      // //create subscription in our backend
-      // this.createSubscription(this.subscription).subscribe(response => {
-      //   console.log("response: " + response);
-      // });
-
-      // this.swUpdate.available.subscribe(update => {
-      //   console.log(update);
-      //   this.matSnackBar
-      //     .open("Update Avaiblable", "Reload")
-      //     .onAction()
-      //     .subscribe(() => {
-      //       window.location.reload();
-      //     });
-      // });
-      // } else {
-      // console.log("device not yet subscribed", this.subscription);
-
-      // }
-      // });
-    }
-  }
-
-  private createSubscription(subscription: PushSubscription) {
-    console.log("here we use this.currentUser", this.currentUser);
-    return this.http.post(`${environment.apiURL}subscribe_to_pn`, {
-      subscription,
-      userID: this.currentUser.id
-    });
-  }
-
-  unsubscribeFromPN() {
-    console.log("unsubscribe from pn");
-
-    console.log(this.subscription);
-    if (this.subscription && this.currentUser) {
-      console.log("in");
-      // this.subscription
-      //   .unsubscribe()
-      const endpoint = this.subscription.endpoint;
-      console.log(endpoint, this.currentUser.id);
-      this.http
-        .delete(
-          `${environment.apiURL}unsubscribe_from_pn/${encodeURIComponent(
-            endpoint
-          )}/${this.currentUser.id}`
-        )
-        .subscribe(response => {
-          console.log("response", response);
-          if (!response["length"])
-            this.swPush
-              .unsubscribe()
-              .then(response => {})
-              .catch(error => console.log(error, error.toString()));
-        });
-    }
-  }
-
   // getMessages() {
   //   const allMessagesForCurrentUser$ = this.swPush.messages.pipe(
   //     filter(
@@ -209,14 +117,14 @@ export class SubscriptionNotificationService {
     );
   }
 
-  sendEmail(addresses: any, subject: any, body: any) {
-    return this.http.post(
-      `${environment.apiURL}notifications/notify_contacts/email`,
-      {
-        addresses,
-        subject,
-        body
-      }
-    );
-  }
+  // sendEmail(addresses: any, subject: any, body: any) {
+  //   return this.http.post(
+  //     `${environment.apiURL}messages/notify-contacts/email`,
+  //     {
+  //       addresses,
+  //       subject,
+  //       body
+  //     }
+  //   );
+  // }
 }
