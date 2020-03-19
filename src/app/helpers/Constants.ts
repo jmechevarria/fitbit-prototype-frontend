@@ -18,6 +18,10 @@ export const ERRORS = {
   TOKEN_EXPIRED: {
     id: 5,
     message: "TOKEN_EXPIRED"
+  },
+  INSUFFICIENT_PRIVILEGES: {
+    id: 6,
+    message: "INSUFFICIENT_PRIVILEGES"
   }
 };
 

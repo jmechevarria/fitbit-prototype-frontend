@@ -7,6 +7,7 @@ import { IUser } from "../models/IUser";
 import { environment } from "src/environments/environment";
 import { User } from "../models/User";
 import { JWTToken } from "../models/JWTToken";
+import { IError } from "../models/IError";
 
 @Injectable({ providedIn: "root" })
 export class AuthenticationService {
@@ -60,10 +61,10 @@ export class AuthenticationService {
       );
   }
 
-  logout() {
+  logout(error?: IError) {
     this.currentUser = null;
     this.token = null;
     this.currentUserSubject$.next(null);
-    this.router.navigate([""]);
+    this.router.navigate(["/login"]);
   }
 }
