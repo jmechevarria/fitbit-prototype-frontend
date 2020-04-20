@@ -1,0 +1,71 @@
+<!--Header-->
+<div class="modal-header">
+  <h4 class="modal-title" id="myModalLabel">
+    {{
+      "widgets.selection_list_dialog.link_user_to_client_accounts" | translate
+    }}
+  </h4>
+  <button
+    type="button"
+    class="close"
+    data-dismiss="modal"
+    aria-label="Close"
+    (click)="modalRef.hide()"
+  >
+    <span aria-hidden="true">×</span>
+  </button>
+</div>
+<!--Body-->
+<div class="modal-body">
+  <div *ngIf="loading" class="spinner-grow text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div *ngIf="!loading">
+    <mat-selection-list #itemsList [(ngModel)]="selected">
+      <ng-container
+        *ngFor="
+          let clientAccount of content.clientAccounts | keyvalue;
+          let i = index
+        "
+      >
+        <mat-list-option [value]="clientAccount.value">
+          {{ i + 1 }}.
+          {{
+            clientAccount.value.firstname +
+              " " +
+              clientAccount.value.lastname +
+              " " +
+              (clientAccount.value.lastname2
+                ? clientAccount.value.lastname2
+                : "")
+          }}
+          (ID: {{ clientAccount.key }})
+        </mat-list-option>
+      </ng-container>
+    </mat-selection-list>
+  </div>
+</div>
+<!--Footer-->
+<div class="modal-footer">
+  <button
+    type="button"
+    mdbBtn
+    color="primary"
+    outline="true"
+    class="waves-light"
+    mdbWavesEffect
+    data-dismiss="modal"
+    (click)="modalRef.hide()"
+  >
+    {{ "shared.cancel" | translate }}
+  </button>
+  <button
+    mdbBtn
+    color="primary"
+    class="waves-light"
+    mdbWavesEffect
+    (click)="modalRef.hide(); onProceed()"
+  >
+    {{ "shared.proceed" | translate }}
+  </button>
+</div>

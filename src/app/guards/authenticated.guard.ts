@@ -1,37 +1,35 @@
 import { Injectable } from "@angular/core";
 import {
+  Router,
   CanActivate,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  UrlTree,
-  Router
+  RouterStateSnapshot
 } from "@angular/router";
 import { AuthenticationService } from "../services/authentication.service";
 
-@Injectable({
-  providedIn: "root"
-})
-export class LoginRegisterGuard implements CanActivate {
+@Injectable({ providedIn: "root" })
+export class AuthenticatedGuard implements CanActivate {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
   ) {}
 
   canActivate(
-    next: ActivatedRouteSnapshot,
+    route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean> {
     return new Promise((resolve: Function, reject: Function) => {
-      const currentUser = this.authenticationService.currentUser;
-
-      if (currentUser) {
-        // logged in so redirect to home page
-        this.router.navigate(["/"]);
-        reject(false);
+      if (this.authenticationService.isAuthenticated) {
+        resolve(true);
         return;
       }
 
-      resolve(true);
+      // not logged in so redirect to login page with the return url
+      this.router.navigate(["/login"], {
+        queryParams: { returnUrl: state.url }
+      });
+
+      reject(false);
       return;
     });
   }

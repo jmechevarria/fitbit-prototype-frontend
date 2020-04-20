@@ -13,7 +13,7 @@ export class ClientAccountService {
       `${environment.apiURL}client-accounts`,
       type_id
         ? {
-            params: { type_id: type_id.toString() }
+            params: { type_id: type_id.toString() },
           }
         : {}
     );
@@ -32,7 +32,7 @@ export class ClientAccountService {
     );
   }
 
-  patch(values: ClientAccount): Observable<ClientAccount> {
+  patch(values): Observable<ClientAccount> {
     return this.http.patch<ClientAccount>(
       `${environment.apiURL}client-accounts/${values.id}/${values.type_id}`,
       values

@@ -6,7 +6,7 @@ import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import {
   HttpClientModule,
   HTTP_INTERCEPTORS,
-  HttpClient
+  HttpClient,
 } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
@@ -37,7 +37,7 @@ import { NotificationsPanelComponent } from "./components/notifications-panel/no
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { SubscriptionNotificationService } from "./services/subscription.notification.service";
-import { NotificationsDropdownComponent } from "./components/notification/notifications-dropdown.component";
+import { NotificationsDropdownComponent } from "./components/notifications-dropdown/notifications-dropdown.component";
 import { ReplaceSubstring } from "./helpers/ReplaceSubstringPipe";
 import { MomentPipe } from "./helpers/MomentPipe";
 import { RoleNamePipe } from "./helpers/RoleNamePipe";
@@ -46,6 +46,9 @@ import { ClientAccountsPanelComponent } from "./components/admin/client-accounts
 import { ClientAccountFormComponent } from "./components/admin/client-account-form/client-account-form.component";
 import { UserFormComponent } from "./components/admin/user-form/user-form.component";
 import { AccountTypeNamePipe } from "./helpers/account-type-name.pipe";
+import { ProfileComponent } from "./components/profile/profile.component";
+import { LinkAccountsDialogComponent } from "./components/admin/users-panel/link-accounts-dialog/link-accounts-dialog.component";
+import { IncidentsPanelComponent } from "./components/incidents-panel/incidents-panel.component";
 // import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
@@ -77,7 +80,10 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     IncidentDetailsDialogComponent,
     ClientAccountFormComponent,
     UserFormComponent,
-    AccountTypeNamePipe
+    AccountTypeNamePipe,
+    ProfileComponent,
+    LinkAccountsDialogComponent,
+    IncidentsPanelComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,8 +91,8 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: I18nHttpLoaderFactory,
-        deps: [HttpClient]
-      }
+        deps: [HttpClient],
+      },
     }),
     HttpClientModule,
     AppRoutingModule,
@@ -99,18 +105,21 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     WidgetsModule,
     SharedModule,
     ServiceWorkerModule.register("ngsw-worker.js", {
-      enabled: environment.production
-    })
+      enabled: environment.production,
+    }),
 
     // ChartsModule
   ],
-  entryComponents: [IncidentDetailsDialogComponent],
+  entryComponents: [
+    IncidentDetailsDialogComponent,
+    LinkAccountsDialogComponent,
+  ],
   providers: [
     DatePipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    SubscriptionNotificationService
+    SubscriptionNotificationService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

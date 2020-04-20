@@ -1,23 +1,20 @@
 import { Subscription } from "rxjs";
-import { Component, Input, OnChanges, OnDestroy, OnInit } from "@angular/core";
-
-// import { FitbitService } from "src/app/services/fitbit.service";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { SubscriptionNotificationService } from "src/app/services/subscription.notification.service";
 
 @Component({
   selector: "notifications-dropdown",
   templateUrl: "./notifications-dropdown.component.html",
-  styleUrls: ["./notifications-dropdown.component.scss"]
+  styleUrls: ["./notifications-dropdown.component.scss"],
 })
 export class NotificationsDropdownComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   ICONS = {
-    warning: "exclamation-triangle"
+    warning: "exclamation-triangle",
   };
 
   unread: number = 0;
-  // showCounter: boolean = false;
 
   @Input()
   notifications: any[];
@@ -31,16 +28,8 @@ export class NotificationsDropdownComponent implements OnInit, OnDestroy {
 
   ngOnInit() {}
 
-  // ngOnChanges() {
-  //   // console.log("notif dropdown", this.notifications);
-
-  //   // if (this.notifications && this.notifications.length) {
-  //   //   this.showCounter = true;
-  //   // }
-  // }
-
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   toggleRead(notification) {
@@ -48,9 +37,9 @@ export class NotificationsDropdownComponent implements OnInit, OnDestroy {
     console.log(notification.read, notification.id);
 
     const sub = this.subscriptionNotificationService
-      .update({ read: notification.read })
+      .toggleRead(notification)
       .subscribe(
-        response => {
+        (response) => {
           if (response) console.log(response);
         },
         () => {

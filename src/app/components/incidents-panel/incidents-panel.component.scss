@@ -1,0 +1,32 @@
+table {
+  margin: 0;
+}
+
+thead th::first-letter {
+  text-transform: capitalize;
+}
+
+th,
+tr.incident td:not(:nth-of-type(4)) {
+  text-align: center;
+}
+
+tr.incident td mdb-icon {
+  font-size: 1.2em;
+}
+
+td.message::first-letter {
+  text-transform: capitalize;
+}
+
+td.message span {
+  text-transform: uppercase;
+}
+
+mdb-icon {
+  cursor: pointer;
+}
+
+:host::ng-deep mdb-tooltip-container .arrow {
+  display: none;
+}

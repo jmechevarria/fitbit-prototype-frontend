@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { BehaviorSubject } from "rxjs";
 
 @Pipe({
-  name: "dynamicMoment"
+  name: "dynamicMoment",
 })
 export class MomentPipe implements PipeTransform {
   /**
@@ -20,22 +20,16 @@ export class MomentPipe implements PipeTransform {
    * @returns {any}
    */
   transform(value: string, format?: string): any {
-    console.log(value, format);
-
     // make the moment format configurable
     format = format ? format : "MMMM Do YYYY";
     // get the initial value
-    const initVal = moment(value)
-      .locale(moment.locale())
-      .format(format);
+    const initVal = moment(value).locale(moment.locale()).format(format);
     // insert the value into a new behaviour subject. If the language changes, the behaviour subject will be
     // updated
     const momentObs = new BehaviorSubject<string>(initVal);
     this.translate.onLangChange.subscribe(() => {
       // format the new date according to the new locale
-      const val = moment(value)
-        .locale(moment.locale())
-        .format(format);
+      const val = moment(value).locale(moment.locale()).format(format);
       momentObs.next(val);
     });
 

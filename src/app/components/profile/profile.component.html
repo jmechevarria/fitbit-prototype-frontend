@@ -1,7 +1,5 @@
 <h1>
-  {{ formHeader }} ({{
-    "shared." + (user.role_id | roleName: roles) | translate
-  }})
+  {{ "shared.profile" | translate }}
 </h1>
 
 <div [hidden]="!serverSideError || inReview" class="alert alert-danger">
@@ -64,7 +62,7 @@
         type="password"
         class="form-control"
         id="password"
-        [required]="!editForm || !password.pristine"
+        [required]="!password.pristine"
         #password="ngModel"
       />
       <div
@@ -165,21 +163,6 @@
       </div>
     </div>
 
-    <!-- <div *ngFor="let role of roles">
-      <div *ngIf="role.id == user.role_id">
-        <h3>
-          {{
-            "forms.user.role_specific_information"
-              | translate
-                : {
-                    role:
-                      "shared." + (user.role_id | roleName: roles) | translate
-                  }
-          }}
-        </h3>
-      </div>
-    </div> -->
-
     <button
       type="button"
       (click)="inReview = true"
@@ -188,7 +171,7 @@
     >
       {{ "shared.review" | translate }}
     </button>
-    <button type="button" [routerLink]="'/admin'" class="btn">
+    <button type="button" [routerLink]="'/'" class="btn">
       {{ "shared.cancel" | translate }}
     </button>
   </div>
@@ -200,11 +183,6 @@
     <table mdbTable bordered="true">
       <tbody>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.role" | translate }}</th>
-          <!-- <td>{{ roles[user.role_id]?.name }}</td> -->
-          <td>{{ user.role_id | roleName: roles | translate }}</td>
-        </tr>
-        <tr mdbTableCol>
           <th scope="row">{{ "forms.field_names.email" | translate }}</th>
           <td>{{ user.email }}</td>
         </tr>
@@ -213,13 +191,12 @@
           <td>{{ user.username }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">
-            {{ "shared.password" | translate }}
-          </th>
+          <th scope="row">{{ "shared.password" | translate }}</th>
           <td class="password">
             <span [style.visibility]="showPassword ? 'visible' : 'hidden'">{{
               user.password
             }}</span>
+
             <mdb-icon
               [hidden]="!showPassword"
               (click)="togglePassword()"

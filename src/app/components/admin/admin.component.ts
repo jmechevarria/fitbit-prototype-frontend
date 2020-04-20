@@ -13,7 +13,7 @@ import { FitbitAccount } from "src/app/models/FitbitAccount";
 @Component({
   selector: "admin",
   templateUrl: "admin.component.html",
-  styleUrls: ["admin.component.scss"]
+  styleUrls: ["admin.component.scss"],
 })
 export class AdminComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -24,13 +24,13 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private fitbitAccountService: FitbitAccountService,
+    // private fitbitAccountService: FitbitAccountService,
     private clientAccountService: ClientAccountService,
     private userService: UserService,
     private fitbitService: FitbitService,
     private router: Router
   ) {
-    const sub = this.authenticationService.currentUser$.subscribe(user => {
+    const sub = this.authenticationService.currentUser$.subscribe((user) => {
       this.currentUser = user;
     });
 
@@ -51,10 +51,12 @@ export class AdminComponent implements OnInit, OnDestroy {
           ImplicitGrantFlowResponse
         >(hash);
 
-        const sub = this.fitbitAccountService
-          .patch(this.fitbitService.tempFitbitAccountID, {
+        const sub = this.clientAccountService
+          .patch({
+            id: this.fitbitService.tempFitbitAccountID,
+            type_id: 1,
             encoded_id: implicitGrantFlowResponse.user_id,
-            access_token: implicitGrantFlowResponse.access_token
+            access_token: implicitGrantFlowResponse.access_token,
           })
           .subscribe(
             () => {
@@ -63,7 +65,7 @@ export class AdminComponent implements OnInit, OnDestroy {
               window.location.hash = "";
               // window.location.search = "";
             },
-            error => {
+            (error) => {
               console.log(error);
             }
           );
@@ -77,13 +79,13 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   unlinkFromClientAccount(params) {
     const sub = this.userService
       .unlinkFromClientAccount(params.userID, params.clientAccountID)
-      .subscribe(response => {
+      .subscribe((response) => {
         response = response["rows"][0];
         if (response) {
           const indexOf = this.users[params.userID].client_account_ids.indexOf(
@@ -100,10 +102,10 @@ export class AdminComponent implements OnInit, OnDestroy {
   linkToClientAccount({ userID, clientAccountsIDs }) {
     const sub = this.userService
       .linkToClientAccount(userID, clientAccountsIDs)
-      .subscribe(response => {
+      .subscribe((response) => {
         response = response["rows"];
         if (response) {
-          response.forEach(row => {
+          response.forEach((row) => {
             const { user_id, client_account_id } = row;
             this.users[user_id].client_account_ids.push(client_account_id);
           });
@@ -114,7 +116,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   private loadUsers() {
-    const sub = this.userService.get().subscribe(users => {
+    const sub = this.userService.get().subscribe((users) => {
       console.log(users);
 
       this.users = users.reduce((acc, user) => {
@@ -130,7 +132,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   private loadClientAccounts() {
-    const sub = this.clientAccountService.get().subscribe(clientAccounts => {
+    const sub = this.clientAccountService.get().subscribe((clientAccounts) => {
       for (const clientAccount of clientAccounts) {
         this.clientAccounts[clientAccount.id] = clientAccount;
       }
@@ -141,7 +143,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   deleteUser(id: number) {
-    const sub = this.userService.delete(id).subscribe(response => {
+    const sub = this.userService.delete(id).subscribe((response) => {
       const deletedID = response.id;
       delete this.users[deletedID];
     });
@@ -150,11 +152,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   deleteFitbitAccount(id: number) {
-    const sub = this.clientAccountService.delete(id).subscribe(response => {
+    const sub = this.clientAccountService.delete(id).subscribe((response) => {
       const deletedID = response.id;
       delete this.clientAccounts[deletedID];
 
-      Object.values<any>(this.users).forEach(user => {
+      Object.values<any>(this.users).forEach((user) => {
         const indexOf = user.client_account_ids.indexOf(deletedID);
 
         user.client_account_ids.splice(indexOf, 1);
@@ -172,7 +174,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   revokeAccessToken(fitbitAccount: FitbitAccount) {
     const sub = this.fitbitService
       .relinquishAccess(fitbitAccount.id)
-      .subscribe(response => {
+      .subscribe((response) => {
         console.log(response, "revoked");
       });
 

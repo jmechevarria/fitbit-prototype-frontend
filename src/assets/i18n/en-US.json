@@ -4,8 +4,6 @@
       "home": "Home",
       "dashboard": "Dashboard",
       "administration": "Administration",
-      "language": "Language",
-      "logout": "Logout",
       "notifications_dropdown": {
         "view_all_notifications": "all notifications",
         "inbox": "inbox",
@@ -47,7 +45,8 @@
       "steps_today": "steps today",
       "floors": "floors today",
       "good": "good",
-      "bad": "bad"
+      "bad": "bad",
+      "latest_states_not_found": "Latest states not found"
     },
     "fitbit_data": {
       "heart_rate_time_series_for_user": "Heart rate time series for user",
@@ -81,7 +80,8 @@
     "moderate": "moderate",
     "dialog": {
       "incident_details": {
-        "title": "incident details"
+        "title": "incident details",
+        "chart_subtitle": "Health parameters previous to incident"
       }
     },
     "no_notifications": "no notifications"
@@ -172,6 +172,13 @@
     "new_client_account": "New client account",
     "type": "type",
     "time": "time",
+    "profile": "profile",
+    "language": "language",
+    "logout": "logout",
+    "delete": "delete",
+    "process": "process",
+    "verified_as": "Verified as",
+    "initial_classification": "Initial classification",
     "dialog": {
       "title": "title",
       "body": "content",

@@ -74,11 +74,8 @@ export class UserService {
     clientAccountIDs: number[]
   ): Observable<any[]> {
     return this.http.post<any[]>(
-      `${environment.apiURL}users/link/user/client-account`,
-      {
-        userID,
-        clientAccountIDs
-      }
+      `${environment.apiURL}users/link/user/client-accounts`,
+      { userID, clientAccountIDs }
     );
   }
 

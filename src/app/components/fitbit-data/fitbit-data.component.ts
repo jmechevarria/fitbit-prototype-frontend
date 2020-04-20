@@ -19,7 +19,7 @@ export interface InterdayDataSource {
 @Component({
   selector: "fitbit-data",
   templateUrl: "./fitbit-data.component.html",
-  styleUrls: ["./fitbit-data.component.scss"]
+  styleUrls: ["./fitbit-data.component.scss"],
 })
 export class FitbitDataComponent implements OnInit {
   // fitbitUser: any;
@@ -41,7 +41,7 @@ export class FitbitDataComponent implements OnInit {
   predefinedRanges: {} = {
     "1d": "shared.today",
     "1w": "shared.last_7_days",
-    "30d": "shared.last_30_days"
+    "30d": "shared.last_30_days",
   };
   selectedPredefinedRange: string = "30d";
   rangeType: string = this.PREDEFINED_RANGE;
@@ -103,17 +103,15 @@ export class FitbitDataComponent implements OnInit {
     this.fitbitService
       .fetchHeartRateInterday(
         this.fitbitAccount.id,
-        // !!from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
-        // !!to ? to : this.selectedPredefinedRange,
         from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
         to ? to : this.selectedPredefinedRange
       )
       .subscribe(
-        response => {
+        (response) => {
           this.interdayDataSource.data = this.responseToDataSource(response);
           this.heartRateInterdayLoading = false;
         },
-        error => {
+        (error) => {
           console.log(error);
           this.heartRateInterdayLoading = false;
         },
@@ -150,48 +148,39 @@ export class FitbitDataComponent implements OnInit {
 
   private responseToDataSource(response): Array<InterdayDataSource> {
     if (response) {
-      console.log(response);
       this.heartRateInterday = response;
-      return (
-        Object.values(this.heartRateInterday)
-          // .reverse()
-          .map(day => {
-            console.log(day["date"], moment.parseZone(day["date"]));
+      return Object.values(this.heartRateInterday).map((day) => {
+        let dataObject = {} as InterdayDataSource;
+        dataObject.date = moment.parseZone(day["date"]).format("YYYY-MM-DD");
 
-            let dataObject = {} as InterdayDataSource;
-            dataObject.date = moment
-              .parseZone(day["date"])
-              .format("YYYY-MM-DD");
+        dataObject.hrz_1 = {
+          caloriesOut: day["hrz_1_calories"]
+            ? day["hrz_1_calories"].toFixed(2)
+            : null,
+          minutes: day["hrz_1_minutes"],
+        };
+        dataObject.hrz_2 = {
+          caloriesOut: day["hrz_2_calories"]
+            ? day["hrz_2_calories"].toFixed(2)
+            : null,
+          minutes: day["hrz_2_minutes"],
+        };
+        dataObject.hrz_3 = {
+          caloriesOut: day["hrz_3_calories"]
+            ? day["hrz_3_calories"].toFixed(2)
+            : null,
+          minutes: day["hrz_3_minutes"],
+        };
+        dataObject.hrz_4 = {
+          caloriesOut: day["hrz_4_calories"]
+            ? day["hrz_4_calories"].toFixed(2)
+            : null,
+          minutes: day["hrz_4_minutes"],
+        };
+        dataObject.steps = day["steps"];
 
-            dataObject.hrz_1 = {
-              caloriesOut: day["hrz_1_calories"]
-                ? day["hrz_1_calories"].toFixed(2)
-                : null,
-              minutes: day["hrz_1_minutes"]
-            };
-            dataObject.hrz_2 = {
-              caloriesOut: day["hrz_2_calories"]
-                ? day["hrz_2_calories"].toFixed(2)
-                : null,
-              minutes: day["hrz_2_minutes"]
-            };
-            dataObject.hrz_3 = {
-              caloriesOut: day["hrz_3_calories"]
-                ? day["hrz_3_calories"].toFixed(2)
-                : null,
-              minutes: day["hrz_3_minutes"]
-            };
-            dataObject.hrz_4 = {
-              caloriesOut: day["hrz_4_calories"]
-                ? day["hrz_4_calories"].toFixed(2)
-                : null,
-              minutes: day["hrz_4_minutes"]
-            };
-            dataObject.steps = day["steps"];
-
-            return dataObject;
-          })
-      );
+        return dataObject;
+      });
     }
 
     return [];
@@ -203,7 +192,7 @@ export class FitbitDataComponent implements OnInit {
     hrz_1: "hrz_1",
     hrz_2: "hrz_2",
     hrz_3: "hrz_3",
-    hrz_4: "hrz_4"
+    hrz_4: "hrz_4",
   };
 
   hrz_translations = {
@@ -211,7 +200,7 @@ export class FitbitDataComponent implements OnInit {
       "dashboard.fitbit_data.interday.out_of_range",
     [this.HEART_RATE_ZONES.hrz_2]: "dashboard.fitbit_data.interday.fat_burn",
     [this.HEART_RATE_ZONES.hrz_3]: "dashboard.fitbit_data.interday.cardio",
-    [this.HEART_RATE_ZONES.hrz_4]: "dashboard.fitbit_data.interday.peak"
+    [this.HEART_RATE_ZONES.hrz_4]: "dashboard.fitbit_data.interday.peak",
   };
 
   displayedColumns: string[] = [
@@ -220,18 +209,17 @@ export class FitbitDataComponent implements OnInit {
     this.HEART_RATE_ZONES.hrz_2,
     this.HEART_RATE_ZONES.hrz_3,
     this.HEART_RATE_ZONES.hrz_4,
-    "steps"
+    "steps",
   ];
   selectedRowIndex: number = -1;
 
   //INTRADAY DATA
   heartRateIntradayLoading: boolean = false;
   heartRateIntradayLoadingError: boolean = false;
-  // intradayChartOptions;
 
   chartTypes = [
     { id: "line", label: "Línea", icon: "timeline" },
-    { id: "bar", label: "Barra", icon: "bar_chart" }
+    { id: "bar", label: "Barra", icon: "bar_chart" },
   ];
 
   public chartType = "line";
@@ -240,7 +228,7 @@ export class FitbitDataComponent implements OnInit {
 
   initChart(config) {
     let time;
-    this.translate.get("shared.time").subscribe(t => {
+    this.translate.get("shared.time").subscribe((t) => {
       time = t;
     });
 
@@ -248,19 +236,19 @@ export class FitbitDataComponent implements OnInit {
       ...{
         chart: {
           type: "line",
-          zoomType: "x"
+          zoomType: "x",
 
           // renderTo: 'container'
         },
         xAxis: {
           title: {
-            text: time
+            text: time,
           },
           type: "datetime",
           dateTimeLabelFormats: {
             // hour: "%I %p",
-            minute: "%I:%M %p"
-          }
+            minute: "%I:%M %p",
+          },
         },
         // yAxis: {
         //   title: {
@@ -268,15 +256,15 @@ export class FitbitDataComponent implements OnInit {
         //   }
         // },
         credits: {
-          enabled: false
+          enabled: false,
         },
         tooltip: {
-          positioner: function() {
+          positioner: function () {
             return { x: 0, y: 0 };
           },
           shadow: false,
           borderWidth: 0,
-          backgroundColor: "rgba(255,255,255,0.8)"
+          backgroundColor: "rgba(255,255,255,0.8)",
           // formatter: function() {
           //   return (
           //     "<b>" +
@@ -291,17 +279,17 @@ export class FitbitDataComponent implements OnInit {
         },
         navigation: {
           buttonOptions: {
-            enabled: true
-          }
+            enabled: true,
+          },
         },
         exporting: {
-          fallbackToExportServer: false
-        }
+          fallbackToExportServer: false,
+        },
         // time: {
         //   useUTC: true
         // }
       },
-      ...config
+      ...config,
     });
   }
 
@@ -324,7 +312,7 @@ export class FitbitDataComponent implements OnInit {
     this.fitbitService
       .fetchHeartRateIntraday(this.fitbitAccount["id"], day.date)
       .subscribe(
-        heartRateIntraday => {
+        (heartRateIntraday) => {
           if (heartRateIntraday) {
             const points = [],
               dayMoment = moment(heartRateIntraday["day"]);
@@ -338,7 +326,7 @@ export class FitbitDataComponent implements OnInit {
                   .add(secondHeartBeatPair["second"], "seconds")
                   // .add(moment().utcOffset(), "minutes")
                   .valueOf(),
-                secondHeartBeatPair["heart_beat"]
+                secondHeartBeatPair["heart_beat"],
               ]);
             }
 
@@ -351,10 +339,10 @@ export class FitbitDataComponent implements OnInit {
                   " " +
                   (this.fitbitAccount.lastname2
                     ? this.fitbitAccount.lastname2
-                    : "")
+                    : ""),
               },
               subtitle: {
-                text: day.date
+                text: day.date,
               },
               series: [
                 {
@@ -362,15 +350,15 @@ export class FitbitDataComponent implements OnInit {
                   // name: this.translate.stream("shared.heart_rate"),
                   name: "Heart rate",
                   data: points,
-                  showInLegend: false
-                }
+                  showInLegend: false,
+                },
               ],
               yAxis: {
                 title: {
-                  text: "Heart rate"
+                  text: "Heart rate",
                   // text: this.translate.stream("shared.heart_rate")
-                }
-              }
+                },
+              },
             });
           } else {
             //empty response
@@ -380,7 +368,7 @@ export class FitbitDataComponent implements OnInit {
           this.highlightRow(rowIndex);
           this.heartRateIntradayLoading = false;
         },
-        error => {
+        (error) => {
           console.log(error);
           this.heartRateIntradayLoading = false;
           this.heartRateIntradayLoadingError = true;

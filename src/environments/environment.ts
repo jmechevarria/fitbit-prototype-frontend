@@ -8,9 +8,10 @@ export const environment = {
   configOauthURL: "https://www.fitbit.com/oauth2/authorize",
   configScope: "heartrate sleep activity profile weight settings",
   configExpiresSec: 30 * 24 * 60 * 60, // 30 days
-  baseURL: "http://localhost:4200",
-  i18n: "/assets/i18n/",
-  apiURL: "http://localhost:3000/api/v1/"
+  baseURL: "http://localhost:4200/",
+  i18n: "assets/i18n/",
+  apiDomain: "http://localhost:3000/",
+  apiURL: "http://localhost:3000/api/v1/",
 };
 
 /*

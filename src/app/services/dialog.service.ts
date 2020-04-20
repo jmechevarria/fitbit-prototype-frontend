@@ -31,6 +31,8 @@ export class DialogService {
     config: MatDialogConfig = this.defaultDialogConfig
   ) {
     config.data = { ...this.defaultDialogConfig.data, ...config.data };
+    console.log(config);
+
     return this.openDialog(component, {
       ...this.defaultDialogConfig,
       ...config

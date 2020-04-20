@@ -1,23 +1,20 @@
 import * as moment from "moment";
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Subscription, forkJoin, Observable } from "rxjs";
-import { filter, switchMap, tap, map } from "rxjs/operators";
+import { Subscription, Observable, BehaviorSubject } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
-import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
-import { DialogService } from "src/app/services/dialog.service";
 import { FitbitService } from "src/app/services/fitbit.service";
 import { SubscriptionNotificationService } from "src/app/services/subscription.notification.service";
-import { TranslateService } from "@ngx-translate/core";
-import { UserService } from "src/app/services/user.service";
 import { IncidentDetailsDialogComponent } from "./incident-details-dialog/incident-details-dialog.component";
 import { MDBModalRef, MDBModalService } from "angular-bootstrap-md";
+import { IncidentService } from "src/app/services/incident.service";
 
 @Component({
   selector: "notifications-panel",
   templateUrl: "./notifications-panel.component.html",
-  styleUrls: ["./notifications-panel.component.scss"]
+  styleUrls: ["./notifications-panel.component.scss"],
 })
 export class NotificationsPanelComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -25,30 +22,31 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   pushMessages$;
   notifications: any[] = [];
   ICONS = {
-    warning: "exclamation-triangle"
+    warning: "exclamation-triangle",
+    danger: "exclamation-circle",
   };
   notifications$: Observable<any[]>;
+  private dialogContentSubject: BehaviorSubject<{}>;
+  dialogContent: Observable<{}>;
 
   constructor(
     private subscriptionNotificationService: SubscriptionNotificationService,
     private authenticationService: AuthenticationService,
-    private fitbitService: FitbitService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private userService: UserService,
+    private incidentService: IncidentService,
     private mDBModalService: MDBModalService
   ) {
+    this.dialogContentSubject = new BehaviorSubject<{}>({});
+    this.dialogContent = this.dialogContentSubject.asObservable();
+
     try {
-      const sub$ = this.subscriptionNotificationService
+      const sub = this.subscriptionNotificationService
         .fetchFromDB(this.authenticationService.currentUser.id, {
-          from: moment()
-            .subtract(1, "d")
-            .format("YYYY-MM-DD HH:mm:ss.SSSZ"),
-          to: moment().format("YYYY-MM-DD HH:mm:ss.SSSZ"),
-          limit: 20
+          // from: moment().subtract(1, "d").format("YYYY-MM-DD HH:mm:ss.SSSZ"),
+          // to: moment().format("YYYY-MM-DD HH:mm:ss.SSSZ"),
+          limit: 20,
         })
-        .subscribe(notifications => {
-          this.notifications = notifications.map(notification => {
+        .subscribe((notifications) => {
+          this.notifications = notifications.map((notification) => {
             // notification.localeFormat = moment(notification.created_utc).format(
             //   "LLL"
             // );
@@ -86,7 +84,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
           // console.log(this.notifications);
         });
 
-      this.subscriptions.push(sub$);
+      this.subscriptions.push(sub);
     } catch (error) {
       console.log(error);
     }
@@ -107,8 +105,8 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const sub = this.subscriptionNotificationService.notifications$
       .pipe(
-        map(notifications =>
-          notifications.map(notification => {
+        map((notifications) =>
+          notifications.map((notification) => {
             console.log("init processNotification", notification);
             // const localeFormat = moment(notification.created).format("LLL");
 
@@ -134,7 +132,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
           })
         )
       )
-      .subscribe(notifications => {
+      .subscribe((notifications) => {
         if (notifications[0]) this.notifications.unshift(notifications[0]);
       });
 
@@ -142,7 +140,7 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
   // private processNotification(notification) {
   //   console.log("init processNotification", notification);
@@ -169,9 +167,26 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
     notification.read = !notification.read;
 
     const sub = this.subscriptionNotificationService
-      .update({ read: notification.read })
+      .toggleRead(notification)
       .subscribe(
-        response => {
+        (response) => {
+          if (response) console.log(response);
+        },
+        () => {
+          notification.read = !notification.read;
+        }
+      );
+
+    this.subscriptions.push(sub);
+  }
+
+  markAccident(notification) {
+    notification.read = !notification.read;
+
+    const sub = this.subscriptionNotificationService
+      .toggleRead(notification)
+      .subscribe(
+        (response) => {
           if (response) console.log(response);
         },
         () => {
@@ -189,42 +204,56 @@ export class NotificationsPanelComponent implements OnInit, OnDestroy {
       focus: true,
       ignoreBackdropClick: false,
       animated: true,
-      class: "modal-dialog-scrollable",
+      class: "modal-dialog-scrollable incident-details-dialog", //incident-details-dialog class is used in styles.scss
       data: {
         title: "notifications_panel.dialog.incident_details.title",
         header: [],
-        content: {}
-      }
+      },
     });
 
-    const sub = this.fitbitService
-      .fetchIncidents(
-        [notification.incident_id],
-        notification.client_account.id
-      )
-      .subscribe(res => {
-        const incident = res[0];
+    // const sub = this.fitbitService
+    //   .fetchIncidents(notification.incident)
+    const sub = this.incidentService
+      .get(notification.incident)
+      .subscribe((incidents) => {
+        const incident = incidents[0];
+        console.log(incident);
 
         if (incident) {
-          this.modalRef.content.content.timestamp = moment(incident.timestamp);
+          // this.modalRef.content.content = {};
+          let auxContent = {
+            timestamp: undefined,
+            wearable_states: undefined,
+            header: undefined,
+            picture: undefined,
+          };
+
+          // console.log(this.modalRef.content.content);
+
+          // this.modalRef.content._content.timestamp = moment(incident.timestamp);
+          auxContent.timestamp = moment(incident.created + "Z");
 
           const wearable_states = incident.wearable_states;
-          if (wearable_states.length) {
-            this.modalRef.content.content.wearable_states = wearable_states;
-            // console.log(Object.keys(wearable_states[0]));
-            // console.log(
-            //   Object.keys(wearable_states[0]).map(
-            //     elem => `dashboard.devices_panel.${elem}`
-            //   )
-            // );
+          if (wearable_states && wearable_states.length) {
+            // this.modalRef.content._content.wearable_states = wearable_states;
+            auxContent.wearable_states = wearable_states;
 
-            this.modalRef.content.header = Object.keys(wearable_states[0]).map(
-              elem => `shared.${elem}`
+            // this.modalRef.content.header = Object.keys(wearable_states[0]).map(
+            auxContent.header = Object.keys(wearable_states[0]).map(
+              (elem) => `shared.${elem}`
             );
           }
+
+          const picture = incident.picture;
+
+          // if (picture) this.modalRef.content._content.picture = picture;
+          if (picture) auxContent.picture = picture;
+
+          this.modalRef.content.content = auxContent;
           this.modalRef.content.loading = false;
 
-          console.log(res, this.modalRef.content);
+          this.dialogContentSubject.next(this.modalRef.content);
+          // console.log(res, this.modalRef.content);
         }
       });
 

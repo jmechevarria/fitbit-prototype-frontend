@@ -6,7 +6,7 @@ export class FitbitAccount extends ClientAccount implements IFitbitAccount {
   secret: string;
   fitbit_app_id: string;
   access_token: string;
-  constructor(params?) {
+  constructor(params?: IFitbitAccount) {
     super(params);
     this.type_id = 1;
     if (params) {

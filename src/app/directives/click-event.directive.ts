@@ -1,7 +1,7 @@
 import { Directive, HostListener, Input } from "@angular/core";
 
 @Directive({
-  selector: "[click-event]"
+  selector: "[click-event]",
 })
 export class ClickEventDirective {
   @Input("click-event-params") params = [];

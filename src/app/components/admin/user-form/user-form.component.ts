@@ -7,6 +7,7 @@ import { RoleService } from "src/app/services/role.service";
 import { Role } from "src/app/models/Role";
 import { User } from "src/app/models/User";
 import { UserFactory } from "src/app/models/UserFactory";
+import { AuthenticationService } from "src/app/services/authentication.service";
 
 @Component({
   selector: "app-user-form",
@@ -21,7 +22,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   serverSideErrorMessage = "";
   formHeader;
   roles: Role[] = [];
-
+  showPassword: boolean = false;
   user: any = new User();
 
   constructor(
@@ -29,7 +30,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private router: Router,
     private userService: UserService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private authenticationService: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -105,6 +107,10 @@ export class UserFormComponent implements OnInit, OnDestroy {
     else
       sub = this.userService.patch(this.user).subscribe(
         () => {
+          delete this.user.password;
+          if (this.user.id === this.authenticationService.currentUser.id)
+            this.authenticationService.currentUser = this.user;
+
           this.router.navigate(["/admin"]);
         },
         error => {
@@ -124,5 +130,9 @@ export class UserFormComponent implements OnInit, OnDestroy {
       );
 
     this.subscriptions.push(sub);
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }

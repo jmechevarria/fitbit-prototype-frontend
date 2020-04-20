@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
 import { FitbitAccount } from "../models/FitbitAccount";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class FitbitService {
   /**
@@ -25,7 +25,7 @@ export class FitbitService {
       configExpiresSec,
       configOauthURL,
       configRedirectURI,
-      configScope
+      configScope,
     } = environment;
 
     this.configExpiresSec = configExpiresSec;
@@ -86,18 +86,6 @@ export class FitbitService {
     );
   }
 
-  fetchIncidents(incidentIDs, fitbitAccountID: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${
-        environment.apiURL
-      }incidents/${fitbitAccountID}/?incident_ids=${incidentIDs
-        .map(id => {
-          return id;
-        })
-        .join(",")}`
-    );
-  }
-
   fetchLatestRecordedStates(
     clientAccountsIDs: number[],
     clientMoment
@@ -107,8 +95,8 @@ export class FitbitService {
       {
         params: {
           clientAccountsIDs: clientAccountsIDs.join(","),
-          clientMomentString: clientMoment.format()
-        }
+          clientMomentString: clientMoment.format(),
+        },
       }
     );
   }

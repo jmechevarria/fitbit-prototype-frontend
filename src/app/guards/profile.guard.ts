@@ -11,7 +11,7 @@ import { map } from "rxjs/operators";
 @Injectable({
   providedIn: "root"
 })
-export class AdminGuard implements CanActivate {
+export class ProfileGuard implements CanActivate {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
@@ -28,7 +28,6 @@ export class AdminGuard implements CanActivate {
           queryParams: { returnUrl: state.url }
         });
         reject(false);
-        return;
       }
 
       if (

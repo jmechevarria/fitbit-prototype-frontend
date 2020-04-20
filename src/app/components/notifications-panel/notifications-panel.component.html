@@ -12,7 +12,7 @@
           {{ "shared.name" | translate }}
         </th>
         <th>{{ "shared.message" | translate }}</th>
-        <th>
+        <th colspan="2">
           {{ "shared.actions" | translate }}
         </th>
       </tr>
@@ -34,7 +34,7 @@
           <mdb-icon fas icon="{{ ICONS[notification?.severity] }}"></mdb-icon>
         </td>
         <td>
-          {{ notification?.created | dynamicMoment: "LLL" | async }}
+          {{ notification?.created + "Z" | dynamicMoment: "LLL" | async }}
         </td>
 
         <td>
@@ -65,6 +65,24 @@
             far
             icon="{{ notification?.read ? 'envelope-open' : 'envelope' }}"
             (click)="toggleRead(notification)"
+          ></mdb-icon>
+        </td>
+        <td scope="row">
+          <mdb-icon
+            click-event
+            click-event-params="[stopPropagation]"
+            mdbTooltip="{{
+              'notifications_panel.' +
+                (notification?.actual_accident
+                  ? 'mark_false_alarm'
+                  : 'mark_accident') | translate
+            }}"
+            placement="left"
+            fas
+            icon="exclamation"
+            [ngClass]="{ actual_accident: notification?.actual_accident }"
+            (click)="markAccident(notification)"
+            class="check-accident"
           ></mdb-icon>
         </td>
       </tr>

@@ -66,3 +66,8 @@ ul {
 label {
   margin: 0 !important;
 }
+
+mdb-modal-container .incident-details-dialog {
+  max-width: fit-content;
+  width: fit-content;
+}

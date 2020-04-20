@@ -230,13 +230,10 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
           <mat-list role="list">
-            <ng-container>
-              <mat-list-item
-                role="listitem"
-                *ngFor="
-                  let clientAccount of user.value.clientAccounts | keyvalue
-                "
-              >
+            <ng-container
+              *ngFor="let clientAccount of user.value.client_account_ids"
+            >
+              <mat-list-item role="listitem">
                 <div
                   fxLayout="row"
                   fxLayoutAlign="space-between center"
@@ -244,23 +241,18 @@
                 >
                   <div>
                     <label>{{
-                      clientAccount.value.firstname +
+                      clientAccounts[clientAccount]?.firstname +
                         " " +
-                        clientAccount.value.lastname +
+                        clientAccounts[clientAccount]?.lastname +
                         " " +
-                        (clientAccount.value.lastname2
-                          ? clientAccount.value.lastname2
+                        (clientAccounts[clientAccount]?.lastname2
+                          ? clientAccounts[clientAccount]?.lastname2
                           : "")
                     }}</label>
                   </div>
                   <div>
                     <a
-                      (click)="
-                        unlinkFromClientAccount(
-                          user.key,
-                          clientAccount.value.id
-                        )
-                      "
+                      (click)="unlinkFromClientAccount(user.key, clientAccount)"
                       class="text-danger"
                     >
                       <button

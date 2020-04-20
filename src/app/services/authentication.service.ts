@@ -27,6 +27,8 @@ export class AuthenticationService {
   }
 
   set currentUser(value) {
+    this.currentUserSubject$.next(value);
+
     localStorage.setItem(this._CURRENT_USER, JSON.stringify(value));
   }
 
@@ -55,7 +57,6 @@ export class AuthenticationService {
             // persist user details and jwt token in local storage
             this.currentUser = response.user;
             this.token = response.jwtToken;
-            this.currentUserSubject$.next(this.currentUser);
           }
         })
       );
@@ -65,6 +66,15 @@ export class AuthenticationService {
     this.currentUser = null;
     this.token = null;
     this.currentUserSubject$.next(null);
+    console.log(error);
+
+    // if (
+    //   error &&
+    //   (error.id === ERRORS.INSUFFICIENT_PRIVILEGES.id ||
+    //     error.id === ERRORS.TOKEN_EXPIRED.id)
+    // )
+    // toast?
+
     this.router.navigate(["/login"]);
   }
 }

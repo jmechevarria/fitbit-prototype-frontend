@@ -24,27 +24,102 @@
     <span class="sr-only">Loading...</span>
   </div>
   <div *ngIf="!loading">
-    <h5>{{ content?.timestamp | dynamicMoment: "LLL" | async }}</h5>
-    <table mdbTable striped="true">
-      <thead>
-        <tr>
-          <th *ngFor="let head of header" scope="col">
-            {{ head | translate }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr mdbTableCol *ngFor="let el of content?.wearable_states">
-          <th>{{ el.hbpm }}</th>
-          <td>{{ el.sleep_status | number: "1.0-2" }}</td>
-          <td>{{ el.steps }}</td>
-          <td>{{ el.floors }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div fxLayout fxLayout.lt-lg="column" fxLayoutAlign="center center">
+      <!-- <div> -->
+      <table mdbTable bordered="true" fxFlexAlign="start">
+        <tbody>
+          <tr>
+            <th>
+              {{ "name" | translate }}
+            </th>
+            <td>
+              {{
+                content.client_account.firstname +
+                  content.client_account.lastname +
+                  (content.client_account.lastname2
+                    ? content.client_account.lastname2
+                    : "")
+              }}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ "date" | translate }} & {{ "time" | translate }}</th>
+            <td>
+              {{ content.created + "Z" | dynamicMoment: "LLL" | async }}
+            </td>
+          </tr>
+          <tr>
+            <th>
+              {{ "initial_classification" | translate }}
+            </th>
+            <td>
+              {{ (content.accident ? "accident" : "incident") | translate }}
+            </td>
+          </tr>
+          <tr>
+            <th>
+              {{ "verified_as" | translate }}
+            </th>
+            <td>
+              {{
+                (content.processed
+                  ? content.actual_accident
+                    ? "actual_accident"
+                    : "false_alarm"
+                  : "not_processed_yet"
+                ) | translate
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- </div> -->
 
-  <!-- <p>{{ description | translate }}</p> -->
+      <div
+        fxLayout="column"
+        fxLayoutAlign="center center"
+        *ngIf="content.wearable_states"
+        id="incident-chart-container"
+        class="mat-elevation-z8"
+      >
+        <!-- <div style="position: relative;width: 100%; z-index:1">
+          <button
+            (click)="hideIntradayData()"
+            mat-button
+            style="position: absolute; top: 10px; right: 20px;"
+          >
+            X
+          </button>
+        </div> -->
+
+        <div [chart]="chart"></div>
+        <div fxLayout fxLayoutAlign="space-evenly center" fxFill="100%">
+          <div>
+            <mdb-badge color="indigo" pill="true"
+              >Sleep status average:
+              {{ content.sleepStatusAverage | number: ".2-2" }}</mdb-badge
+            >
+          </div>
+          <div>
+            <mdb-badge color="amber darken-2" pill="true"
+              >Steps: {{ content.steps }}</mdb-badge
+            >
+          </div>
+          <div>
+            <mdb-badge color="purple darken-2" pill="true"
+              >Floors: {{ content.floors }}</mdb-badge
+            >
+          </div>
+        </div>
+      </div>
+      <div *ngIf="content.picture">
+        <img
+          width="100%"
+          src="data:image/jpg;base64,{{ content.picture.data }}"
+        />
+      </div>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <button

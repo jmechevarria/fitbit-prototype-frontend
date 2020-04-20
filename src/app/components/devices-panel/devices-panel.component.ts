@@ -7,9 +7,9 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from "@angular/core";
-import { filter, map, switchMap, tap } from "rxjs/operators";
+import { filter, map, switchMap } from "rxjs/operators";
 
 import { AuthenticationService } from "src/app/services/authentication.service";
 import { FitbitService } from "src/app/services/fitbit.service";
@@ -19,7 +19,7 @@ import { Subscription } from "rxjs";
   selector: "devices-panel",
   templateUrl: "./devices-panel.component.html",
   styleUrls: ["./devices-panel.component.scss"],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class DevicesPanelComponent implements OnInit, OnDestroy {
   @Input()
@@ -29,7 +29,7 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
 
   // _clientAccounts;
   // private currentUser;
-  states: Object;
+  states: Object = {};
   showStates: boolean = false;
 
   subscriptions: Subscription[] = [];
@@ -43,14 +43,13 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
     this.showStates = false;
     console.log("devices oninit");
 
-    const sub$ = this.authenticationService.currentUser$
+    const sub = this.authenticationService.currentUser$
       .pipe(
-        // tap(user => (this.currentUser = user)),
-        filter(user => !!user),
-        map((user: any) => user.clientAccounts),
-        switchMap(clientAccounts => {
+        filter((user) => !!user),
+        map((user) => user["clientAccounts"]),
+        switchMap((clientAccounts) => {
           const clientAccountsIDs = clientAccounts.map(
-            clientAccount => clientAccount.id
+            (clientAccount) => clientAccount.id
           );
 
           return this.fitbitService.fetchLatestRecordedStates(
@@ -58,7 +57,9 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
             moment()
           );
         }),
-        map(states => {
+        map((states) => {
+          // if (states) {
+          console.log(states);
           if (states.length) {
             this.showStates = true;
             this.states = states.reduce((acc, state) => {
@@ -73,15 +74,18 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
               return acc;
             }, {});
           }
+          // }
+
+          console.log(this.states);
         })
       )
       .subscribe();
 
-    this.subscriptions.push(sub$);
+    this.subscriptions.push(sub);
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s$ => s$.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   age(birthdate) {

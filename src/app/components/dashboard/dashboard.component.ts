@@ -13,10 +13,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild(FitbitDataComponent, { static: false })
   fitbitDataComponent: FitbitDataComponent;
 
-  constructor(
-    // private fitbitService: FitbitService,
-    private authenticationService: AuthenticationService
-  ) {}
+  constructor(private authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.currentUser = this.authenticationService.currentUser;

@@ -7,13 +7,14 @@ import {
   OnDestroy
 } from "@angular/core";
 import { DialogService } from "src/app/services/dialog.service";
-import { SelectionListDialogComponent } from "src/app/widgets/components/selection-list-dialog/selection-list-dialog.component";
+import { LinkAccountsDialogComponent } from "src/app/components/admin/users-panel/link-accounts-dialog/link-accounts-dialog.component";
 import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
 import { TranslateService } from "@ngx-translate/core";
 import { forkJoin, Subscription } from "rxjs";
 import { switchMap, tap, filter } from "rxjs/operators";
 import { Role } from "src/app/models/Role";
 import { RoleService } from "src/app/services/role.service";
+import { MDBModalRef, MDBModalService } from "angular-bootstrap-md";
 
 export interface DialogData {
   clientAccounts: {};
@@ -27,6 +28,7 @@ export interface DialogData {
 })
 export class UsersPanelComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
+  modalRef: MDBModalRef;
 
   @Input()
   users: any;
@@ -43,7 +45,8 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: DialogService,
     private roleService: RoleService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private mDBModalService: MDBModalService
   ) {}
 
   ngOnInit() {
@@ -149,30 +152,24 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
   }
 
   linkToClientAccount(user) {
-    const clientAccounts = Object.keys(this.clientAccounts).reduce(
-      (acc, key) => {
-        acc[key] = {
-          ...this.clientAccounts[key],
-          // show: !user.clientAccounts[key]
-          show: !user.client_account_ids.includes(parseInt(key))
-        };
-
-        return acc;
-      },
-      {}
-    );
-
-    const dialogRef = this.dialogService.customDialogComponent(
-      SelectionListDialogComponent,
-      {
-        data: { clientAccounts, selected: [] }
+    this.modalRef = this.mDBModalService.show(LinkAccountsDialogComponent, {
+      backdrop: true,
+      keyboard: true,
+      focus: true,
+      ignoreBackdropClick: false,
+      animated: true,
+      class: "modal-dialog-scrollable",
+      data: {
+        title: "notifications_panel.dialog.incident_details.title",
+        header: [],
+        content: {}
       }
-    );
+    });
 
-    const sub = dialogRef.afterClosed().subscribe(selected => {
+    this.modalRef.content.action.subscribe((selected: any[]) => {
+      console.log(selected);
       if (selected && selected.length) {
-        const clientAccountsIDs = selected.map(element => element.key);
-
+        const clientAccountsIDs = selected.map(element => element.id);
         this.linkToClientAccount_EE.emit({
           userID: user.id,
           clientAccountsIDs
@@ -180,6 +177,21 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscriptions.push(sub);
+    const clientAccounts = Object.keys(this.clientAccounts).reduce(
+      (acc, key) => {
+        if (!user.client_account_ids.includes(parseInt(key)))
+          acc[key] = {
+            ...this.clientAccounts[key]
+          };
+        return acc;
+      },
+      {}
+    );
+
+    this.modalRef.content.content.clientAccounts = clientAccounts;
+
+    this.modalRef.content.loading = false;
+
+    console.log(this.modalRef.content);
   }
 }

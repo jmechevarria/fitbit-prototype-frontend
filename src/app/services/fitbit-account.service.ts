@@ -1,8 +1,5 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { FitbitAccount } from "../models/FitbitAccount";
-import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class FitbitAccountService {
@@ -25,12 +22,12 @@ export class FitbitAccountService {
   //   );
   // }
 
-  patch(id: number, values) {
-    return this.http.patch(
-      `${environment.apiURL}fitbit-accounts/${id}`,
-      values
-    );
-  }
+  // patch(id: number, values) {
+  //   return this.http.patch(
+  //     `${environment.apiURL}fitbit-accounts/${id}`,
+  //     values
+  //   );
+  // }
 
   // delete(id: number) {
   //   return this.http.delete(`${environment.apiURL}fitbit-accounts/${id}`);

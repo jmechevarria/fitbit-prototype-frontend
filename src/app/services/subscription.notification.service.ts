@@ -18,14 +18,14 @@ export class SubscriptionNotificationService {
   notifications$: Observable<
     any[]
   > = this._notificationSubject$.asObservable().pipe(
-    map(messages => {
+    map((messages) => {
       // console.log(
       //   "pass filter",
       //   this.currentUser && messages["userID"] === this.currentUser.id
       // );
       // console.log("message", messages, this.currentUser);
 
-      return messages.filter(m => {
+      return messages.filter((m) => {
         return this.currentUser && m["userID"] === this.currentUser.id;
       });
     })
@@ -41,7 +41,7 @@ export class SubscriptionNotificationService {
     // TODO: maybe clean up subscription
     this.swPush.messages
       .pipe(
-        tap(n => {
+        tap((n) => {
           console.log("receive notif", n);
 
           const all = this._notificationSubject$.getValue();
@@ -49,7 +49,7 @@ export class SubscriptionNotificationService {
         })
       )
       .subscribe();
-    this.swUpdate.available.subscribe(update => {
+    this.swUpdate.available.subscribe((update) => {
       console.log(update);
       this.matSnackBar
         .open(
@@ -78,7 +78,7 @@ export class SubscriptionNotificationService {
       //     );
       //   })
       // )
-      .subscribe(user => {
+      .subscribe((user) => {
         this.currentUser = user;
       });
   }
@@ -104,17 +104,21 @@ export class SubscriptionNotificationService {
     // console.log(range);
 
     return this.http.get<any[]>(`${environment.apiURL}messages/1/${userID}`, {
-      params: queryParams
+      params: queryParams,
     });
   }
 
-  update(values) {
+  toggleRead(values) {
     console.log(values);
 
     return this.http.patch(
-      `${environment.apiURL}messages/${values.id}/${values.type}`,
+      `${environment.apiURL}messages/${values.id}/toggle-read`,
       values
     );
+  }
+
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiURL}messages/${id}`);
   }
 
   // sendEmail(addresses: any, subject: any, body: any) {

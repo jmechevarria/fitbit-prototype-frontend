@@ -323,7 +323,7 @@
         </tr>
         <tr mdbTableCol>
           <th scope="row">{{ "shared.birthdate" | translate }}</th>
-          <td>{{ clientAccount.birthdate | dynamicMoment: "LLL" | async }}</td>
+          <td>{{ clientAccount.birthdate | dynamicMoment: "LL" | async }}</td>
         </tr>
         <ng-container *ngIf="clientAccount.type_id === 1">
           <tr mdbTableCol>

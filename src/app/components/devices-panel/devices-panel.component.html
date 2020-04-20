@@ -40,7 +40,7 @@
         *ngFor="let device of fitbitAccount.value.devices | keyvalue"
         role="listitem"
       >
-        <div fxLayout fxLayoutAlign="space-between center" style="width: 100%">
+        <div fxLayout fxLayoutAlign="space-between center" style="width: 100%;">
           <div fxLayout>
             <span fxLayoutAlign="space-around center"
               ><img
@@ -53,7 +53,7 @@
             </span>
           </div>
           <div
-            *ngIf="showStates; else no_state"
+            *ngIf="states[fitbitAccount.value.id]; else no_state"
             fxLayout="column"
             class="state-container"
           >
@@ -113,7 +113,7 @@
             </div>
             <div fxLayout fxLayoutAlign="end center">
               <h5>
-                <mdb-badge style="color:black !important">
+                <mdb-badge style="color: black !important;">
                   {{
                     states[fitbitAccount.value.id]["moment"]
                       | dynamicMoment: "LLL"
@@ -124,8 +124,8 @@
             </div>
           </div>
           <ng-template #no_state
-            ><label style="color: lightgray">{{
-              "dashboard.devices_panel.problem_retrieving_state" | translate
+            ><label style="color: lightgray;">{{
+              "dashboard.devices_panel.latest_states_not_found" | translate
             }}</label></ng-template
           >
         </div>

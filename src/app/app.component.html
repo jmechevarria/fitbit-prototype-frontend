@@ -8,7 +8,6 @@
   <!-- Collapsible content -->
   <links>
     <!-- Links -->
-
     <ul class="navbar-nav mr-auto">
       <li
         class="nav-item"
@@ -58,7 +57,7 @@
           class="nav-link dropdown-toggle waves-light"
           mdbWavesEffect
         >
-          {{ "home.main_menu.language" | translate }}<span class="caret"></span
+          {{ "shared.language" | translate }}<span class="caret"></span
         ></a>
         <div
           *dropdownMenu
@@ -92,6 +91,18 @@
         </div>
       </li>
 
+      <!-- Incidents Link -->
+      <li *ngIf="isAuthenticated" class="nav-item">
+        <a
+          type="button"
+          class="nav-link waves-light"
+          mdbWavesEffect
+          [routerLink]="['/incidents']"
+        >
+          <mdb-icon fas icon="exclamation"></mdb-icon>
+        </a>
+      </li>
+
       <!-- Notifications Link -->
       <li *ngIf="isAuthenticated" class="nav-item" fxShow fxHide.gt-xs>
         <a
@@ -107,13 +118,13 @@
             icon="exclamation-circle"
             class="counter"
           ></mdb-icon>
-          <!-- <mdb-icon fas icon="bell"></mdb-icon>
+          <mdb-icon fas icon="bell"></mdb-icon>
           <span
             class="counter"
             *ngIf="newNotifications && notifications$ | async as notifications"
           >
             {{ notifications.length ? notifications.length : "" }}
-          </span> -->
+          </span>
         </a>
       </li>
 
@@ -144,12 +155,16 @@
           <!-- <a [routerLink]="['/notifications']" class="dropdown-item" href="#">
             {{ "home.main_menu.notifications" | translate }}</a
           > -->
-          <a (click)="logout()" class="dropdown-item" href="#">{{
-            "home.main_menu.logout" | translate
-          }}</a>
+          <button [routerLink]="['/profile']" class="dropdown-item">
+            {{ "shared.profile" | translate }}
+          </button>
+          <button (click)="logout()" class="dropdown-item">
+            {{ "shared.logout" | translate }}
+          </button>
         </div>
       </li>
     </ul>
+
     <ul class="navbar-nav">
       <li *ngIf="!isAuthenticated" class="nav-item">
         <a
@@ -170,26 +185,19 @@
 </main>
 <!-- Footer -->
 <footer class="page-footer font-small blue pt-4 mt-3">
-  <!-- Footer Links -->
-  <div class="container-fluid text-center text-md-left">
-    <!-- Grid row -->
+  <!-- <div class="container-fluid text-center text-md-left">
     <div class="row">
-      <!-- Grid column -->
       <div class="col-md-6 mt-md-0 mt-3">
-        <!-- Content -->
         <h5 class="text-uppercase">Footer Content</h5>
         <p>
           Here you can use rows and columns here to organize your footer
           content.
         </p>
       </div>
-      <!-- Grid column -->
 
       <hr class="clearfix w-100 d-md-none pb-3" />
 
-      <!-- Grid column -->
       <div class="col-md-3 mb-md-0 mb-3">
-        <!-- Links -->
         <h5 class="text-uppercase">Links</h5>
 
         <ul class="list-unstyled">
@@ -207,11 +215,7 @@
           </li>
         </ul>
       </div>
-      <!-- Grid column -->
-
-      <!-- Grid column -->
       <div class="col-md-3 mb-md-0 mb-3">
-        <!-- Links -->
         <h5 class="text-uppercase">Links</h5>
 
         <ul class="list-unstyled">
@@ -229,16 +233,14 @@
           </li>
         </ul>
       </div>
-      <!-- Grid column -->
     </div>
-    <!-- Grid row -->
-  </div>
-  <!-- Footer Links -->
+  </div> -->
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">
     © 2020 Copyright:
-    <a href="https://mdbootstrap.com/"> MDBootstrap.com</a>
+    <a href="#"> Company</a>
+    <!-- <a href="https://mdbootstrap.com/"> MDBootstrap.com</a> -->
   </div>
   <!-- Copyright -->
 </footer>
