@@ -20,24 +20,24 @@
     role="menu"
     id="notifications-container"
   >
+    <!-- [routerLink]="['/notifications']" -->
     <div
       fxLayout
       fxLayoutAlign="space-between center"
       id="notifications-header"
       class="elegant-color white-text"
-      [routerLink]="['/notifications']"
     >
       <h6>
         {{ "home.main_menu.notifications_dropdown.inbox" | translate }}
       </h6>
-      <div>
+      <!-- <div>
         <label>
           {{
             "home.main_menu.notifications_dropdown.view_all_notifications"
               | translate
           }}
         </label>
-      </div>
+      </div> -->
     </div>
     <div
       id="notifications-dropdown"
@@ -47,7 +47,8 @@
       <ul>
         <li
           *ngFor="let notification of notifications"
-          [routerLink]="['/notifications']"
+          [routerLink]="['incidents']"
+          [queryParams]="{ incident_id: notification.incident }"
           class="notification"
           [ngClass]="{
             'light-green lighten-5 unread': !notification.read

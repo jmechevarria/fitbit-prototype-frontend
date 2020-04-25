@@ -51,6 +51,14 @@
               : ('process' | translate)
           }}" -->
           <mdb-icon
+            [title]="
+              (incident?.processed
+                ? incident.actual_accident
+                  ? 'actual_accident'
+                  : 'false_alarm'
+                : 'process'
+              ) | translate
+            "
             [mdbPopover]="popTemplate"
             [outsideClick]="true"
             placement="left"
@@ -62,7 +70,7 @@
                 ? incident.actual_accident
                   ? 'check-double'
                   : 'times-circle'
-                : 'cogs'
+                : 'ellipsis-h'
             "
             [ngClass]="
               incident?.processed

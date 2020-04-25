@@ -1,11 +1,9 @@
-import * as moment from "moment";
 import { Component, OnInit } from "@angular/core";
 import { MDBModalRef, MDBModalService } from "angular-bootstrap-md";
 import { Subscription, Observable } from "rxjs";
-import { AuthenticationService } from "src/app/services/authentication.service";
-import { FitbitService } from "src/app/services/fitbit.service";
 import { IncidentService } from "src/app/services/incident.service";
 import { IncidentDetailsDialogComponent } from "../notifications-panel/incident-details-dialog/incident-details-dialog.component";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "incidents-panel",
@@ -22,18 +20,14 @@ export class IncidentsPanelComponent implements OnInit {
     danger: "exclamation-circle",
   };
   notifications$: Observable<any[]>;
-  // private dialogContentSubject: BehaviorSubject<{}>;
-  // dialogContent: Observable<{}>;
 
+  selectedIncidentID: number; //when redirecting from notifications drop-down
   constructor(
-    private authenticationService: AuthenticationService,
-    private fitbitService: FitbitService,
     private mDBModalService: MDBModalService,
-    private incidentService: IncidentService
+    private incidentService: IncidentService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
-    // this.dialogContentSubject = new BehaviorSubject<{}>({});
-    // this.dialogContent = this.dialogContentSubject.asObservable();
-
     try {
       const sub = this.incidentService
         .search({
@@ -42,6 +36,8 @@ export class IncidentsPanelComponent implements OnInit {
           limit: 20,
         })
         .subscribe((incidents) => {
+          console.log(incidents);
+
           this.incidents = incidents.map((incident) => {
             const clientAccountFullname = `${
               incident.client_account.firstname
@@ -59,119 +55,68 @@ export class IncidentsPanelComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // The Router manages the observables it provides and localizes the subscriptions.
+    // The subscriptions are cleaned up when the component is destroyed, protecting against memory leaks,
+    // so we don't need to unsubscribe from the route params Observable.
+    this.activatedRoute.queryParams.subscribe((params) => {
+      // this.selectedIncidentID = params.incident_id;
+      if (params.incident_id) this.auxViewIncidentDetails(params.incident_id);
+      // this.router.navigateByUrl(window.location.href);
+      console.log(window.location);
+      console.log(params);
+      // window.location.search = "";
+      // window.location.hash = "";
+    });
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  // processIncident(event, incident, accident: boolean) {
-  //   console.log(event.target.value, incident);
-
-  //   // if (incident.processed) {
-  //   //   //toast already processed
-  //   // } else
-  //   if (event.target.value !== undefined) {
-  //     const sub = this.incidentService
-  //       .processIncident({ ...incident, actual_accident: event.target.value })
-  //       .subscribe((response) => {
-  //         if (response) console.log(response);
-  //         // incident = response;
-  //         incident.actual_accident = event.target.value;
-  //         incident.processed = true;
-  //       });
-  //     this.subscriptions.push(sub);
-  //   }
-  // }
   processIncident(incident, accident: boolean) {
     console.log(incident, accident);
 
-    // if (incident.processed) {
-    //   //toast already processed
-    // } else
-    // if (event.target.value !== undefined) {
     const sub = this.incidentService
       .processIncident({ ...incident, actual_accident: accident })
       .subscribe((response) => {
         if (response) console.log(response);
-        // incident = response;
         incident.actual_accident = accident;
         incident.processed = true;
       });
     this.subscriptions.push(sub);
-    // }
   }
 
   viewIncidentDetails(event, incident) {
-    // // if (event.currentTarget.classList.contains("incident")) {
-    // console.log(event.target, event.currentTarget);
-    // console.log(event.target.tagName, event.currentTarget.tagName);
     if (event.target.tagName == "TD") {
-      this.modalRef = this.mDBModalService.show(
-        IncidentDetailsDialogComponent,
-        {
-          backdrop: true,
-          keyboard: true,
-          focus: true,
-          ignoreBackdropClick: false,
-          animated: true,
-          class: "modal-dialog-scrollable incident-details-dialog", //incident-details-dialog class is used in styles.scss
-          data: {
-            title: "notifications_panel.dialog.incident_details.title",
-            header: [],
-          },
-        }
-      );
-
-      // const sub = this.fitbitService
-      //   .fetchIncidents(incident.id)
-      const sub = this.incidentService
-        .get(incident.id)
-        .subscribe((incident) => {
-          // const incident = incidents[0];
-          console.log(incident);
-
-          if (incident) {
-            // this.modalRef.content.content = {};
-            // let auxContent = {
-            //   timestamp: undefined,
-            //   wearable_states: undefined,
-            //   header: undefined,
-            //   picture: undefined,
-            // };
-
-            // // console.log(this.modalRef.content.content);
-
-            // // this.modalRef.content._content.timestamp = moment(incident.timestamp);
-            // auxContent.timestamp = moment(incident.created + "Z");
-
-            // const wearable_states = incident.wearable_states;
-            // if (wearable_states && wearable_states.length) {
-            //   // this.modalRef.content._content.wearable_states = wearable_states;
-            //   auxContent.wearable_states = wearable_states;
-
-            //   // this.modalRef.content.header = Object.keys(wearable_states[0]).map(
-            //   auxContent.header = Object.keys(wearable_states[0]).map(
-            //     (elem) => `shared.${elem}`
-            //   );
-            // }
-
-            // const picture = incident.picture;
-
-            // // if (picture) this.modalRef.content._content.picture = picture;
-            // if (picture) auxContent.picture = picture;
-
-            // this.modalRef.content.content = auxContent;
-            // console.log(this.modalRef.content);
-            this.modalRef.content.content = incident;
-            this.modalRef.content.loading = false;
-            // this.dialogContentSubject.next(this.modalRef.content);
-            // console.log(res, this.modalRef.content);
-          }
-        });
-
-      this.subscriptions.push(sub);
+      this.auxViewIncidentDetails(incident.id);
     }
+  }
+
+  private auxViewIncidentDetails(id) {
+    this.modalRef = this.mDBModalService.show(IncidentDetailsDialogComponent, {
+      backdrop: true,
+      keyboard: true,
+      focus: true,
+      ignoreBackdropClick: false,
+      animated: true,
+      class: "modal-dialog-scrollable incident-details-dialog", //incident-details-dialog class is used in styles.scss
+      data: {
+        title: "notifications_panel.dialog.incident_details.title",
+        header: [],
+      },
+    });
+
+    const sub = this.incidentService.get(id).subscribe((incident) => {
+      console.log(incident);
+
+      if (incident) {
+        this.modalRef.content.content = incident;
+        this.modalRef.content.loading = false;
+      }
+    });
+
+    this.subscriptions.push(sub);
   }
 
   // getContacts(client_account, notification) {
