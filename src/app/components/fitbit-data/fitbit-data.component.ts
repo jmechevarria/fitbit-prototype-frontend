@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { FitbitService } from "src/app/services/fitbit.service";
 import { DatePipe } from "@angular/common";
 import * as moment from "moment";
@@ -6,6 +6,7 @@ import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
 import { Chart } from "angular-highcharts";
 import { TranslateService } from "@ngx-translate/core";
+import { Subscription } from "rxjs";
 
 export interface InterdayDataSource {
   date: string;
@@ -21,15 +22,9 @@ export interface InterdayDataSource {
   templateUrl: "./fitbit-data.component.html",
   styleUrls: ["./fitbit-data.component.scss"],
 })
-export class FitbitDataComponent implements OnInit {
-  // fitbitUser: any;
-  constructor(
-    private fitbitService: FitbitService,
-    // private dailySummaryService: DailySummaryService,
-    private datePipe: DatePipe,
-    private translate: TranslateService
-  ) {}
-  test: boolean = true;
+export class FitbitDataComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
+  // test: boolean = true;
 
   //DATE RANGE
   PREDEFINED_RANGE: string = "predefined-range";
@@ -48,15 +43,21 @@ export class FitbitDataComponent implements OnInit {
 
   heartRateInterday;
   heartRateInterdayLoading: boolean = false;
-
-  //PAGINATION AND SORTING
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
   interdayDataSource: MatTableDataSource<InterdayDataSource>;
   showComponent: boolean;
   fitbitAccount;
   langSubscription: any;
+
+  constructor(
+    private fitbitService: FitbitService,
+    // private dailySummaryService: DailySummaryService,
+    private datePipe: DatePipe,
+    private translate: TranslateService
+  ) {}
+
+  //PAGINATION AND SORTING
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
     console.log("oninit");
@@ -95,15 +96,22 @@ export class FitbitDataComponent implements OnInit {
     this.interdayDataSource.sort = this.sort;
   }
 
+  ngOnDestroy() {
+    this.subscriptions.forEach((s) => s.unsubscribe());
+  }
+
   getHeartRateInterday(fitbitAccount, from?: string, to?: string) {
+    console.log(from, to, moment.utc());
+
     this.hideIntradayData();
     this.fitbitAccount = fitbitAccount;
     this.heartRateInterdayLoading = true;
     this.showComponent = true;
-    this.fitbitService
+    const sub = this.fitbitService
       .fetchHeartRateInterday(
         this.fitbitAccount.id,
-        from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
+        // from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
+        from ? from : moment.utc().format("YYYY-MM-DD"),
         to ? to : this.selectedPredefinedRange
       )
       .subscribe(
@@ -119,6 +127,8 @@ export class FitbitDataComponent implements OnInit {
           this.heartRateInterdayLoading = false;
         }
       );
+
+    this.subscriptions.push(sub);
   }
 
   updateTable() {
@@ -228,10 +238,11 @@ export class FitbitDataComponent implements OnInit {
 
   initChart(config) {
     let time;
-    this.translate.get("shared.time").subscribe((t) => {
+    const sub = this.translate.get("shared.time").subscribe((t) => {
       time = t;
     });
 
+    this.subscriptions.push(sub);
     this.chart = new Chart({
       ...{
         chart: {
@@ -307,15 +318,21 @@ export class FitbitDataComponent implements OnInit {
     this.showIntradayData = true;
     this.heartRateIntradayLoading = true;
     this.heartRateIntradayLoadingError = false;
-    this.test = false;
+    // this.test = false;
 
-    this.fitbitService
-      .fetchHeartRateIntraday(this.fitbitAccount["id"], day.date)
+    const sub = this.fitbitService
+      .fetchHeartRateIntraday(
+        this.fitbitAccount["id"],
+        moment(day.date).format()
+      )
       .subscribe(
         (heartRateIntraday) => {
           if (heartRateIntraday) {
+            //since the data comes in the form [seconds_elapsed_from_day_start => heart_beat_value],
+            //and day start refers to utc, the client has to counter the time difference by adding/subtracting hours
+            //before passing the points to the chart
             const points = [],
-              dayMoment = moment(heartRateIntraday["day"]);
+              dayMoment = moment.utc(day.date).add(moment().utcOffset(), "m");
 
             for (const secondHeartBeatPair of (heartRateIntraday[
               "data"
@@ -324,7 +341,6 @@ export class FitbitDataComponent implements OnInit {
                 dayMoment
                   .clone()
                   .add(secondHeartBeatPair["second"], "seconds")
-                  // .add(moment().utcOffset(), "minutes")
                   .valueOf(),
                 secondHeartBeatPair["heart_beat"],
               ]);
@@ -374,6 +390,8 @@ export class FitbitDataComponent implements OnInit {
           this.heartRateIntradayLoadingError = true;
         }
       );
+
+    this.subscriptions.push(sub);
   }
 
   highlightRow(rowIndex = undefined) {
