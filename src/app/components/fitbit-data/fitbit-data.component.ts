@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { FitbitService } from "src/app/services/fitbit.service";
 import { DatePipe } from "@angular/common";
 import * as moment from "moment";
+import "moment-timezone";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
 import { Chart } from "angular-highcharts";
@@ -318,7 +319,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
     this.showIntradayData = true;
     this.heartRateIntradayLoading = true;
     this.heartRateIntradayLoadingError = false;
-    // this.test = false;
 
     const sub = this.fitbitService
       .fetchHeartRateIntraday(
@@ -328,22 +328,28 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
       .subscribe(
         (heartRateIntraday) => {
           if (heartRateIntraday) {
-            //since the data comes in the form [seconds_elapsed_from_day_start => heart_beat_value],
+            //since the data comes in the form [seconds_elapsed_from_week_start => heart_beat_value],
             //and day start refers to utc, the client has to counter the time difference by adding/subtracting hours
             //before passing the points to the chart
-            const points = [],
-              dayMoment = moment.utc(day.date).add(moment().utcOffset(), "m");
+            const hbpm = [],
+              stepsPoints = [],
+              dayMoment = moment
+                .utc(day.date)
+                .startOf("isoWeek")
+                .add(moment(day.date).utcOffset(), "m");
 
-            for (const secondHeartBeatPair of (heartRateIntraday[
-              "data"
-            ] as Array<Object>).reverse()) {
-              points.push([
-                dayMoment
-                  .clone()
-                  .add(secondHeartBeatPair["second"], "seconds")
-                  .valueOf(),
-                secondHeartBeatPair["heart_beat"],
-              ]);
+            let stepCount = 0;
+            for (const data of heartRateIntraday["data"] as Array<Object>) {
+              const x = dayMoment
+                .clone()
+                .add(data["second"], "seconds")
+                .valueOf();
+
+              hbpm.push([x, data["heart_beat"]]);
+              // stepCount += data["steps"];
+              // stepsPoints.push([x, stepCount]);
+              // stepCount += data["steps"];
+              stepsPoints.push([x, data["steps"]]);
             }
 
             this.initChart({
@@ -362,16 +368,26 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
               },
               series: [
                 {
+                  type: "column",
+                  // name: this.translate.stream("shared.heart_rate"),
+                  name: "Steps",
+                  data: stepsPoints,
+                  color: "green",
+                  // showInLegend: false,
+                },
+                {
                   type: "line",
                   // name: this.translate.stream("shared.heart_rate"),
                   name: "Heart rate",
-                  data: points,
-                  showInLegend: false,
+                  data: hbpm,
+                  color: "pink",
+
+                  // showInLegend: false,
                 },
               ],
               yAxis: {
                 title: {
-                  text: "Heart rate",
+                  text: "Values",
                   // text: this.translate.stream("shared.heart_rate")
                 },
               },
