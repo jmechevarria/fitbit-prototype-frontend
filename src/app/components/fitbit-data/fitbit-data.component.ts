@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { FitbitService } from "src/app/services/fitbit.service";
-import { DatePipe } from "@angular/common";
 import * as moment from "moment";
 import "moment-timezone";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
@@ -25,7 +24,6 @@ export interface InterdayDataSource {
 })
 export class FitbitDataComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
-  // test: boolean = true;
 
   //DATE RANGE
   PREDEFINED_RANGE: string = "predefined-range";
@@ -34,6 +32,7 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   SPECIFIC_RANGE_MAX_BOTH: moment.Moment = moment(); //maximum TODAY
   specificRangeFrom: moment.Moment = moment().subtract(29, "day"); //current 'from': 30 DAYS AGO
   specificRangeTo: moment.Moment = moment(); //current 'to': TODAY
+
   predefinedRanges: {} = {
     "1d": "shared.today",
     "1w": "shared.last_7_days",
@@ -51,8 +50,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
 
   constructor(
     private fitbitService: FitbitService,
-    // private dailySummaryService: DailySummaryService,
-    private datePipe: DatePipe,
     private translate: TranslateService
   ) {}
 
@@ -61,8 +58,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {
-    console.log("oninit");
-
     this.interdayDataSource = new MatTableDataSource<InterdayDataSource>();
     this.interdayDataSource.filterPredicate = (
       data: InterdayDataSource,
@@ -101,20 +96,22 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  getHeartRateInterday(fitbitAccount, from?: string, to?: string) {
-    console.log(from, to, moment.utc());
+  getHeartRateInterday(fitbitAccount) {
+    const from: string =
+      this.rangeType === this.PREDEFINED_RANGE
+        ? moment().format("YYYY-MM-DD")
+        : this.specificRangeFrom.format("YYYY-MM-DD");
+    const to: string =
+      this.rangeType === this.SPECIFIC_RANGE
+        ? this.specificRangeTo.format("YYYY-MM-DD")
+        : this.selectedPredefinedRange;
 
     this.hideIntradayData();
     this.fitbitAccount = fitbitAccount;
     this.heartRateInterdayLoading = true;
     this.showComponent = true;
     const sub = this.fitbitService
-      .fetchHeartRateInterday(
-        this.fitbitAccount.id,
-        // from ? from : this.datePipe.transform(new Date(), "yyyy-MM-dd"),
-        from ? from : moment.utc().format("YYYY-MM-DD"),
-        to ? to : this.selectedPredefinedRange
-      )
+      .fetchHeartRateInterday(this.fitbitAccount.id, from, to)
       .subscribe(
         (response) => {
           this.interdayDataSource.data = this.responseToDataSource(response);
@@ -130,20 +127,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
       );
 
     this.subscriptions.push(sub);
-  }
-
-  updateTable() {
-    this.hideIntradayData();
-    const from: string =
-      this.rangeType === this.PREDEFINED_RANGE
-        ? moment().format("Y-MM-DD")
-        : this.specificRangeFrom.format("Y-MM-DD");
-    const to: string =
-      this.rangeType === this.SPECIFIC_RANGE
-        ? this.specificRangeTo.format("Y-MM-DD")
-        : this.selectedPredefinedRange;
-
-    this.getHeartRateInterday(this.fitbitAccount, from, to);
   }
 
   specificRangeChanged(event: MatDatepickerInputEvent<moment.Moment>) {
@@ -197,8 +180,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
     return [];
   }
 
-  sortNull() {} //this is to make 'predefinedRanges' be rendered as ordered in the variable declaration
-
   HEART_RATE_ZONES = {
     hrz_1: "hrz_1",
     hrz_2: "hrz_2",
@@ -249,8 +230,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
         chart: {
           type: "line",
           zoomType: "x",
-
-          // renderTo: 'container'
         },
         xAxis: {
           title: {
@@ -258,15 +237,9 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
           },
           type: "datetime",
           dateTimeLabelFormats: {
-            // hour: "%I %p",
             minute: "%I:%M %p",
           },
         },
-        // yAxis: {
-        //   title: {
-        //     text: "Heartd rate"
-        //   }
-        // },
         credits: {
           enabled: false,
         },
@@ -277,17 +250,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
           shadow: false,
           borderWidth: 0,
           backgroundColor: "rgba(255,255,255,0.8)",
-          // formatter: function() {
-          //   return (
-          //     "<b>" +
-          //     this.series.name +
-          //     "</b><br/>" +
-          //     Chart.dateFormat("%e - %b - %Y", new Date(this.x)) +
-          //     " date, " +
-          //     this.y +
-          //     " Kg."
-          //   );
-          // }
         },
         navigation: {
           buttonOptions: {
@@ -297,9 +259,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
         exporting: {
           fallbackToExportServer: false,
         },
-        // time: {
-        //   useUTC: true
-        // }
       },
       ...config,
     });
@@ -338,7 +297,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                 .startOf("isoWeek")
                 .add(moment(day.date).utcOffset(), "m");
 
-            let stepCount = 0;
             for (const data of heartRateIntraday["data"] as Array<Object>) {
               const x = dayMoment
                 .clone()
@@ -346,9 +304,6 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                 .valueOf();
 
               hbpm.push([x, data["heart_beat"]]);
-              // stepCount += data["steps"];
-              // stepsPoints.push([x, stepCount]);
-              // stepCount += data["steps"];
               stepsPoints.push([x, data["steps"]]);
             }
 
@@ -369,26 +324,20 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
               series: [
                 {
                   type: "column",
-                  // name: this.translate.stream("shared.heart_rate"),
                   name: "Steps",
                   data: stepsPoints,
                   color: "green",
-                  // showInLegend: false,
                 },
                 {
                   type: "line",
-                  // name: this.translate.stream("shared.heart_rate"),
                   name: "Heart rate",
                   data: hbpm,
                   color: "pink",
-
-                  // showInLegend: false,
                 },
               ],
               yAxis: {
                 title: {
                   text: "Values",
-                  // text: this.translate.stream("shared.heart_rate")
                 },
               },
             });
@@ -414,66 +363,8 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
     this.selectedRowIndex = rowIndex;
   }
 
-  // exportChart(event, format) {
-  //   const canvas = document.getElementById("chart") as HTMLCanvasElement;
-  //   if (format === "png") {
-  //     const anchor = event.target.parentNode;
-  //     anchor.href = canvas.toDataURL();
-  //     anchor.download = "test.png";
-  //   } else if (format === "pdf") {
-  //     const imgData = canvas.toDataURL("image/png", 1.0);
-  //     const pdf = new jsPDF();
-
-  //     pdf.addImage(imgData, "PNG", 0, 0);
-  //     pdf.save("test.pdf");
-  //   }
-  // }
-
-  /**
-   * line, bar, radar, pie, polarArea, doughnut, bubble and scatter
-   */
-  changeChartType(event, type) {
-    event.preventDefault();
-    this.chartType = type;
-  }
-
   hideIntradayData() {
     this.showIntradayData = false;
     this.highlightRow();
   }
-
-  // createChart() {
-  //   this.chart = new Chart({
-  //     chart: {
-  //       type: "line",
-  //       zoomType: "x"
-  //       // renderTo: 'container'
-  //     },
-  //     xAxis: {
-  //       type: "datetime",
-  //       dateTimeLabelFormats: {
-  //         // hour: "%I %p",
-  //         minute: "%I:%M %p"
-  //       }
-  //     },
-  //     yAxis: {
-  //       title: {
-  //         text: "Heart rate"
-  //       }
-  //     },
-  //     credits: {
-  //       enabled: false
-  //     },
-  //     tooltip: {
-  //       positioner: function() {
-  //         return { x: 0, y: 0 };
-  //       },
-  //       shadow: false,
-  //       borderWidth: 0,
-  //       backgroundColor: "rgba(255,255,255,0.8)"
-  //     }
-  //   });
-  // }
-
-  // private clearIntradayData() {}
 }

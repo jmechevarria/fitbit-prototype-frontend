@@ -83,7 +83,7 @@
       "
       mat-flat-button
       color="primary"
-      (click)="updateTable()"
+      (click)="getHeartRateInterday(fitbitAccount)"
     >
       <mat-icon>autorenew</mat-icon>
     </button>
@@ -139,7 +139,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              style="background: lightgreen"
+              style="background: lightgreen;"
             >
               {{ hrz_translations[HEART_RATE_ZONES.hrz_1] | translate }}
             </th>
@@ -164,7 +164,7 @@
                 </div>
               </span>
               <ng-template #no_activity
-                ><label style="color: lightgray">{{
+                ><label style="color: lightgray;">{{
                   "dashboard.fitbit_data.interday.no_activity_perceived"
                     | translate
                 }}</label></ng-template
@@ -177,7 +177,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              style="background: #ecec69"
+              style="background: #ecec69;"
             >
               {{ hrz_translations[HEART_RATE_ZONES.hrz_2] | translate }}
             </th>
@@ -202,7 +202,7 @@
                 </div>
               </span>
               <ng-template #no_activity
-                ><label style="color: lightgray">{{
+                ><label style="color: lightgray;">{{
                   "dashboard.fitbit_data.interday.no_activity_perceived"
                     | translate
                 }}</label></ng-template
@@ -215,7 +215,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              style="background: rgb(255, 160, 36)"
+              style="background: rgb(255, 160, 36);"
             >
               {{ hrz_translations[HEART_RATE_ZONES.hrz_3] | translate }}
             </th>
@@ -240,7 +240,7 @@
                 </div>
               </span>
               <ng-template #no_activity
-                ><label style="color: lightgray">{{
+                ><label style="color: lightgray;">{{
                   "dashboard.fitbit_data.interday.no_activity_perceived"
                     | translate
                 }}</label></ng-template
@@ -253,7 +253,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              style="background: rgb(182, 27, 27); color: white"
+              style="background: rgb(182, 27, 27); color: white;"
             >
               {{ hrz_translations[HEART_RATE_ZONES.hrz_4] | translate }}
             </th>
@@ -278,7 +278,7 @@
                 </div>
               </span>
               <ng-template #no_activity
-                ><label style="color: lightgray">{{
+                ><label style="color: lightgray;">{{
                   "dashboard.fitbit_data.interday.no_activity_perceived"
                     | translate
                 }}</label></ng-template
@@ -291,7 +291,7 @@
               mat-header-cell
               *matHeaderCellDef
               mat-sort-header
-              style="background: rgb(29, 133, 244); color: white"
+              style="background: rgb(29, 133, 244); color: white;"
             >
               {{ "shared.steps" | translate }}
             </th>
@@ -300,7 +300,7 @@
                 {{ day["steps"] }}
               </span>
               <ng-template #no_activity
-                ><label style="color: lightgray">{{
+                ><label style="color: lightgray;">{{
                   "dashboard.fitbit_data.interday.no_activity_perceived"
                     | translate
                 }}</label></ng-template
