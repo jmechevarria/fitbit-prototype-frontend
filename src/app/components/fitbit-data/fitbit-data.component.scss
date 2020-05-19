@@ -1,5 +1,9 @@
 #fitbit-data-container {
-  padding-top: 5px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px black;
+  margin-top: 5px;
+  padding: 5px;
 }
 
 table {
@@ -11,7 +15,7 @@ div.specific-range-container {
 }
 
 #interday-table-container {
-  max-height: 400px;
+  max-height: 700px;
   overflow: auto;
 }
 
@@ -43,10 +47,18 @@ mat-paginator {
 
 #intraday-chart-container {
   width: 100%;
+  height: fit-content !important;
 }
 
 @media screen and (max-width: 959px) {
   #interday-table-container {
-    max-height: 150px;
+    max-height: 300px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  #interday-table th,
+  #interday-table td {
+    font-size: 12px !important;
   }
 }

@@ -8,6 +8,6 @@ import { TranslateModule } from "@ngx-translate/core";
 @NgModule({
   declarations: [ConfirmationDialogComponent],
   imports: [CommonModule, MaterialModule, FormsModule, TranslateModule],
-  entryComponents: [ConfirmationDialogComponent]
+  entryComponents: [ConfirmationDialogComponent],
 })
 export class WidgetsModule {}

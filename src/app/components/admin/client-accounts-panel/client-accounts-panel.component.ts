@@ -4,7 +4,7 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
 } from "@angular/core";
 import { DialogService } from "src/app/services/dialog.service";
 import { ConfirmationDialogComponent } from "src/app/widgets/components/confirmation-dialog/confirmation-dialog.component";
@@ -16,7 +16,7 @@ import { AccountTypeService } from "src/app/services/account-type.service";
 @Component({
   selector: "client-accounts-panel",
   templateUrl: "./client-accounts-panel.component.html",
-  styleUrls: ["./client-accounts-panel.component.scss"]
+  styleUrls: ["./client-accounts-panel.component.scss"],
 })
 export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
   @Input()
@@ -37,7 +37,7 @@ export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const sub = this.accountTypeService.get().subscribe(response => {
+    const sub = this.accountTypeService.get().subscribe((response) => {
       this.accountTypes = response;
       console.log(this.accountTypes);
     });
@@ -46,7 +46,7 @@ export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   refreshAccessToken(fitbitAccount) {
@@ -64,16 +64,18 @@ export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
     const body$ = this.translate.get(
       "admin.client_accounts_panel.dialog.delete_client_account_body_msg",
       {
-        name: `<b>${this.clientAccounts[id].firstname +
+        name: `<b>${
+          this.clientAccounts[id].firstname +
           " " +
           this.clientAccounts[id].lastname +
           " " +
           (this.clientAccounts[id].lastname2
             ? this.clientAccounts[id].lastname2
-            : "")}</b>`
+            : "")
+        }</b>`,
       }
     );
-    const warning$ = this.translate.get("shared.warning");
+    const warning$ = this.translate.get("admin.users_panel.dialog.warning");
 
     const sub = forkJoin([title$, body$, warning$])
       .pipe(
@@ -86,14 +88,14 @@ export class ClientAccountsPanelComponent implements OnInit, OnDestroy {
             {
               data: {
                 title,
-                body: bodyText
-              }
+                body: bodyText,
+              },
             }
           );
 
           return dialogRef.afterClosed();
         }),
-        filter(reply => reply),
+        filter((reply) => reply),
         tap(() => {
           this.deleteFitbitAccount_EE.next(id);
         })

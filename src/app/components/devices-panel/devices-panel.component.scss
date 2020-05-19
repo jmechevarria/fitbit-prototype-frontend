@@ -1,5 +1,10 @@
-#show-data {
-  right: 60px;
+#devices-panel-container {
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px black;
+}
+
+.mat-expansion-panel.border-radius {
+  border-radius: 5px;
 }
 
 #devices h5 {
@@ -9,9 +14,42 @@
 .state-container {
   padding: 3px;
   box-shadow: 0px 0px 5px black;
+  background-color: #9a9a9a;
 }
 
 .state-container .badge {
   box-shadow: none;
   border-radius: 5px;
+}
+
+#show-data {
+  box-shadow: none;
+}
+
+mat-list-item .mat-list-item-content {
+  padding: 0 !important;
+}
+
+mat-panel-title,
+div.client-data {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 430px) {
+  span.device-name {
+    display: none;
+  }
+
+  .state-container h5 {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .mat-expansion-panel-header {
+    padding: 1px !important;
+  }
+
+  .mat-expansion-indicator {
+    display: none;
+  }
 }

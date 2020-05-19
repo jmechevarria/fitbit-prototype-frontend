@@ -5,12 +5,12 @@ import { TranslateService } from "@ngx-translate/core";
 import { UserService } from "src/app/services/user.service";
 import { User } from "src/app/models/User";
 import { AuthenticationService } from "src/app/services/authentication.service";
-import { RESPONSES } from "src/app/helpers/Constants";
+import { RESPONSES, ROLES } from "src/app/helpers/Constants";
 
 @Component({
   selector: "profile",
   templateUrl: "./profile.component.html",
-  styleUrls: ["./profile.component.scss"]
+  styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -32,7 +32,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   onSubmit() {
@@ -44,16 +44,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         this.authenticationService.currentUser = this.user;
 
-        this.router.navigate(["/"]);
+        if (this.user.role_id === ROLES.ADMIN) this.router.navigate(["/admin"]);
+        else if (this.user.role_id === ROLES.CAREGIVER)
+          this.router.navigate(["/dashboard"]);
+        else this.router.navigate(["/"]);
       },
-      error => {
+      (error) => {
         this.inReview = false;
         this.serverSideError = true;
         if (error.id === RESPONSES.UNIQUE_CONSTRAINT.id) {
           this.serverSideErrorMessage = `${this.translate.instant(
             "forms.field_names." + error.entity
           )} ${this.translate.instant("forms.errors.unique_constraint_field", {
-            field_value: `'${this.user[error.entity]}'`
+            field_value: `'${this.user[error.entity]}'`,
           })}`;
         }
       }

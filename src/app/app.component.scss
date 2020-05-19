@@ -24,15 +24,16 @@ mdb-navbar ul.navbar-nav li.active {
   color: #616161;
 }
 
-// footer {
-//   z-index: -1;
-// }
+#landing-page {
+  display: none;
+}
 
-// @media (min-width: 768px) {
-//   footer {
-//     position: fixed;
-//     right: 0;
-//     bottom: 0;
-//     left: 0;
-//   }
-// }
+#landing-page.show {
+  display: block;
+}
+
+@media (max-width: 990px) {
+  notifications-dropdown {
+    display: none;
+  }
+}

@@ -58,20 +58,6 @@ export class FitbitService {
     );
   }
 
-  // stateOfToken() {
-  //   let headers: HttpHeaders = new HttpHeaders({
-  //     Authorization: "Bearer " + this.accessToken,
-  //     "Content-type": "application/x-www-form-urlencoded"
-  //   });
-
-  //   let params = new URLSearchParams();
-  //   params.append("token", this.accessToken);
-
-  //   return this.http.post("https://api.fitbit.com/1.1/oauth2/introspect", params.toString(), {
-  //     headers: headers
-  //   });
-  // }
-
   fetchHeartRateIntraday(fitbitAccountID: number, day: string) {
     console.log(fitbitAccountID, day);
 

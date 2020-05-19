@@ -1,13 +1,14 @@
 {
   "home": {
     "main_menu": {
-      "home": "Home",
-      "dashboard": "Dashboard",
-      "administration": "Administration",
+      "home": "home",
+      "dashboard": "dashboard",
+      "administration": "administration",
       "notifications_dropdown": {
-        "view_all_notifications": "all notifications",
         "inbox": "inbox",
-        "no_new_notifications": "no new notifications"
+        "no_new_notifications": "No new notifications",
+        "mark_read": "Mark read",
+        "mark_unread": "Mark unread"
       }
     }
   },
@@ -15,15 +16,14 @@
     "users_panel": {
       "fitbit_accounts": "Fitbit accounts",
       "client_accounts_attended_by_this_user": "Client accounts attended by this user",
-      "caregiver_options_menu": "Caregiver Options Menu",
       "link_to_client_accounts": "Link to client accounts",
       "delete_user": "Delete user",
       "revoke_access_token": "Revoke access token",
       "refresh_access_token": "Refresh access token",
-      "unlink": "Unlink",
+      "unlink": "unlink",
       "dialog": {
-        "delete_user": "Delete user",
         "delete_user_body_msg": "User {{ name }} will be deleted from the system.",
+        "warning": "This action is irreversible",
         "unlink_user_from_client_account": "Unlink caregiver from client account",
         "unlink_user_from_client_account_body": "Caregiver {{userFullname}} will no longer be able to monitor client account {{clientAccountFullname}} (ID: {{clientAccountID}})"
       }
@@ -37,57 +37,57 @@
   },
   "dashboard": {
     "devices_panel": {
-      "age": "Age",
-      "height": "Height",
-      "weight": "Weight",
       "show_data": "Show data",
       "this_user_has_no_active_client_accounts_to_monitor": "This user has no active client accounts to monitor",
-      "steps_today": "steps today",
-      "floors": "floors today",
       "good": "good",
       "bad": "bad",
       "latest_states_not_found": "Latest states not found"
     },
     "fitbit_data": {
-      "heart_rate_time_series_for_user": "Heart rate time series for user",
-      "predefined": "Predefined",
-      "specific": "Specific",
-      "from": "From",
-      "to": "To",
+      "heading": "Client account",
+      "from": "from",
+      "to": "to",
       "interday": {
-        "filter": "Filter",
+        "filter": "filtrar",
         "out_of_range": "Out of Range",
         "fat_burn": "Fat Burn",
-        "cardio": "Cardio",
-        "peak": "Peak",
-        "calories": "cal",
-        "minutes": "min",
+        "cardio": "cardio",
+        "peak": "peak",
         "no_activity_perceived": "No activity perceived",
         "no_results_for_selected_interval": "No results for selected interval"
       },
       "intraday": {
-        "options": "Options",
-        "select_type": "Select type"
+        "options": "options",
+        "select_type": "Select type",
+        "chart": {
+          "full_screen": "Full screen",
+          "print_chart": "Print chart",
+          "download_png": "Download PNG",
+          "download_jpeg": "Download JPEG",
+          "download_pdf": "Download PDF",
+          "download_svg": "Download SVG",
+          "context_menu": "Options"
+        }
       }
     }
   },
-  "notifications_panel": {
-    "mark_read": "Mark read",
-    "mark_unread": "Mark unread",
-    "accident_probability": "accident probability",
-    "very_high": "very high",
-    "high": "high",
-    "moderate": "moderate",
+  "incidents_panel": {
+    "false_alarm": "False alarm",
+    "process_incident": "Process incident",
+    "no_incidents": "No incidents",
+    "time": "time",
     "dialog": {
       "incident_details": {
-        "title": "incident details",
+        "title": "Incident details",
+        "initial_classification": "Initial classification",
+        "verified_as": "Verified as",
+        "not_processed": "Not processed",
         "chart_subtitle": "Health parameters previous to incident"
       }
-    },
-    "no_notifications": "no notifications"
+    }
   },
   "login": {
-    "welcome": "Welcome",
+    "welcome": "welcome",
     "username_is_required": "Username is required",
     "password_is_required": "Password is required"
   },
@@ -99,19 +99,19 @@
   },
   "forms": {
     "please_review_the_data": "Please review the data",
-    "fitbit_account": {},
     "client_account": {
       "edit_client_account": "Edit client account",
       "account_type_specific_information": "{{account_type}}-specific information"
     },
     "user": {
       "edit_user": "Edit user",
-      "role_specific_information": "{{role}}-specific information",
       "select_role": "Select role",
       "receive_emails": "Receive emails",
       "receive_text_messages": "Receive text messages"
     },
     "errors": {
+      "invalid_username": "Invalid username",
+      "incorrect_password": "Incorrect password",
       "this_field_is_required": "This field is required",
       "unique_constraint_field": "{{field_value}} is already used"
     },
@@ -119,7 +119,7 @@
       "encoded_id": "Encoded ID",
       "secret": "secret",
       "fitbit_app_id": "Fitbit app ID",
-      "access_token": "access_token",
+      "access_token": "Access token",
       "username": "username",
       "email": "email"
     }
@@ -127,15 +127,14 @@
   "shared": {
     "name": "name",
     "user": "user",
-    "administrator": "administrator",
-    "admin": "administrator",
-    "caregiver": "caregiver",
-    "contact": "contact",
     "users": "users",
-    "administrators": "administrators",
-    "admins": "administrators",
+    "caregiver": "caregiver",
     "caregivers": "caregivers",
+    "contact": "contact",
     "contacts": "contacts",
+    "admin": "admin",
+    "administrator": "administrator",
+    "administrators": "administrators",
     "login": "login",
     "cancel": "cancel",
     "proceed": "proceed",
@@ -143,23 +142,24 @@
     "today": "today",
     "last_7_days": "Last 7 Days",
     "last_30_days": "Last 30 Days",
-    "warning": "This action is irreversible",
     "heart_rate": "heart rate",
     "severity": "severity",
     "date": "date",
     "message": "message",
     "actions": "actions",
-    "hbpm": "heartbeats per minute",
-    "sleep_status": "sleep status",
+    "hbpm": "Heartbeats per minute",
+    "sleep_status": "Sleep status",
     "steps": "steps",
     "floors": "floors",
     "account": "account",
     "accounts": "accounts",
     "firstname": "firstname",
     "lastname": "lastname",
-    "lastname2": "second lastname",
-    "height_cm": "height_cm",
-    "weight_kg": "weight_kg",
+    "lastname2": "Second lastname",
+    "height": "height",
+    "weight": "weight",
+    "cm": "cm",
+    "kg": "kg",
     "birthdate": "birthdate",
     "review": "review",
     "edit": "edit",
@@ -177,12 +177,15 @@
     "logout": "logout",
     "delete": "delete",
     "process": "process",
-    "verified_as": "Verified as",
-    "initial_classification": "Initial classification",
-    "dialog": {
-      "title": "title",
-      "body": "content",
-      "close": "close"
-    }
+    "predefined": "predefined",
+    "custom": "custom",
+    "accident": "accident",
+    "incident": "incident",
+    "loading": "loading",
+    "calories": "calories",
+    "minutes": "minutes",
+    "age": "age",
+    "close": "close",
+    "values": "values"
   }
 }

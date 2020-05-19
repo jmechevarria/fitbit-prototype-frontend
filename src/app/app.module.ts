@@ -33,7 +33,6 @@ import { UsersPanelComponent } from "./components/admin/users-panel/users-panel.
 import { ClickEventDirective } from "./directives/click-event.directive";
 import { WidgetsModule } from "./widgets/widgets.module";
 import { SharedModule } from "./shared/shared.module";
-import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { SubscriptionNotificationService } from "./services/subscription.notification.service";
@@ -41,7 +40,7 @@ import { NotificationsDropdownComponent } from "./components/notifications-dropd
 import { ReplaceSubstring } from "./helpers/ReplaceSubstringPipe";
 import { MomentPipe } from "./helpers/MomentPipe";
 import { RoleNamePipe } from "./helpers/RoleNamePipe";
-import { IncidentDetailsDialogComponent } from "./components/notifications-panel/incident-details-dialog/incident-details-dialog.component";
+import { IncidentDetailsDialogComponent } from "./components/incidents-panel/incident_details_dialog/incident-details-dialog.component";
 import { ClientAccountsPanelComponent } from "./components/admin/client-accounts-panel/client-accounts-panel.component";
 import { ClientAccountFormComponent } from "./components/admin/client-account-form/client-account-form.component";
 import { UserFormComponent } from "./components/admin/user-form/user-form.component";
@@ -49,7 +48,8 @@ import { AccountTypeNamePipe } from "./helpers/account-type-name.pipe";
 import { ProfileComponent } from "./components/profile/profile.component";
 import { LinkAccountsDialogComponent } from "./components/admin/users-panel/link-accounts-dialog/link-accounts-dialog.component";
 import { IncidentsPanelComponent } from "./components/incidents-panel/incidents-panel.component";
-// import { ReplaceSubstring } from "../app/helpers/ReplaceSubstringPipe";
+import { SentenceCasePipe } from "./helpers/SentenceCasePipe";
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(
@@ -72,7 +72,6 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     UsersPanelComponent,
     ClientAccountsPanelComponent,
     ClickEventDirective,
-    NotificationsPanelComponent,
     NotificationsDropdownComponent,
     ReplaceSubstring,
     MomentPipe,
@@ -84,6 +83,8 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     ProfileComponent,
     LinkAccountsDialogComponent,
     IncidentsPanelComponent,
+    SentenceCasePipe,
+    LandingPageComponent,
   ],
   imports: [
     BrowserModule,

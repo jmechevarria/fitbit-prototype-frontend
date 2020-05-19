@@ -94,19 +94,19 @@ export class SubscriptionNotificationService {
   //   return allMessagesForCurrentUser$;
   // }
 
-  /**
-   *
-   * @param userID
-   * @param limit
-   * @param param2
-   */
-  fetchFromDB(userID, queryParams): Observable<any[]> {
-    // console.log(range);
+  // /**
+  //  *
+  //  * @param userID
+  //  * @param limit
+  //  * @param param2
+  //  */
+  // fetchFromDB(userID, queryParams): Observable<any[]> {
+  //   // console.log(range);
 
-    return this.http.get<any[]>(`${environment.apiURL}messages/1/${userID}`, {
-      params: queryParams,
-    });
-  }
+  //   return this.http.get<any[]>(`${environment.apiURL}messages/1/${userID}`, {
+  //     params: queryParams,
+  //   });
+  // }
 
   toggleRead(values) {
     console.log(values);

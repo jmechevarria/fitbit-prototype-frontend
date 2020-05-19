@@ -25,6 +25,12 @@ export class ClientAccountService {
     );
   }
 
+  getByUser(): Observable<ClientAccount[]> {
+    return this.http.get<ClientAccount[]>(
+      `${environment.apiURL}client-accounts/get-by-user`
+    );
+  }
+
   create(ClientAccount: ClientAccount): Observable<ClientAccount> {
     return this.http.post<ClientAccount>(
       `${environment.apiURL}client-accounts/new`,

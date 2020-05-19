@@ -39,6 +39,10 @@ export const RESPONSES = {
     id: 10,
     message: "MISSING_TOKEN",
   },
+  GENERIC_400: {
+    id: 11,
+    message: "BAD_REQUEST",
+  },
 };
 
 export const ROLES = {

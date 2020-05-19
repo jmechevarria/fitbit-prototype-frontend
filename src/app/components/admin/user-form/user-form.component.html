@@ -1,6 +1,6 @@
 <h1>
   {{ formHeader }} ({{
-    "shared." + (user.role_id | roleName: roles) | translate
+    "shared." + (user.role_id | roleName: roles) | translate | sentenceCase
   }})
 </h1>
 
@@ -16,7 +16,9 @@
   <div [hidden]="inReview">
     <!-- email -->
     <div class="form-group">
-      <label for="email">{{ "forms.field_names.email" | translate }}</label>
+      <label for="email">{{
+        "forms.field_names.email" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="user.email"
         name="email"
@@ -35,7 +37,7 @@
     <!-- username -->
     <div class="form-group">
       <label for="username">{{
-        "forms.field_names.username" | translate
+        "forms.field_names.username" | translate | sentenceCase
       }}</label>
       <input
         [(ngModel)]="user.username"
@@ -57,7 +59,9 @@
     <!-- password -->
 
     <div class="form-group">
-      <label for="password">{{ "shared.password" | translate }}</label>
+      <label for="password">{{
+        "shared.password" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="user.password"
         name="password"
@@ -77,7 +81,9 @@
 
     <!-- firstname -->
     <div class="form-group">
-      <label for="firstname">{{ "shared.firstname" | translate }}</label>
+      <label for="firstname">{{
+        "shared.firstname" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="user.firstname"
         name="firstname"
@@ -97,7 +103,9 @@
 
     <!-- lastname -->
     <div class="form-group">
-      <label for="lastname">{{ "shared.lastname" | translate }}</label>
+      <label for="lastname">{{
+        "shared.lastname" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="user.lastname"
         name="lastname"
@@ -117,7 +125,9 @@
 
     <!-- lastname2 -->
     <div class="form-group">
-      <label for="lastname2">{{ "shared.lastname2" | translate }}</label>
+      <label for="lastname2">{{
+        "shared.lastname2" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="user.lastname2"
         name="lastname2"
@@ -165,31 +175,16 @@
       </div>
     </div>
 
-    <!-- <div *ngFor="let role of roles">
-      <div *ngIf="role.id == user.role_id">
-        <h3>
-          {{
-            "forms.user.role_specific_information"
-              | translate
-                : {
-                    role:
-                      "shared." + (user.role_id | roleName: roles) | translate
-                  }
-          }}
-        </h3>
-      </div>
-    </div> -->
-
     <button
       type="button"
       (click)="inReview = true"
       class="btn btn-primary"
       [disabled]="!userForm.form.valid"
     >
-      {{ "shared.review" | translate }}
+      {{ "shared.review" | translate | sentenceCase }}
     </button>
     <button type="button" [routerLink]="'/admin'" class="btn">
-      {{ "shared.cancel" | translate }}
+      {{ "shared.cancel" | translate | sentenceCase }}
     </button>
   </div>
 
@@ -200,21 +195,27 @@
     <table mdbTable bordered="true">
       <tbody>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.role" | translate }}</th>
+          <th scope="row">{{ "shared.role" | translate | sentenceCase }}</th>
           <!-- <td>{{ roles[user.role_id]?.name }}</td> -->
-          <td>{{ user.role_id | roleName: roles | translate }}</td>
+          <td>
+            {{ user.role_id | roleName: roles | sentenceCase }}
+          </td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "forms.field_names.email" | translate }}</th>
+          <th scope="row">
+            {{ "forms.field_names.email" | translate | sentenceCase }}
+          </th>
           <td>{{ user.email }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "forms.field_names.username" | translate }}</th>
+          <th scope="row">
+            {{ "forms.field_names.username" | translate | sentenceCase }}
+          </th>
           <td>{{ user.username }}</td>
         </tr>
         <tr mdbTableCol>
           <th scope="row">
-            {{ "shared.password" | translate }}
+            {{ "shared.password" | translate | sentenceCase }}
           </th>
           <td class="password">
             <span [style.visibility]="showPassword ? 'visible' : 'hidden'">{{
@@ -235,21 +236,31 @@
           </td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.firstname" | translate }}</th>
+          <th scope="row">
+            {{ "shared.firstname" | translate | sentenceCase }}
+          </th>
           <td>{{ user.firstname }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <th scope="row">
+            {{ "shared.lastname" | translate | sentenceCase }}
+          </th>
           <td>{{ user.lastname }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.lastname" | translate }}</th>
+          <th scope="row">
+            {{ "shared.lastname" | translate | sentenceCase }}
+          </th>
           <td>{{ user.lastname2 }}</td>
         </tr>
         <tr mdbTableCol>
           <th scope="row">{{ "forms.user.receive_emails" | translate }}</th>
           <td>
-            {{ (user.receive_emails ? "shared.yes" : "shared.no") | translate }}
+            {{
+              (user.receive_emails ? "shared.yes" : "shared.no")
+                | translate
+                | sentenceCase
+            }}
           </td>
         </tr>
         <tr mdbTableCol>
@@ -260,6 +271,7 @@
             {{
               (user.receive_text_messages ? "shared.yes" : "shared.no")
                 | translate
+                | sentenceCase
             }}
           </td>
         </tr>
@@ -267,10 +279,10 @@
     </table>
 
     <button class="btn btn-success" [disabled]="!userForm.form.valid">
-      {{ "shared.submit" | translate }}
+      {{ "shared.submit" | translate | sentenceCase }}
     </button>
     <button type="button" (click)="inReview = false" class="btn">
-      {{ "shared.edit" | translate }}
+      {{ "shared.edit" | translate | sentenceCase }}
     </button>
   </div>
 </form>

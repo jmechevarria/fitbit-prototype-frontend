@@ -8,11 +8,12 @@ import { Role } from "src/app/models/Role";
 import { User } from "src/app/models/User";
 import { UserFactory } from "src/app/models/UserFactory";
 import { AuthenticationService } from "src/app/services/authentication.service";
+import { RESPONSES } from "src/app/helpers/Constants";
 
 @Component({
   selector: "app-user-form",
   templateUrl: "./user-form.component.html",
-  styleUrls: ["./user-form.component.scss"]
+  styleUrls: ["./user-form.component.scss"],
 })
 export class UserFormComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -45,7 +46,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
         const sub = this.translate
           .get("shared.new_user")
-          .subscribe(translated => {
+          .subscribe((translated) => {
             this.formHeader = translated;
           });
 
@@ -53,7 +54,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       } else {
         const sub = this.translate
           .get("forms.user.edit_user")
-          .subscribe(translated => {
+          .subscribe((translated) => {
             this.formHeader = translated;
           });
         this.subscriptions.push(sub);
@@ -61,7 +62,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
         //get user
         const sub2 = this.userService
           .getByID(params.params.id, params.params.role_id)
-          .subscribe(response => {
+          .subscribe((response) => {
             this.user = UserFactory.createUser(
               parseInt(this.activatedRoute.snapshot.url[2].toString()),
               response
@@ -71,7 +72,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       }
     });
 
-    const sub2 = this.roleService.get().subscribe(response => {
+    const sub2 = this.roleService.get().subscribe((response) => {
       this.roles = response;
     });
 
@@ -79,7 +80,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   onSubmit() {
@@ -89,16 +90,16 @@ export class UserFormComponent implements OnInit, OnDestroy {
         () => {
           this.router.navigate(["/admin"]);
         },
-        error => {
+        (error) => {
           this.inReview = false;
           this.serverSideError = true;
-          if (error.id === "UNIQUE_CONSTRAINT") {
+          if (error.id === RESPONSES.UNIQUE_CONSTRAINT.id) {
             this.serverSideErrorMessage = `${this.translate.instant(
               "forms.field_names." + error.entity
             )} ${this.translate.instant(
               "forms.errors.unique_constraint_field",
               {
-                field_value: `'${this.user[error.entity]}'`
+                field_value: `'${this.user[error.entity]}'`,
               }
             )}`;
           }
@@ -113,7 +114,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
 
           this.router.navigate(["/admin"]);
         },
-        error => {
+        (error) => {
           this.inReview = false;
           this.serverSideError = true;
           if (error.id === "UNIQUE_CONSTRAINT") {
@@ -122,7 +123,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
             )} ${this.translate.instant(
               "forms.errors.unique_constraint_field",
               {
-                field_value: `'${this.user[error.entity]}'`
+                field_value: `'${this.user[error.entity]}'`,
               }
             )}`;
           }

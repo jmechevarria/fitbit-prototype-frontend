@@ -25,6 +25,12 @@
 // gt-md 	'screen and (min-width: 1280px)'
 // gt-lg 	'screen and (min-width: 1920px)'
 
+body {
+  background-image: url(assets/images/bg.jpg);
+  background-size: auto;
+  background-repeat: repeat-y;
+}
+
 body,
 h1,
 h2,

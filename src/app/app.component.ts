@@ -16,7 +16,7 @@ import { UserService } from "./services/user.service";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"]
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, OnDestroy {
   title: string = "fitbit-app-proto";
@@ -43,11 +43,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.setLocale();
 
     this.notifications$ = this.subscriptionNotificationService.notifications$.pipe(
-      // map(notifications => notifications.map(n => this.processNotification(n)))
-      map(notifications =>
-        notifications.map(notification => {
+      map((notifications) =>
+        notifications.map((notification) => {
           console.log("init processNotification", notification);
-          // const localeFormat = moment(notification.created).format("LLL");
           const clientAccountFullname = `${
             notification.client_account.firstname
           } ${notification.client_account.lastname}${
@@ -56,23 +54,14 @@ export class AppComponent implements OnInit, OnDestroy {
               : ""
           }`;
 
-          // const accidentProbability = notification.payload.accident_probability;
-
-          // let message = "notifications_panel.";
-
-          // if (accidentProbability > 0.9) message += "very_high";
-          // else if (accidentProbability > 0.8) message += "high";
-          // else message += "moderate";
-
           this.newNotifications = true;
 
           return { ...notification, clientAccountFullname };
-          // return { ...notification, message, localeFormat };
         })
       )
     );
 
-    const sub = this.authenticationService.currentUser$.subscribe(user => {
+    const sub = this.authenticationService.currentUser$.subscribe((user) => {
       this.currentUser = user;
       if (user) {
         this.userService.requestPNSubscription();
@@ -83,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   // playAudio() {

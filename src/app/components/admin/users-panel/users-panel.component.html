@@ -1,4 +1,4 @@
-<div fxLayout fxLayoutAlign="space-between center" style="width: 100%">
+<div fxLayout fxLayoutAlign="space-between center" style="width: 100%;">
   <h1 class="mat-headline">{{ "shared.users" | translate }}</h1>
   <div>
     <button
@@ -6,7 +6,6 @@
       click-event-params="[stopPropagation]"
       mat-icon-button
       [matMenuTriggerFor]="menu"
-      aria-label="'admin.users_panel.caregiver_options_menu' | translate"
     >
       <mdb-icon
         matTooltip="{{ 'shared.new_user' | translate }}"
@@ -21,7 +20,7 @@
         mat-menu-item
         [routerLink]="['/user/new', role.id]"
       >
-        {{ role.name }}
+        {{ "shared." + role.name | translate }}
       </a>
     </mat-menu>
   </div>
@@ -32,7 +31,7 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <h3>{{ "shared.administrators" | translate }}</h3>
+        <h3>{{ "shared.administrators" | translate | sentenceCase }}</h3>
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-list role="list">
@@ -41,7 +40,7 @@
           <div
             fxLayout="row"
             fxLayoutAlign="space-between center"
-            style="width: 100%"
+            style="width: 100%;"
           >
             <div>
               <a
@@ -63,7 +62,10 @@
             </div>
             <div>
               <button mat-icon-button>
-                <mat-icon color="warn" (click)="deleteUser(user.key)"
+                <mat-icon
+                  color="warn"
+                  (click)="deleteUser(user.key)"
+                  matTooltip="{{ 'shared.delete' | translate | sentenceCase }}"
                   >delete</mat-icon
                 >
               </button>
@@ -77,7 +79,7 @@
   <!-- CAREGIVERS -->
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>{{ "shared.caregivers" | translate }}</h3>
+      <h3>{{ "shared.caregivers" | translate | sentenceCase }}</h3>
     </mat-expansion-panel-header>
     <mat-accordion>
       <ng-container *ngFor="let user of users | keyvalue">
@@ -111,7 +113,6 @@
                 click-event-params="[stopPropagation]"
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
-                aria-label="'admin.users_panel.caregiver_options_menu' | translate"
               >
                 <mat-icon>more_vert</mat-icon>
               </button>
@@ -137,7 +138,7 @@
                 <div
                   fxLayout="row"
                   fxLayoutAlign="space-between center"
-                  style="width: 100%"
+                  style="width: 100%;"
                 >
                   <div>
                     <label>{{
@@ -157,7 +158,7 @@
                     >
                       <button
                         matTooltip="{{
-                          'admin.users_panel.unlink' | translate
+                          'admin.users_panel.unlink' | translate | sentenceCase
                         }}"
                         mat-icon-button
                       >
@@ -177,7 +178,7 @@
   <!-- CONTACTS -->
   <mat-expansion-panel>
     <mat-expansion-panel-header>
-      <h3>{{ "shared.contacts" | translate }}</h3>
+      <h3>{{ "shared.contacts" | translate | sentenceCase }}</h3>
     </mat-expansion-panel-header>
     <mat-accordion>
       <ng-container *ngFor="let user of users | keyvalue">
@@ -211,7 +212,6 @@
                 click-event-params="[stopPropagation]"
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
-                aria-label="'admin.users_panel.caregiver_options_menu' | translate"
               >
                 <mat-icon>more_vert</mat-icon>
               </button>
@@ -237,7 +237,7 @@
                 <div
                   fxLayout="row"
                   fxLayoutAlign="space-between center"
-                  style="width: 100%"
+                  style="width: 100%;"
                 >
                   <div>
                     <label>{{
@@ -257,7 +257,7 @@
                     >
                       <button
                         matTooltip="{{
-                          'admin.users_panel.unlink' | translate
+                          'admin.users_panel.unlink' | translate | sentenceCase
                         }}"
                         mat-icon-button
                       >

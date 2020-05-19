@@ -1,15 +1,14 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { first } from "rxjs/operators";
 import { AuthenticationService } from "src/app/services/authentication.service";
-import { AlertService } from "src/app/services/alert.service";
 import { MyErrorStateMatcher } from "src/app/helpers/error-state-matcher";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "login",
   templateUrl: "login.component.html",
-  styleUrls: ["./login.component.scss"]
+  styleUrls: ["./login.component.scss"],
   // styles
 })
 export class LoginComponent implements OnInit {
@@ -24,13 +23,14 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
       username: ["", Validators.required],
-      password: ["", Validators.required]
+      password: ["", Validators.required],
       // email: ["", [Validators.required, Validators.email]]
     });
 
@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService
       .login(this.formFields.username.value, this.formFields.password.value)
       .subscribe(
-        response => {
+        (response) => {
           console.log(response);
 
           const roleID = response.user.role_id;
@@ -63,10 +63,18 @@ export class LoginComponent implements OnInit {
           else if (roleID === 2) this.router.navigate(["/dashboard"]);
           else this.router.navigate([""]);
         },
-        error => {
+        (error) => {
           console.log(error);
+          if (error.id === 2) this.error = "forms.errors.invalid_username";
+          // this.translateService.get("").subscribe((t) => {
+          //   this.error = t;
+          // });
+          else if (error.id === 3)
+            this.error = "forms.errors.incorrect_password";
+          // this.translateService.get("").subscribe((t) => {
+          //   this.error = t;
+          // });
 
-          this.error = error;
           this.loading = false;
         }
       );

@@ -43,8 +43,9 @@
       id="notifications-dropdown"
       fxLayout="column"
       style="overflow-y: scroll;"
+      ngStyle.lt-sm="width: 100vw"
     >
-      <ul>
+      <ul ngStyle.gt-xs="min-width: 500px">
         <li
           *ngFor="let notification of notifications"
           [routerLink]="['incidents']"
@@ -74,16 +75,13 @@
               [class.unread]="notification.read === false"
             >
               <label class="notification-moment ml-auto mb-auto">
-                <!-- {{ notification.localeFormat }} -->
                 {{ notification.created | dynamicMoment: "LLL" | async }}
               </label>
 
               <label class="mb-auto">{{
                 notification.clientAccountFullname
               }}</label>
-              <!-- <label class="mb-auto">{{ notification.client_account }}</label> -->
               <p class="message">
-                <!-- {{ "notifications_panel.accident_probability" | translate }}: -->
                 {{ notification.content | translate }}
               </p>
               <div class="actions">

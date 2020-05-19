@@ -9,6 +9,8 @@ export class ClickEventDirective {
   constructor() {}
   @HostListener("click", ["$event"])
   public onClick(event: any): void {
+    console.log(this.params.includes("stopPropagation"));
+
     if (this.params.includes("preventDefault")) event.preventDefault();
     if (this.params.includes("stopPropagation")) event.stopPropagation();
     if (this.params.includes("stopImmediatePropagation"))

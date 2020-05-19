@@ -4,7 +4,7 @@ import { Role } from "../models/Role";
 export class RoleNamePipe implements PipeTransform {
   transform(id: number, roles: Role[]): string {
     if (id && roles.length) {
-      return roles.find(r => r.id === id).name;
+      return roles.find((r) => r.id === id).name;
     }
   }
 }

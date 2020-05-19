@@ -27,11 +27,11 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
 
   //DATE RANGE
   PREDEFINED_RANGE: string = "predefined-range";
-  SPECIFIC_RANGE: string = "specific-range";
-  SPECIFIC_RANGE_MIN_BOTH: moment.Moment = moment("2017-01-01"); //minimum January 1st, 2017
-  SPECIFIC_RANGE_MAX_BOTH: moment.Moment = moment(); //maximum TODAY
-  specificRangeFrom: moment.Moment = moment().subtract(29, "day"); //current 'from': 30 DAYS AGO
-  specificRangeTo: moment.Moment = moment(); //current 'to': TODAY
+  CUSTOM_RANGE: string = "custom-range";
+  CUSTOM_RANGE_MIN_BOTH: moment.Moment = moment("2017-01-01"); //minimum January 1st, 2017
+  CUSTOM_RANGE_MAX_BOTH: moment.Moment = moment(); //maximum TODAY
+  customRangeFrom: moment.Moment = moment().subtract(29, "day"); //current 'from': 30 DAYS AGO
+  customRangeTo: moment.Moment = moment(); //current 'to': TODAY
 
   predefinedRanges: {} = {
     "1d": "shared.today",
@@ -66,21 +66,25 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
       return (
         data.date.indexOf(filter) !== -1 ||
         (data.hrz_1 &&
+          data.hrz_1.caloriesOut &&
           data.hrz_1.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
         (data.hrz_2 &&
+          data.hrz_2.caloriesOut &&
           data.hrz_2.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
         (data.hrz_3 &&
+          data.hrz_3.caloriesOut &&
           data.hrz_3.caloriesOut
             .toString()
             .toLowerCase()
             .indexOf(filter.toLowerCase()) !== -1) ||
         (data.hrz_4 &&
+          data.hrz_4.caloriesOut &&
           data.hrz_4.caloriesOut
             .toString()
             .toLowerCase()
@@ -90,6 +94,33 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
 
     this.interdayDataSource.paginator = this.paginator;
     this.interdayDataSource.sort = this.sort;
+    const sub = this.translate.stream("shared.time").subscribe((t) => {
+      this.CHART_LABELS.X_AXIS = t;
+    });
+
+    const sub2 = this.translate.stream("shared.values").subscribe((t) => {
+      this.CHART_LABELS.Y_AXIS = t;
+    });
+
+    const sub3 = this.translate.stream("shared.heart_rate").subscribe((t) => {
+      this.CHART_LABELS.HEART_RATE = t;
+    });
+
+    const sub4 = this.translate.stream("shared.steps").subscribe((t) => {
+      this.CHART_LABELS.STEPS = t;
+    });
+
+    this.subscriptions.push(sub, sub2, sub3, sub4);
+
+    for (const i of Object.keys(this.CHART_LABELS.MENU)) {
+      this.subscriptions.push(
+        this.translate
+          .stream(`dashboard.fitbit_data.intraday.chart.${i.toLowerCase()}`)
+          .subscribe((t) => {
+            this.CHART_LABELS.MENU[i] = t;
+          })
+      );
+    }
   }
 
   ngOnDestroy() {
@@ -99,11 +130,11 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   getHeartRateInterday(fitbitAccount) {
     const from: string =
       this.rangeType === this.PREDEFINED_RANGE
-        ? moment().format("YYYY-MM-DD")
-        : this.specificRangeFrom.format("YYYY-MM-DD");
+        ? moment().format()
+        : this.customRangeFrom.format();
     const to: string =
-      this.rangeType === this.SPECIFIC_RANGE
-        ? this.specificRangeTo.format("YYYY-MM-DD")
+      this.rangeType === this.CUSTOM_RANGE
+        ? this.customRangeTo.format("YYYY-MM-DD")
         : this.selectedPredefinedRange;
 
     this.hideIntradayData();
@@ -129,11 +160,11 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sub);
   }
 
-  specificRangeChanged(event: MatDatepickerInputEvent<moment.Moment>) {
-    if (this.specificRangeFrom > this.specificRangeTo)
-      if (event.targetElement.getAttribute("id") === "specific-range-from")
-        this.specificRangeTo = this.specificRangeFrom;
-      else this.specificRangeFrom = this.specificRangeTo;
+  customRangeChanged(event: MatDatepickerInputEvent<moment.Moment>) {
+    if (this.customRangeFrom > this.customRangeTo)
+      if (event.targetElement.getAttribute("id") === "custom-range-from")
+        this.customRangeTo = this.customRangeFrom;
+      else this.customRangeFrom = this.customRangeTo;
   }
 
   rangeTypeChanged(value: string) {
@@ -217,23 +248,43 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   public chartType = "line";
   showIntradayData = false;
   chart: Chart;
+  CHART_LABELS = {
+    X_AXIS: null,
+    Y_AXIS: null,
+    STEPS: null,
+    HEART_RATE: null,
+    MENU: {
+      FULL_SCREEN: null,
+      PRINT_CHART: null,
+      DOWNLOAD_PNG: null,
+      DOWNLOAD_JPEG: null,
+      DOWNLOAD_PDF: null,
+      DOWNLOAD_SVG: null,
+      CONTEXT_MENU: null,
+    },
+  };
 
   initChart(config) {
-    let time;
-    const sub = this.translate.get("shared.time").subscribe((t) => {
-      time = t;
-    });
-
-    this.subscriptions.push(sub);
     this.chart = new Chart({
       ...{
         chart: {
           type: "line",
           zoomType: "x",
         },
+        lang: {
+          viewFullscreen: this.CHART_LABELS.MENU.FULL_SCREEN,
+          printChart: this.CHART_LABELS.MENU.PRINT_CHART,
+          downloadPNG: this.CHART_LABELS.MENU.DOWNLOAD_PNG,
+          downloadJPEG: this.CHART_LABELS.MENU.DOWNLOAD_JPEG,
+          downloadPDF: this.CHART_LABELS.MENU.DOWNLOAD_PDF,
+          downloadSVG: this.CHART_LABELS.MENU.DOWNLOAD_SVG,
+          contextButtonTitle: this.CHART_LABELS.MENU.CONTEXT_MENU,
+        },
         xAxis: {
           title: {
-            text: time,
+            text:
+              this.CHART_LABELS.X_AXIS[0].toUpperCase() +
+              this.CHART_LABELS.X_AXIS.substr(1),
           },
           type: "datetime",
           dateTimeLabelFormats: {
@@ -297,13 +348,18 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                 .startOf("isoWeek")
                 .add(moment(day.date).utcOffset(), "m");
 
+            let stepCount = 0;
             for (const data of heartRateIntraday["data"] as Array<Object>) {
               const x = dayMoment
                 .clone()
                 .add(data["second"], "seconds")
                 .valueOf();
 
-              hbpm.push([x, data["heart_beat"]]);
+              if (data["steps"]) {
+                stepCount += parseInt(data["steps"]);
+              }
+
+              if (data["heart_beat"]) hbpm.push([x, data["heart_beat"]]);
               stepsPoints.push([x, data["steps"]]);
             }
 
@@ -324,20 +380,32 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
               series: [
                 {
                   type: "column",
-                  name: "Steps",
+                  name: `${this.CHART_LABELS.STEPS[0].toUpperCase()}${this.CHART_LABELS.STEPS.substr(
+                    1
+                  )} (${stepCount})`,
                   data: stepsPoints,
                   color: "green",
                 },
                 {
                   type: "line",
-                  name: "Heart rate",
+                  name:
+                    this.CHART_LABELS.HEART_RATE[0].toUpperCase() +
+                    this.CHART_LABELS.HEART_RATE.substr(1),
                   data: hbpm,
                   color: "pink",
                 },
               ],
+              // plotOptions: {
+              //   series: {
+              //     pointWidth: 20,
+              //     groupPadding: 0,
+              //   },
+              // },
               yAxis: {
                 title: {
-                  text: "Values",
+                  text:
+                    this.CHART_LABELS.Y_AXIS[0].toUpperCase() +
+                    this.CHART_LABELS.Y_AXIS.substr(1),
                 },
               },
             });

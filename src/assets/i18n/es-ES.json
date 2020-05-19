@@ -1,143 +1,191 @@
 {
   "home": {
     "main_menu": {
-      "home": "Inicio",
-      "dashboard": "Panel",
-      "administration": "Administración",
-      "language": "Lenguaje",
-      "logout": "Cerrar sesión",
+      "home": "inicio",
+      "dashboard": "panel",
+      "administration": "administración",
       "notifications_dropdown": {
-        "view_all_notifications": "ver todas",
         "inbox": "buzón",
-        "no_new_notifications": "sin notificaciones nuevas"
+        "no_new_notifications": "No hay notificaciones nuevas",
+        "mark_read": "Marcar como leído",
+        "mark_unread": "Marcar como no leído"
       }
     }
   },
   "admin": {
     "users_panel": {
       "fitbit_accounts": "Cuentas Fitbit",
-      "client_accounts_attended_by_this_user": "Cuentas Fitbit atendidas por este cuidador",
-      "caregiver_options_menu": "Menú de opciones del cuidador",
-      "link_to_client_accounts": "Vincular a cuentas Fitbit",
+      "client_accounts_attended_by_this_user": "Cuentas atendidas por este usuario",
+      "link_to_client_accounts": "Vincular a cuentas clientes",
       "delete_user": "Eliminar usuario",
       "revoke_access_token": "Revocar token de acceso",
       "refresh_access_token": "Renovar token de acceso",
-      "unlink": "Desvincular",
+      "unlink": "desvincular",
       "dialog": {
-        "delete_user": "Eliminar usuario",
-        "delete_user_body_msg": "El usuario {{ name }} será eliminado del sistema.",
-        "unlink_user_from_client_account": "Desvincular cuidador de cuenta Fitbit",
-        "unlink_user_from_client_account_body": "El(la) cuidador(a) {{userFullname}} ya no podrá monitorizar la cuenta Fitbit {{clientAccountFullname}} (ID: {{clientAccountID}})"
+        "delete_user_body_msg": "El (la) usuario (a) {{ name }} será eliminado (a) del sistema.",
+        "warning": "Esta acción es irreversible",
+        "unlink_user_from_client_account": "Desvincular cuidador de cuenta cliente",
+        "unlink_user_from_client_account_body": "El (la) cuidador (a) {{userFullname}} no podrá monitorizar la cuenta cliente {{clientAccountFullname}} (ID: {{clientAccountID}})"
       }
     },
     "client_accounts_panel": {
       "dialog": {
-        "delete_client_account": "Eliminar cuenta Fitbit",
-        "delete_client_account_body_msg": "La cuenta Fitbit {{ name }} será eliminada del sistema."
+        "delete_client_account": "Eliminar cuenta cliente",
+        "delete_client_account_body_msg": "La cuenta cliente {{ name }} será eliminada del sistema."
       }
     }
   },
   "dashboard": {
     "devices_panel": {
-      "age": "Edad",
-      "height": "Altura",
-      "weight": "Peso",
       "show_data": "Mostrar datos",
-      "this_user_has_no_active_client_accounts_to_monitor": "Este usuario no está vinculado con ninguna cuenta Fitbit activa",
-      "steps_today": "pasos en el día",
-      "floors": "pisos en el día",
+      "this_user_has_no_active_client_accounts_to_monitor": "Este usuario no tiene cuentas clientes activas que monitorizar",
       "good": "buena",
-      "bad": "mala"
+      "bad": "mala",
+      "latest_states_not_found": "No se encontraron estados de salud recientes"
     },
     "fitbit_data": {
-      "heart_rate_time_series_for_user": "Series de tiempo del ritmo cardíaco del usuario",
-      "predefined": "Predefinido",
-      "specific": "Específico",
-      "from": "Desde",
-      "to": "Hasta",
+      "heading": "Cuenta cliente",
+      "from": "desde",
+      "to": "hasta",
       "interday": {
-        "filter": "Filtrar",
+        "filter": "filtrar",
         "out_of_range": "Fuera de Rango",
         "fat_burn": "Quemar Grasa",
-        "cardio": "Cardio",
+        "cardio": "cardio",
         "peak": "Tope",
-        "calories": "cal",
-        "minutes": "min",
         "no_activity_perceived": "Sin actividad percibida",
         "no_results_for_selected_interval": "Sin resultados para el intervalo seleccionado"
       },
       "intraday": {
-        "options": "Opciones",
-        "select_type": "Seleccionar tipo"
+        "options": "opciones",
+        "select_type": "Seleccionar tipo",
+        "chart": {
+          "full_screen": "Pantalla completa",
+          "print_chart": "Imprimir gráfica",
+          "download_png": "Descargar PNG",
+          "download_jpeg": "Descargar JPEG",
+          "download_pdf": "Descargar PDF",
+          "download_svg": "Descargar SVG",
+          "context_menu": "Opciones"
+        }
       }
     }
   },
-  "notifications_panel": {
-    "mark_read": "Marcar como leído",
-    "mark_unread": "Marcar como no leído",
-    "accident_probability": "probabilidad de accidente",
-    "very_high": "muy alta",
-    "high": "alta",
-    "moderate": "moderada",
+  "incidents_panel": {
+    "false_alarm": "Falsa alarma",
+    "process_incident": "Procesar incidente",
+    "no_incidents": "Sin incidentes",
     "time": "hora",
     "dialog": {
       "incident_details": {
-        "title": "detalles de incidente"
+        "title": "Detalles de incidente",
+        "initial_classification": "Clasificación inicial",
+        "verified_as": "Verificado como",
+        "not_processed": "Sin procesar",
+        "chart_subtitle": "Parámetros de salud previos al incidente"
       }
-    },
-    "no_notifications": "sin notificaciones"
+    }
   },
   "login": {
-    "welcome": "Bienvenido",
-    "username": "Usuario",
-    "username_is_required": "El usuario es requerido",
-    "password": "Clave",
-    "password_is_required": "La clave es requerida"
+    "welcome": "Bienvenid@",
+    "username_is_required": "El usuario es obligatorio",
+    "password_is_required": "La contraseña es obligatoria"
   },
   "widgets": {
     "selection_list_dialog": {
       "accounts_selected": "Cuentas seleccionadas",
-      "link_user_to_client_accounts": "Vincular cuidador con cuenta Fitbit"
+      "link_user_to_client_accounts": "Vincular usuario con cuentas clientes"
     }
   },
   "forms": {
+    "please_review_the_data": "Por favor, revise los datos",
+    "client_account": {
+      "edit_client_account": "Editar cuenta cliente",
+      "account_type_specific_information": "Información específica a {{account_type}}"
+    },
     "user": {
-      "role_specific_information": "Datos específicos de {{role}}"
+      "edit_user": "Editar usuario",
+      "select_role": "Seleccionar rol",
+      "receive_emails": "Recibir correos electrónicos",
+      "receive_text_messages": "Recibir mensajes de texto"
+    },
+    "errors": {
+      "invalid_username": "Usuario no válido",
+      "incorrect_password": "Contraseña incorrecta",
+      "this_field_is_required": "Este campo es obligatorio",
+      "unique_constraint_field": "{{field_value}} no está disponible"
+    },
+    "field_names": {
+      "encoded_id": "ID codificado",
+      "secret": "secreto",
+      "fitbit_app_id": "ID de aplicación Fitbit",
+      "access_token": "Token de acceso",
+      "username": "Usuario",
+      "email": "Correo electrónico"
     }
   },
   "shared": {
+    "name": "nombre",
     "user": "usuario",
-    "administrator": "administrador",
-    "admin": "administrador",
-    "caregiver": "cuidador",
-    "contact": "contacto",
     "users": "usuarios",
-    "administrators": "administradores",
-    "admins": "administradores",
+    "caregiver": "cuidador",
     "caregivers": "cuidadores",
+    "contact": "contacto",
     "contacts": "contactos",
-    "login": "Iniciar sesión",
-    "cancel": "Cancelar",
-    "proceed": "Proceder",
-    "confirm": "Confirmar",
-    "today": "Hoy",
+    "admin": "admin",
+    "administrator": "administrator",
+    "administrators": "administradores",
+    "login": "entrar",
+    "cancel": "cancelar",
+    "proceed": "proceder",
+    "confirm": "confirmar",
+    "today": "hoy",
     "last_7_days": "Últimos 7 días",
     "last_30_days": "Últimos 30 días",
-    "warning": "Esta acción es irreversible",
-    "heart_rate": "ritmo cardíaco",
+    "heart_rate": "Ritmo cardíaco",
     "severity": "severidad",
     "date": "fecha",
     "message": "mensaje",
     "actions": "acciones",
-    "hbpm": "latidos por minuto",
-    "sleep_status": "calidad de sueño",
+    "hbpm": "Latidos por minuto",
+    "sleep_status": "Estado de sueño",
     "steps": "pasos",
     "floors": "pisos",
     "account": "cuenta",
-    "dialog": {
-      "title": "título",
-      "body": "contenido",
-      "close": "cerrar"
-    }
+    "accounts": "cuentas",
+    "firstname": "nombre",
+    "lastname": "apellido",
+    "lastname2": "Segundo apellido",
+    "height": "altura",
+    "weight": "peso",
+    "cm": "cm",
+    "kg": "kg",
+    "birthdate": "Fecha de nacimiento",
+    "review": "revisar",
+    "edit": "editar",
+    "submit": "enviar",
+    "password": "contraseña",
+    "role": "rol",
+    "yes": "sí",
+    "no": "no",
+    "new_user": "Nuevo usuario",
+    "new_client_account": "Nueva cuenta cliente",
+    "type": "tipo",
+    "time": "tiempo",
+    "profile": "perfil",
+    "language": "lenguaje",
+    "logout": "salir",
+    "delete": "eliminar",
+    "process": "procesar",
+    "predefined": "predefinido",
+    "custom": "personalizado",
+    "accident": "accidente",
+    "incident": "incidente",
+    "loading": "cargando",
+    "calories": "calorías",
+    "minutes": "minutos",
+    "age": "edad",
+    "close": "close",
+    "values": "valores"
   }
 }

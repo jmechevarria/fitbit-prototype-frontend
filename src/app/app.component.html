@@ -1,6 +1,7 @@
 <!--Navbar-->
 
 <mdb-navbar
+  #navbar
   SideClass="navbar navbar-expand-lg navbar-light blue-grey lighten-5"
   mdbStickyHeader
   [containerInside]="true"
@@ -15,7 +16,7 @@
         [routerLinkActiveOptions]="{ exact: true }"
       >
         <a class="nav-link waves-light" mdbWavesEffect routerLink="/">{{
-          "home.main_menu.home" | translate
+          "home.main_menu.home" | translate | sentenceCase
         }}</a>
       </li>
 
@@ -26,7 +27,7 @@
         [routerLinkActiveOptions]="{ exact: true }"
       >
         <a class="nav-link waves-light" mdbWavesEffect routerLink="/dashboard">
-          {{ "home.main_menu.dashboard" | translate }}
+          {{ "home.main_menu.dashboard" | translate | sentenceCase }}
         </a>
       </li>
 
@@ -42,7 +43,7 @@
           style="color: red;"
           [routerLink]="'/admin'"
         >
-          {{ "home.main_menu.administration" | translate }}
+          {{ "home.main_menu.administration" | translate | sentenceCase }}
         </a>
       </li>
     </ul>
@@ -57,7 +58,8 @@
           class="nav-link dropdown-toggle waves-light"
           mdbWavesEffect
         >
-          {{ "shared.language" | translate }}<span class="caret"></span
+          {{ "shared.language" | translate | sentenceCase
+          }}<span class="caret"></span
         ></a>
         <div
           *dropdownMenu
@@ -92,7 +94,10 @@
       </li>
 
       <!-- Incidents Link -->
-      <li *ngIf="isAuthenticated" class="nav-item">
+      <li
+        *ngIf="currentUser?.role_id === 2 || currentUser?.role_id === 3"
+        class="nav-item"
+      >
         <a
           type="button"
           class="nav-link waves-light"
@@ -104,7 +109,7 @@
       </li>
 
       <!-- Notifications Link -->
-      <li *ngIf="isAuthenticated" class="nav-item" fxShow fxHide.gt-xs>
+      <!-- <li *ngIf="isAuthenticated" class="nav-item" fxShow fxHide.gt-xs>
         <a
           id="notifications-link"
           type="button"
@@ -126,11 +131,10 @@
             {{ notifications.length ? notifications.length : "" }}
           </span>
         </a>
-      </li>
+      </li> -->
 
       <!-- Notifications Dropdown -->
       <notifications-dropdown
-        fxHide.lt-sm
         *ngIf="isAuthenticated"
         [notifications]="notifications$ | async"
         [newNotifications]="newNotifications"
@@ -156,10 +160,10 @@
             {{ "home.main_menu.notifications" | translate }}</a
           > -->
           <button [routerLink]="['/profile']" class="dropdown-item">
-            {{ "shared.profile" | translate }}
+            {{ "shared.profile" | translate | sentenceCase }}
           </button>
           <button (click)="logout()" class="dropdown-item">
-            {{ "shared.logout" | translate }}
+            {{ "shared.logout" | translate | sentenceCase }}
           </button>
         </div>
       </li>
@@ -171,7 +175,7 @@
           [routerLink]="['/login']"
           class="nav-link waves-light"
           mdbWavesEffect
-          >{{ "shared.login" | translate }}</a
+          >{{ "shared.login" | translate | sentenceCase }}</a
         >
       </li>
     </ul>
@@ -179,71 +183,15 @@
   <!-- Collapsible content -->
 </mdb-navbar>
 
-<main ngClass.gt-xs="container" style="margin-top: 60px;">
-  <!-- style="margin-top: 60px; height: calc(100vh - 265px); overflow: auto;" -->
+<main
+  ngClass.gt-xs="container-fluid"
+  style="margin-top: 60px; min-height: calc(100vh - 60px);"
+>
   <router-outlet></router-outlet>
 </main>
-<!-- Footer -->
-<footer class="page-footer font-small blue pt-4 mt-3">
-  <!-- <div class="container-fluid text-center text-md-left">
-    <div class="row">
-      <div class="col-md-6 mt-md-0 mt-3">
-        <h5 class="text-uppercase">Footer Content</h5>
-        <p>
-          Here you can use rows and columns here to organize your footer
-          content.
-        </p>
-      </div>
 
-      <hr class="clearfix w-100 d-md-none pb-3" />
-
-      <div class="col-md-3 mb-md-0 mb-3">
-        <h5 class="text-uppercase">Links</h5>
-
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Link 1</a>
-          </li>
-          <li>
-            <a href="#!">Link 2</a>
-          </li>
-          <li>
-            <a href="#!">Link 3</a>
-          </li>
-          <li>
-            <a href="#!">Link 4</a>
-          </li>
-        </ul>
-      </div>
-      <div class="col-md-3 mb-md-0 mb-3">
-        <h5 class="text-uppercase">Links</h5>
-
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Link 1</a>
-          </li>
-          <li>
-            <a href="#!">Link 2</a>
-          </li>
-          <li>
-            <a href="#!">Link 3</a>
-          </li>
-          <li>
-            <a href="#!">Link 4</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div> -->
-
-  <!-- Copyright -->
+<footer class="page-footer font-small special-color-dark pt-4 mt-4">
   <div class="footer-copyright text-center py-3">
-    © 2020 Copyright:
-    <a href="#"> Company</a>
-    <!-- <a href="https://mdbootstrap.com/"> MDBootstrap.com</a> -->
+    © ITO Orizaba
   </div>
-  <!-- Copyright -->
 </footer>
-<!-- Footer -->
-<!-- <button (click)="unsubscribe()">unsubscribe</button> -->
-<!-- <button (click)="playAudio()">unsubscribe</button> -->

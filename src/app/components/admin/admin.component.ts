@@ -7,7 +7,6 @@ import { FitbitService } from "src/app/services/fitbit.service";
 import { Router } from "@angular/router";
 import { parseWindowHash } from "../../helpers/parseWindowHash";
 import { ImplicitGrantFlowResponse } from "../../models/ImplicitGrantFlowResponse";
-import { FitbitAccountService } from "src/app/services/fitbit-account.service";
 import { FitbitAccount } from "src/app/models/FitbitAccount";
 
 @Component({
@@ -24,7 +23,6 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   constructor(
     private authenticationService: AuthenticationService,
-    // private fitbitAccountService: FitbitAccountService,
     private clientAccountService: ClientAccountService,
     private userService: UserService,
     private fitbitService: FitbitService,
@@ -38,8 +36,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log(window.location);
-
     const hash = window.location.hash;
     const search = window.location.search;
 
@@ -63,7 +59,6 @@ export class AdminComponent implements OnInit, OnDestroy {
               //on success, we remove tempFitbitAccountID from local storage since it's not needed anymore
               this.fitbitService.tempFitbitAccountID = null;
               window.location.hash = "";
-              // window.location.search = "";
             },
             (error) => {
               console.log(error);

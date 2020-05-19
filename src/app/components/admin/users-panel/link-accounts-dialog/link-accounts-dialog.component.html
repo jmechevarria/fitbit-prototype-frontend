@@ -57,7 +57,7 @@
     data-dismiss="modal"
     (click)="modalRef.hide()"
   >
-    {{ "shared.cancel" | translate }}
+    {{ "shared.cancel" | translate | sentenceCase }}
   </button>
   <button
     mdbBtn
@@ -66,6 +66,6 @@
     mdbWavesEffect
     (click)="modalRef.hide(); onProceed()"
   >
-    {{ "shared.proceed" | translate }}
+    {{ "shared.proceed" | translate | sentenceCase }}
   </button>
 </div>

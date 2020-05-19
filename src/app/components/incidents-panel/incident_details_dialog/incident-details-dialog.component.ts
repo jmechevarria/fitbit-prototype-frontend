@@ -33,12 +33,12 @@ export class IncidentDetailsDialogComponent implements OnInit, OnDestroy {
 
       if (states.length) {
         const data = [];
-        this._content.sleepStatusAverage = 0;
+        this._content.sleepStatus = 0;
         this._content.steps = 0;
         this._content.floors = 0;
 
         states.forEach((elem: any, index) => {
-          this._content.sleepStatusAverage += elem.sleep_status;
+          this._content.sleepStatus += elem.sleep_status;
           if (this._content.steps < elem.steps)
             this._content.steps = elem.steps;
           if (this._content.floors < elem.floors)
@@ -47,17 +47,17 @@ export class IncidentDetailsDialogComponent implements OnInit, OnDestroy {
           data.push([index, elem.hbpm]);
         });
 
-        this._content.sleepStatusAverage /= states.length;
+        this._content.sleepStatus /= states.length;
 
         let titleText, subtitleText;
         const sub = this.translate
-          .get("notifications_panel.dialog.incident_details.chart_title")
+          .get("incidents_panel.dialog.incident_details.chart_title")
           .subscribe((t) => {
             // titleText = t;
           });
 
         const sub2 = this.translate
-          .get("notifications_panel.dialog.incident_details.chart_subtitle")
+          .get("incidents_panel.dialog.incident_details.chart_subtitle")
           .subscribe((st) => {
             subtitleText = st;
           });
@@ -77,7 +77,6 @@ export class IncidentDetailsDialogComponent implements OnInit, OnDestroy {
               }`,
           },
           subtitle: {
-            // text: this._content.timestamp.format("LLL"),
             text: subtitleText,
           },
           series: [

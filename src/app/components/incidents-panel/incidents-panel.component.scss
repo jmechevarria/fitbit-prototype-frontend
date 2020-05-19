@@ -6,21 +6,17 @@ thead th::first-letter {
   text-transform: capitalize;
 }
 
-th,
-tr.incident td:not(:nth-of-type(4)) {
-  text-align: center;
-}
-
-tr.incident td mdb-icon {
-  font-size: 1.2em;
-}
-
-td.message::first-letter {
+tr td:first-of-type {
   text-transform: capitalize;
 }
 
-td.message span {
-  text-transform: uppercase;
+th,
+td {
+  text-align: center;
+}
+
+tr td mdb-icon {
+  font-size: 1.2em;
 }
 
 mdb-icon {
@@ -29,4 +25,18 @@ mdb-icon {
 
 :host::ng-deep mdb-tooltip-container .arrow {
   display: none;
+}
+
+table th,
+table td {
+  padding: 5px 5px;
+  vertical-align: middle !important;
+}
+
+@media screen and (max-width: 350px) {
+  table th,
+  table td {
+    font-size: 12px !important;
+    padding: 1px 3px;
+  }
 }

@@ -1,20 +1,22 @@
 <!-- Table  -->
 <div class="table-responsive z-depth-1">
-  <table mdbTable class="table" hover="true">
+  <table mdbTable class="table" hover="true" striped="true">
     <!-- Table head -->
     <thead class="blue-grey darken-3 white-text">
       <tr>
         <th>
-          {{ "shared.initial_classification" | translate }}
+          {{
+            "incidents_panel.dialog.incident_details.initial_classification"
+              | translate
+          }}
         </th>
-        <th>{{ "shared.date" | translate }}/{{ "shared.time" | translate }}</th>
         <th>
-          {{ "shared.name" | translate }}
+          {{ "shared.date" | translate }}/{{
+            "incidents_panel.time" | translate
+          }}
         </th>
-        <th>{{ "shared.message" | translate }}</th>
-        <th>
-          {{ "shared.actions" | translate }}
-        </th>
+        <th>{{ "shared.name" | translate }}</th>
+        <th>{{ "shared.actions" | translate }}</th>
       </tr>
     </thead>
     <!-- Table head -->
@@ -24,13 +26,16 @@
       <tr
         *ngFor="let incident of incidents"
         [routerLink]="['/incidents']"
-        class="incident"
         (click)="viewIncidentDetails($event, incident)"
-        [ngClass]="{ actual_accident: incident?.actual_accident }"
+        [ngClass]="{
+          accident: incident?.accident
+        }"
       >
-        <td>
-          <!-- <mdb-icon fas icon="{{ ICONS[incident?.severity] }}"></mdb-icon> -->
-          {{ (incident.accident ? "accident" : "incident") | translate }}
+        <td [ngClass]="incident?.accident ? 'red-text' : 'amber-text'">
+          {{
+            "shared." + (incident.accident ? "accident" : "incident")
+              | translate
+          }}
         </td>
         <td>
           {{ incident?.created + "Z" | dynamicMoment: "LLL" | async }}
@@ -39,31 +44,22 @@
         <td>
           {{ incident?.clientAccountFullname }}
         </td>
-        <td class="message">
-          {{ incident.content }}
-        </td>
         <td scope="row">
-          <!-- mdbTooltip="{{
-            incident?.processed
-              ? incident.actual_accident
-                ? 'actual_accident'
-                : 'false_alarm'
-              : ('process' | translate)
-          }}" -->
           <mdb-icon
             [title]="
               (incident?.processed
                 ? incident.actual_accident
-                  ? 'actual_accident'
-                  : 'false_alarm'
-                : 'process'
-              ) | translate
+                  ? 'shared.accident'
+                  : 'incidents_panel.false_alarm'
+                : 'incidents_panel.process_incident'
+              )
+                | translate
+                | sentenceCase
             "
             [mdbPopover]="popTemplate"
-            [outsideClick]="true"
             placement="left"
             #pop="bs-mdbPopover"
-            mdbPopoverHeader="Process incident"
+            [mdbPopoverHeader]="'incidents_panel.process_incident' | translate"
             fas
             [icon]="
               incident?.processed
@@ -81,10 +77,15 @@
             "
           ></mdb-icon>
           <ng-template #popTemplate>
-            <div fxLayout fxLayoutAlign="space-around center">
+            <div
+              fxLayout
+              fxLayoutAlign="space-around center"
+              click-event
+              click-event-params="[stopPropagation]"
+            >
               <mdb-icon
                 placement="bottom"
-                mdbTooltip="{{ 'actual_accident' | translate }}"
+                mdbTooltip="{{ 'accident' | translate | sentenceCase }}"
                 fas
                 icon="check-double"
                 class="red-text"
@@ -92,7 +93,7 @@
               ></mdb-icon>
               <mdb-icon
                 placement="bottom"
-                mdbTooltip="{{ 'false_alarm' | translate }}"
+                mdbTooltip="{{ 'incidents_panel.false_alarm' | translate }}"
                 fas
                 icon="times-circle"
                 (click)="pop.hide(); processIncident(incident, false)"
@@ -102,7 +103,7 @@
         </td>
       </tr>
       <tr *ngIf="incidents.length === 0">
-        <td colspan="5">
+        <td colspan="99999">
           <div
             class="alert alert-primary"
             role="alert"

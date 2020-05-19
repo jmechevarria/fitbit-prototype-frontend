@@ -2,8 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { MDBModalRef, MDBModalService } from "angular-bootstrap-md";
 import { Subscription, Observable } from "rxjs";
 import { IncidentService } from "src/app/services/incident.service";
-import { IncidentDetailsDialogComponent } from "../notifications-panel/incident-details-dialog/incident-details-dialog.component";
+import { IncidentDetailsDialogComponent } from "./incident_details_dialog/incident-details-dialog.component";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "incidents-panel",
@@ -26,8 +27,11 @@ export class IncidentsPanelComponent implements OnInit {
     private mDBModalService: MDBModalService,
     private incidentService: IncidentService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) {
+    // private router: Router,
+    private location: Location
+  ) {}
+
+  ngOnInit() {
     try {
       const sub = this.incidentService
         .search({
@@ -46,6 +50,7 @@ export class IncidentsPanelComponent implements OnInit {
                 ? ` ${incident.client_account.lastname2}`
                 : ""
             }`;
+
             return { ...incident, clientAccountFullname };
           });
         });
@@ -53,9 +58,7 @@ export class IncidentsPanelComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
-  }
 
-  ngOnInit() {
     // The Router manages the observables it provides and localizes the subscriptions.
     // The subscriptions are cleaned up when the component is destroyed, protecting against memory leaks,
     // so we don't need to unsubscribe from the route params Observable.
@@ -65,7 +68,7 @@ export class IncidentsPanelComponent implements OnInit {
       // this.router.navigateByUrl(window.location.href);
       console.log(window.location);
       console.log(params);
-      // window.location.search = "";
+      this.location.go(window.location.pathname);
       // window.location.hash = "";
     });
   }
@@ -102,7 +105,7 @@ export class IncidentsPanelComponent implements OnInit {
       animated: true,
       class: "modal-dialog-scrollable incident-details-dialog", //incident-details-dialog class is used in styles.scss
       data: {
-        title: "notifications_panel.dialog.incident_details.title",
+        title: "incidents_panel.dialog.incident_details.title",
         header: [],
       },
     });
@@ -130,9 +133,9 @@ export class IncidentsPanelComponent implements OnInit {
   // }
 
   // private showEmailConfirmationModal(contacts, notification) {
-  //   const title$ = this.translate.get("notifications_panel.dialog.title");
+  //   const title$ = this.translate.get("incidents_panel.dialog.title");
   //   const body$ = this.translate.get(
-  //     "notifications_panel.dialog.email_confirmation.body",
+  //     "incidents_panel.dialog.email_confirmation.body",
   //     {
   //       emails: `${contacts
   //         .filter(contact => contact.receive_emails)

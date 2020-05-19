@@ -3,8 +3,10 @@
   fxLayout
   fxLayout.lt-lg="column"
   fxLayoutGap="10px"
+  fxLayoutAlign="space-between start"
 >
   <users-panel
+    fxFlex="50"
     [users]="users"
     [clientAccounts]="clientAccounts"
     (deleteUser_EE)="deleteUser($event)"
@@ -15,6 +17,7 @@
 
   <mat-divider vertical="true"></mat-divider>
   <client-accounts-panel
+    fxFlex="50"
     [clientAccounts]="clientAccounts"
     (refreshAccessToken_EE)="refreshAccessToken($event)"
     (revokeAccessToken_EE)="revokeAccessToken($event)"

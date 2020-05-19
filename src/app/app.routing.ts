@@ -6,13 +6,13 @@ import { AuthenticatedGuard } from "./guards/authenticated.guard";
 import { AdminComponent } from "./components/admin/admin.component";
 import { AdminGuard } from "./guards/admin.guard";
 import { CaregiverGuard } from "./guards/caregiver.guard";
-import { NotificationsPanelComponent } from "./components/notifications-panel/notifications-panel.component";
 import { ClientAccountFormComponent } from "./components/admin/client-account-form/client-account-form.component";
 import { UserFormComponent } from "./components/admin/user-form/user-form.component";
 import { MasterGuard } from "./guards/master.guard";
 import { GUARDS } from "./helpers/Constants";
 import { ProfileComponent } from "./components/profile/profile.component";
 import { IncidentsPanelComponent } from "./components/incidents-panel/incidents-panel.component";
+import { LandingPageComponent } from "./components/landing-page/landing-page.component";
 
 const routes: Routes = [
   {
@@ -22,6 +22,10 @@ const routes: Routes = [
     data: {
       guards: [GUARDS.LoginRegister],
     },
+  },
+  {
+    path: "",
+    component: LandingPageComponent,
   },
   {
     path: "profile",
@@ -43,11 +47,6 @@ const routes: Routes = [
     path: "dashboard",
     component: DashboardComponent,
     canActivate: [CaregiverGuard],
-  },
-  {
-    path: "notifications",
-    component: NotificationsPanelComponent,
-    canActivate: [AuthenticatedGuard],
   },
   {
     path: "incidents",

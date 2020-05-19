@@ -1,4 +1,4 @@
-<div fxLayout fxLayoutAlign="space-between center" style="width: 100%">
+<div fxLayout fxLayoutAlign="space-between center" style="width: 100%;">
   <h1 class="mat-headline">{{ "shared.accounts" | translate }}</h1>
   <div>
     <button
@@ -6,7 +6,6 @@
       click-event-params="[stopPropagation]"
       mat-icon-button
       [matMenuTriggerFor]="menu"
-      aria-label="'admin.users_panel.caregiver_options_menu' | translate"
     >
       <mdb-icon
         matTooltip="{{ 'shared.new_client_account' | translate }}"
@@ -31,7 +30,7 @@
   <mat-expansion-panel *ngFor="let accountType of accountTypes">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <h3>{{ accountType.name }}</h3>
+        <h3>{{ accountType.name | sentenceCase }}</h3>
       </mat-panel-title>
     </mat-expansion-panel-header>
     <mat-list role="list">
@@ -43,7 +42,7 @@
           <div
             fxLayout="row"
             fxLayoutAlign="space-between center"
-            style="width: 100%"
+            style="width: 100%;"
           >
             <div>
               <a
@@ -99,6 +98,7 @@
                   click-event-params="[stopPropagation]"
                   color="warn"
                   (click)="deleteClientAccount(clientAccount.key)"
+                  matTooltip="{{ 'shared.delete' | translate | sentenceCase }}"
                 >
                   delete
                 </mat-icon>

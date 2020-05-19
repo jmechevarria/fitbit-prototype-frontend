@@ -1,10 +1,9 @@
-/* 'Open Sans' font from Google Fonts */
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700");
 
 :host {
   display: flex;
   justify-content: center;
-  margin: 100px 0px;
+  margin-top: 10%;
 }
 
 .mat-form-field {
@@ -25,6 +24,7 @@ mat-card-content {
 
 #login {
   float: right;
-  // display: flex;
-  // justify-content: flex-end;
+}
+
+@media screen and (max-width: 400px) {
 }

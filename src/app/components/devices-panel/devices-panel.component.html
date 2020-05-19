@@ -1,141 +1,177 @@
-<mat-accordion>
-  <mat-expansion-panel
-    fxLayout="column"
-    [expanded]="isFirst"
-    *ngFor="let fitbitAccount of clientAccounts | keyvalue; first as isFirst"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>
+<div id="devices-panel-container">
+  <mat-accordion>
+    <mat-expansion-panel
+      #panel
+      fxLayout="column"
+      [expanded]="isFirst"
+      [class.border-radius]="panel.expanded"
+      *ngFor="let fitbitAccount of clientAccounts | keyvalue; first as isFirst"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title
+          fxLayout
+          fxLayoutAlign="space-around center"
+          ngClass.xs="mat-caption"
+        >
+          {{
+            fitbitAccount.value.firstname +
+              " " +
+              fitbitAccount.value.lastname +
+              " " +
+              (fitbitAccount.value.lastname2
+                ? fitbitAccount.value.lastname2
+                : "")
+          }}
+        </mat-panel-title>
+        <mat-panel-description fxLayout fxLayoutAlign="space-around center">
+          <div fxHide.xs class="client-data" ngClass.xs="mat-caption">
+            {{
+              ("shared.age" | translate | sentenceCase) +
+                ": " +
+                age(fitbitAccount.value.birthdate)
+            }}
+            |
+            {{ "shared.height" | translate | sentenceCase }}:
+            {{ fitbitAccount.value.height_cm }}
+            {{ "shared.cm" | translate }}
+            |
+            {{ "shared.weight" | translate | sentenceCase }}
+            {{ fitbitAccount.value.weight_kg }}
+            {{ "shared.kg" | translate }}
+          </div>
+          <div>
+            <button
+              id="show-data"
+              click-event
+              click-event-params="[stopPropagation]"
+              mat-flat-button
+              color="primary"
+              (click)="getHeartRateData(fitbitAccount.value)"
+              mat-mini-fab
+            >
+              <mat-icon>search</mat-icon>
+              <!-- <label>{{ "dashboard.devices_panel.show_data" | translate }}</label> -->
+            </button>
+          </div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div fxHide.gt-xs class="client-data" ngClass.xs="mat-caption">
         {{
-          fitbitAccount.value.firstname +
-            " " +
-            fitbitAccount.value.lastname +
-            " " +
-            (fitbitAccount.value.lastname2 ? fitbitAccount.value.lastname2 : "")
+          ("shared.age" | translate | sentenceCase) +
+            ": " +
+            age(fitbitAccount.value.birthdate)
         }}
-      </mat-panel-title>
-      <mat-panel-description fxLayout>
-        <div fxLayout>
-          {{ "dashboard.devices_panel.age" | translate }}:
-          {{ age(fitbitAccount.value.birthdate) }} |
-          {{ "dashboard.devices_panel.height" | translate }}:
-          {{ fitbitAccount.value.height_cm }} |
-          {{ "dashboard.devices_panel.weight" | translate }}:
-          {{ fitbitAccount.value.weight_kg }}
-        </div>
-      </mat-panel-description>
-      <button
-        id="show-data"
-        click-event
-        click-event-params="[stopPropagation]"
-        mat-flat-button
-        color="primary"
-        (click)="getHeartRateData(fitbitAccount.value)"
-      >
-        {{ "dashboard.devices_panel.show_data" | translate }}
-      </button>
-    </mat-expansion-panel-header>
-    <mat-list role="list" id="devices">
-      <mat-list-item
-        *ngFor="let device of fitbitAccount.value.devices | keyvalue"
-        role="listitem"
-      >
-        <div fxLayout fxLayoutAlign="space-between center" style="width: 100%;">
-          <div fxLayout>
-            <span fxLayoutAlign="space-around center"
-              ><img
+        |
+        {{ "shared.height" | translate | sentenceCase }}:
+        {{ fitbitAccount.value.height_cm }}
+        {{ "shared.cm" | translate }}
+        |
+        {{ "shared.weight" | translate | sentenceCase }}
+        {{ fitbitAccount.value.weight_kg }}
+        {{ "shared.kg" | translate }}
+      </div>
+      <mat-list role="list" id="devices">
+        <mat-list-item
+          *ngFor="let device of fitbitAccount.value.devices | keyvalue"
+          role="listitem"
+        >
+          <div
+            fxLayout
+            fxLayoutAlign="space-between center"
+            style="width: 100%;"
+          >
+            <div fxLayout fxLayoutAlign="space-around center">
+              <img
                 matListAvatar
                 src="http://localhost:3000/devices/{{ device.value.image }}"
                 alt="{{ device.value.image }}"
                 width="50"
               />
-              {{ device.value.brand }} {{ device.value.model }}
-            </span>
-          </div>
-          <div
-            *ngIf="states[fitbitAccount.value.id]; else no_state"
-            fxLayout="column"
-            class="state-container"
-          >
-            <div fxLayout fxLayoutGap="10px">
-              <h5>
-                <mdb-badge
-                  mdbTooltip="{{ 'shared.hbpm' | translate }}"
-                  placement="top"
-                  color="pink"
-                >
-                  <mdb-icon fas icon="heartbeat" class="mr-1"></mdb-icon>
-                  {{ states[fitbitAccount.value.id]["heart_beat"] }}
-                </mdb-badge>
-              </h5>
-              <h5>
-                <mdb-badge
-                  mdbTooltip="{{ 'shared.sleep_status' | translate }}"
-                  placement="top"
-                  color="indigo"
-                >
-                  <mdb-icon fas icon="bed" class="mr-1"></mdb-icon>
-                  {{
-                    "dashboard.devices_panel." +
-                      states[fitbitAccount.value.id]["sleep_classification"]
-                      | translate
-                  }}
-                </mdb-badge>
-              </h5>
-              <h5>
-                <mdb-badge
-                  mdbTooltip="{{
-                    'dashboard.devices_panel.steps_today' | translate
-                  }}"
-                  placement="top"
-                  color="amber"
-                >
-                  <mdb-icon fas icon="shoe-prints" class="mr-1"></mdb-icon>
-                  {{ states[fitbitAccount.value.id]["steps"] }}
-                </mdb-badge>
-              </h5>
-              <h5>
-                <mdb-badge
-                  mdbTooltip="{{
-                    'dashboard.devices_panel.floors' | translate
-                  }}"
-                  placement="top"
-                  color="purple darken-2"
-                >
-                  <mdb-icon fas icon="sort-amount-up" class="mr-1"></mdb-icon>
-                  {{
-                    states[fitbitAccount.value.id]["floors"]
-                      ? states[fitbitAccount.value.id]["floors"]
-                      : 0
-                  }}
-                </mdb-badge>
-              </h5>
+              <span class="device-name"
+                >{{ device.value.brand }} {{ device.value.model }}</span
+              >
             </div>
-            <div fxLayout fxLayoutAlign="end center">
-              <h5>
-                <mdb-badge style="color: black !important;">
-                  {{
-                    states[fitbitAccount.value.id]["moment"]
-                      | dynamicMoment: "LL, LTS"
-                      | async
-                  }}
-                </mdb-badge>
-              </h5>
+            <div
+              *ngIf="states[fitbitAccount.value.id]; else no_state"
+              fxLayout="column"
+              class="state-container"
+            >
+              <div fxLayout fxLayoutGap="10px">
+                <h5>
+                  <mdb-badge
+                    mdbTooltip="{{ 'shared.hbpm' | translate }}"
+                    placement="top"
+                    color="pink"
+                  >
+                    <mdb-icon fas icon="heartbeat" class="mr-1"></mdb-icon>
+                    {{ states[fitbitAccount.value.id]["heart_beat"] }}
+                  </mdb-badge>
+                </h5>
+                <h5>
+                  <mdb-badge
+                    mdbTooltip="{{ 'shared.sleep_status' | translate }}"
+                    placement="top"
+                    color="indigo"
+                  >
+                    <mdb-icon fas icon="bed" class="mr-1"></mdb-icon>
+                    {{
+                      "dashboard.devices_panel." +
+                        states[fitbitAccount.value.id]["sleep_classification"]
+                        | translate
+                    }}
+                  </mdb-badge>
+                </h5>
+                <h5>
+                  <mdb-badge
+                    mdbTooltip="{{ 'shared.steps' | translate }}"
+                    placement="top"
+                    color="amber"
+                  >
+                    <mdb-icon fas icon="shoe-prints" class="mr-1"></mdb-icon>
+                    {{ states[fitbitAccount.value.id]["steps"] }}
+                  </mdb-badge>
+                </h5>
+                <h5>
+                  <mdb-badge
+                    mdbTooltip="{{ 'shared.floors' | translate }}"
+                    placement="top"
+                    color="purple darken-2"
+                  >
+                    <mdb-icon fas icon="sort-amount-up" class="mr-1"></mdb-icon>
+                    {{
+                      states[fitbitAccount.value.id]["floors"]
+                        ? states[fitbitAccount.value.id]["floors"]
+                        : 0
+                    }}
+                  </mdb-badge>
+                </h5>
+              </div>
+              <div fxLayout fxLayoutAlign="end center">
+                <h5>
+                  <mdb-badge>
+                    {{
+                      states[fitbitAccount.value.id]["moment"]
+                        | dynamicMoment: "LL, LTS"
+                        | async
+                    }}
+                  </mdb-badge>
+                </h5>
+              </div>
             </div>
+            <ng-template #no_state
+              ><label style="color: lightgray;">{{
+                "dashboard.devices_panel.latest_states_not_found" | translate
+              }}</label></ng-template
+            >
           </div>
-          <ng-template #no_state
-            ><label style="color: lightgray;">{{
-              "dashboard.devices_panel.latest_states_not_found" | translate
-            }}</label></ng-template
-          >
-        </div>
-      </mat-list-item>
-    </mat-list>
-  </mat-expansion-panel>
-</mat-accordion>
-<div *ngIf="(clientAccounts | json) === '{}'">
-  {{
-    "dashboard.devices_panel.this_user_has_no_active_client_accounts_to_monitor"
-      | translate
-  }}
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div *ngIf="(clientAccounts | json) === '{}'">
+    {{
+      "dashboard.devices_panel.this_user_has_no_active_client_accounts_to_monitor"
+        | translate
+    }}
+  </div>
 </div>

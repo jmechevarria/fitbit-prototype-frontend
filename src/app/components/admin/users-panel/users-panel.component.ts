@@ -4,7 +4,7 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
 } from "@angular/core";
 import { DialogService } from "src/app/services/dialog.service";
 import { LinkAccountsDialogComponent } from "src/app/components/admin/users-panel/link-accounts-dialog/link-accounts-dialog.component";
@@ -24,7 +24,7 @@ export interface DialogData {
 @Component({
   selector: "users-panel",
   templateUrl: "./users-panel.component.html",
-  styleUrls: ["../admin.component.scss", "./users-panel.component.scss"]
+  styleUrls: ["../admin.component.scss", "./users-panel.component.scss"],
 })
 export class UsersPanelComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -50,7 +50,7 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const sub = this.roleService.get().subscribe(response => {
+    const sub = this.roleService.get().subscribe((response) => {
       if (response) this.roles = response;
 
       console.log(this.roles);
@@ -60,21 +60,21 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   deleteUser(id: number) {
-    const title$ = this.translate.get("admin.users_panel.dialog.delete_user");
+    const title$ = this.translate.get("admin.users_panel.delete_user");
     const user = this.users[id];
     const body$ = this.translate.get(
       "admin.users_panel.dialog.delete_user_body_msg",
       {
         name: `<b>${user.firstname} ${user.lastname} ${
           user.lastname2 ? user.lastname2 : ""
-        }</b>`
+        }</b>`,
       }
     );
-    const warning$ = this.translate.get("shared.warning");
+    const warning$ = this.translate.get("admin.users_panel.dialog.warning");
 
     const sub = forkJoin([title$, body$, warning$])
       .pipe(
@@ -87,14 +87,14 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
             {
               data: {
                 title,
-                body: bodyText
-              }
+                body: bodyText,
+              },
             }
           );
 
           return dialogRef.afterClosed();
         }),
-        filter(reply => reply),
+        filter((reply) => reply),
         tap(() => {
           this.deleteUser_EE.next(id);
         })
@@ -108,21 +108,21 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
     const title$ = this.translate.get(
       "admin.users_panel.dialog.unlink_user_from_client_account"
     );
-    const body$ = this.translate.get(
-      "admin.users_panel.dialog.unlink_user_from_client_account_body",
-      {
-        userFullname: `<b>${this.users[userID].fullname}</b>`,
-        clientAccountFullname: `<b>${this.clientAccounts[clientAccountID]
-          .firstname +
-          " " +
-          this.clientAccounts[clientAccountID].lastname +
-          " " +
-          (this.clientAccounts[clientAccountID].lastname2
-            ? this.clientAccounts[clientAccountID].lastname2
-            : "")}</b>`,
-        clientAccountID
-      }
-    );
+
+    const user = this.users[userID],
+      clientAccount = this.clientAccounts[clientAccountID],
+      body$ = this.translate.get(
+        "admin.users_panel.dialog.unlink_user_from_client_account_body",
+        {
+          userFullname: `<b>${user.firstname} ${user.lastname}${
+            user.lastname2 ? user.lastname2 : ""
+          }</b>`,
+          clientAccountFullname: `<b>${clientAccount.firstname}${
+            clientAccount.lastname
+          }${clientAccount.lastname2 ? clientAccount.lastname2 : ""}</b>`,
+          clientAccountID,
+        }
+      );
 
     const sub = forkJoin([title$, body$])
       .pipe(
@@ -134,14 +134,14 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
             {
               data: {
                 title,
-                body: bodyText
-              }
+                body: bodyText,
+              },
             }
           );
 
           return dialogRef.afterClosed();
         }),
-        filter(reply => reply),
+        filter((reply) => reply),
         tap(() => {
           this.unlinkFromClientAccount_EE.next({ userID, clientAccountID });
         })
@@ -160,19 +160,18 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
       animated: true,
       class: "modal-dialog-scrollable",
       data: {
-        title: "notifications_panel.dialog.incident_details.title",
+        title: "incidents_panel.dialog.incident_details.title",
         header: [],
-        content: {}
-      }
+        content: {},
+      },
     });
 
     this.modalRef.content.action.subscribe((selected: any[]) => {
-      console.log(selected);
       if (selected && selected.length) {
-        const clientAccountsIDs = selected.map(element => element.id);
+        const clientAccountsIDs = selected.map((element) => element.id);
         this.linkToClientAccount_EE.emit({
           userID: user.id,
-          clientAccountsIDs
+          clientAccountsIDs,
         });
       }
     });
@@ -181,7 +180,7 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
       (acc, key) => {
         if (!user.client_account_ids.includes(parseInt(key)))
           acc[key] = {
-            ...this.clientAccounts[key]
+            ...this.clientAccounts[key],
           };
         return acc;
       },
@@ -191,7 +190,5 @@ export class UsersPanelComponent implements OnInit, OnDestroy {
     this.modalRef.content.content.clientAccounts = clientAccounts;
 
     this.modalRef.content.loading = false;
-
-    console.log(this.modalRef.content);
   }
 }
