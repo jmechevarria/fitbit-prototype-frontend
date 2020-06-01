@@ -1,29 +1,36 @@
-<div
-  id="landing-page"
-  routerLinkActive="show"
-  [routerLinkActiveOptions]="{ exact: true }"
-  routerLink="/"
->
-  <div fxLayout="column" fxLayoutAlign="space-around center">
-    <div id="welcome-text" fxFlexOffset.lt-sm="30" fxFlexOffset.gt-xs="10">
-      <h2 class="h2-responsive"><b>WELCOME TO SENTINEL</b></h2>
+<div id="landing-page">
+  <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5%">
+    <div fxFlexOffset.lt-sm="30" fxFlexOffset.gt-xs="10">
+      <img src="assets/images/s-logo.png" width="100" />
     </div>
-    <div fxHide.gt-xs>
+
+    <div id="welcome-text">
+      <h2 class="h2-responsive">
+        <b>{{ "landing-page.welcome" | translate }}</b>
+      </h2>
+    </div>
+    <!-- <div fxHide.gt-xs>
       <login *ngIf="!isAuthenticated"></login>
-    </div>
-    <div fxHide.lt-sm fxFlexOffset.gt-xs="20">
-      <h5 class="h5-responsive"><i>No company, no problem</i></h5>
+    </div> -->
+    <div
+      fxHide.lt-sm
+      fxLayout="column"
+      fxLayoutAlign="space-around center"
+      fxLayoutGap="5%"
+    >
+      <h5 class="h5-responsive">
+        <i>{{ "landing-page.quote" | translate }}</i>
+      </h5>
       <br />
-      <h3 class="h3-responsive">
-        At <b>Sentinel</b> we have your loved ones' safety in mind, and we let
-        you be near them even when away.
-      </h3>
-      <p class="mat-body-strong">
+      <h5 class="h5-responsive">
+        {{ "landing-page.subtitle" | translate }}
+      </h5>
+      <!-- <p class="mat-body-strong">
         By taking advantage of the Internet of Things, we keep an eye on your
         loved ones for you, so you can focus on your daily activities with peace
         of mind, knowing we'll let you know instantly if anything should happen.
         We strive everyday to make a measurable difference in our clients' lives
-      </p>
+      </p> -->
     </div>
   </div>
 </div>

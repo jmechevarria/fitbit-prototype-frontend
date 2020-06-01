@@ -37,7 +37,7 @@ export class IncidentsPanelComponent implements OnInit {
         .search({
           // from: moment().subtract(1, "d").format("YYYY-MM-DD HH:mm:ss.SSSZ"),
           // to: moment().format("YYYY-MM-DD HH:mm:ss.SSSZ"),
-          limit: 20,
+          // limit: 20,
         })
         .subscribe((incidents) => {
           console.log(incidents);
@@ -117,6 +117,7 @@ export class IncidentsPanelComponent implements OnInit {
         this.modalRef.content.content = incident;
         this.modalRef.content.loading = false;
       }
+      console.log(this.modalRef.content.content);
     });
 
     this.subscriptions.push(sub);

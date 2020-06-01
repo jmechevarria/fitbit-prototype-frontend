@@ -351,50 +351,17 @@
         </div>
       </div>
 
-      <div
-        *ngIf="showIntradayData"
-        fxLayout
-        id="intraday-container"
-        fxFlex="1 1 0%"
-      >
+      <div fxLayout id="intraday-container" fxFlex="1 1 0%">
         <div
-          *ngIf="!heartRateIntradayLoadingError && chart"
           id="intraday-chart-container"
-          class="mat-elevation-z8"
+          [class.mat-elevation-z8]="showIntradayData"
         >
-          <!-- <div style="position: relative;width: 100%; z-index:1">
-          <button
-            (click)="hideIntradayData()"
-            mat-button
-            style="position: absolute; top: 10px; right: 20px;"
-          >
-            X
-          </button>
-        </div> -->
-
-          <div [chart]="chart"></div>
-        </div>
-        <div *ngIf="heartRateIntradayLoadingError">ERROR RETRIEVING DATA</div>
-
-        <div
-          *ngIf="
-            !heartRateIntradayLoading &&
-            !heartRateIntradayLoadingError &&
-            !chart
-          "
-        >
-          {{
-            "dashboard.fitbit_data.interday.no_results_for_selected_interval"
-              | translate
-          }}
+          <div id="chart-container"></div>
         </div>
       </div>
     </div>
     <div *ngIf="!interdayDataSource?.data.length && !heartRateInterdayLoading">
-      {{
-        "dashboard.fitbit_data.interday.no_results_for_selected_interval"
-          | translate
-      }}
+      {{ "dashboard.fitbit_data.no_results_for_selected_interval" | translate }}
     </div>
 
     <div *ngIf="heartRateInterdayLoading">

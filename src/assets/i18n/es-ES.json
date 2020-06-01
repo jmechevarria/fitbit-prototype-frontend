@@ -1,16 +1,19 @@
 {
-  "home": {
-    "main_menu": {
-      "home": "inicio",
-      "dashboard": "panel",
-      "administration": "administración",
-      "notifications_dropdown": {
-        "inbox": "buzón",
-        "no_new_notifications": "No hay notificaciones nuevas",
-        "mark_read": "Marcar como leído",
-        "mark_unread": "Marcar como no leído"
-      }
+  "main_menu": {
+    "home": "inicio",
+    "dashboard": "panel",
+    "administration": "administración",
+    "notifications_dropdown": {
+      "inbox": "buzón",
+      "no_new_notifications": "No hay notificaciones nuevas",
+      "mark_read": "Marcar como leído",
+      "mark_unread": "Marcar como no leído"
     }
+  },
+  "landing-page": {
+    "welcome": "BIENVENID@ A SENTINEL",
+    "quote": "¿No tiene compañía? No tiene problema",
+    "subtitle": "En Sentinel, priorizamos la salud y seguridad de tus mayores, y te permitimos estar cerca de ellos aún cuando estés lejos."
   },
   "admin": {
     "users_panel": {
@@ -47,14 +50,14 @@
       "heading": "Cuenta cliente",
       "from": "desde",
       "to": "hasta",
+      "no_results_for_selected_interval": "Sin resultados para el intervalo seleccionado",
       "interday": {
         "filter": "filtrar",
         "out_of_range": "Fuera de Rango",
         "fat_burn": "Quemar Grasa",
         "cardio": "cardio",
         "peak": "Tope",
-        "no_activity_perceived": "Sin actividad percibida",
-        "no_results_for_selected_interval": "Sin resultados para el intervalo seleccionado"
+        "no_activity_perceived": "Sin actividad percibida"
       },
       "intraday": {
         "options": "opciones",
@@ -66,7 +69,9 @@
           "download_jpeg": "Descargar JPEG",
           "download_pdf": "Descargar PDF",
           "download_svg": "Descargar SVG",
-          "context_menu": "Opciones"
+          "context_menu": "Opciones",
+          "loading": "Cargando",
+          "no_data": "Sin datos"
         }
       }
     }

@@ -38,22 +38,16 @@ export class DevicesPanelComponent implements OnInit, OnDestroy {
       this.fitbitService
         .fetchLatestRecordedStates(clientAccountsIDs, moment())
         .subscribe((states) => {
-          console.log(states);
-
           if (states) {
             if (states.length) {
               this.showStates = true;
               this.states = states.reduce((acc, state) => {
-                // state["moment"] = moment
-                //   .parseZone(state["week"])
-                //   .add(state["second"], "s");
                 state["moment"] = moment(state["week"]).add(
                   state["second"],
                   "s"
                 );
-                console.log(moment(state.week).format());
-                console.log(moment.utc(state.week).format());
 
+                if (!state["steps"]) state["steps"] = 0;
                 state["sleep_classification"] =
                   state["sleep_status"] > 85 ? "good" : "bad";
 

@@ -1,0 +1,16 @@
+#chart-container,
+#chart {
+  width: 100%;
+}
+
+#chart-container.hidden {
+  display: none !important;
+}
+
+.modal-footer {
+  padding: 0 !important;
+}
+
+.modal-header {
+  padding: 0.3rem !important;
+}

@@ -83,21 +83,29 @@
               click-event
               click-event-params="[stopPropagation]"
             >
-              <mdb-icon
-                placement="bottom"
-                mdbTooltip="{{ 'accident' | translate | sentenceCase }}"
-                fas
-                icon="check-double"
-                class="red-text"
+              <button
                 (click)="pop.hide(); processIncident(incident, true)"
-              ></mdb-icon>
-              <mdb-icon
-                placement="bottom"
-                mdbTooltip="{{ 'incidents_panel.false_alarm' | translate }}"
-                fas
-                icon="times-circle"
+                style="background: transparent; border: none;"
+              >
+                <mdb-icon
+                  placement="bottom"
+                  mdbTooltip="{{ 'accident' | translate | sentenceCase }}"
+                  fas
+                  icon="check-double"
+                  class="red-text"
+                ></mdb-icon>
+              </button>
+              <button
                 (click)="pop.hide(); processIncident(incident, false)"
-              ></mdb-icon>
+                style="background: transparent; border: none;"
+              >
+                <mdb-icon
+                  placement="bottom"
+                  mdbTooltip="{{ 'incidents_panel.false_alarm' | translate }}"
+                  fas
+                  icon="times-circle"
+                ></mdb-icon>
+              </button>
             </div>
           </ng-template>
         </td>

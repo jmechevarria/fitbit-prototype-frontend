@@ -49,7 +49,11 @@ import { ProfileComponent } from "./components/profile/profile.component";
 import { LinkAccountsDialogComponent } from "./components/admin/users-panel/link-accounts-dialog/link-accounts-dialog.component";
 import { IncidentsPanelComponent } from "./components/incidents-panel/incidents-panel.component";
 import { SentenceCasePipe } from "./helpers/SentenceCasePipe";
-import { LandingPageComponent } from './components/landing-page/landing-page.component';
+import { LandingPageComponent } from "./components/landing-page/landing-page.component";
+
+import { HighchartsChartModule } from "highcharts-angular";
+
+import { PopoverModule } from "ngx-bootstrap/popover";
 
 export function I18nHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(
@@ -108,7 +112,8 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
     ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
-
+    HighchartsChartModule,
+    PopoverModule.forRoot(),
     // ChartsModule
   ],
   entryComponents: [

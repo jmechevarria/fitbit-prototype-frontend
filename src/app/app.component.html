@@ -16,7 +16,7 @@
         [routerLinkActiveOptions]="{ exact: true }"
       >
         <a class="nav-link waves-light" mdbWavesEffect routerLink="/">{{
-          "home.main_menu.home" | translate | sentenceCase
+          "main_menu.home" | translate | sentenceCase
         }}</a>
       </li>
 
@@ -27,7 +27,7 @@
         [routerLinkActiveOptions]="{ exact: true }"
       >
         <a class="nav-link waves-light" mdbWavesEffect routerLink="/dashboard">
-          {{ "home.main_menu.dashboard" | translate | sentenceCase }}
+          {{ "main_menu.dashboard" | translate | sentenceCase }}
         </a>
       </li>
 
@@ -43,7 +43,7 @@
           style="color: red;"
           [routerLink]="'/admin'"
         >
-          {{ "home.main_menu.administration" | translate | sentenceCase }}
+          {{ "main_menu.administration" | translate | sentenceCase }}
         </a>
       </li>
     </ul>
@@ -59,7 +59,13 @@
           mdbWavesEffect
         >
           {{ "shared.language" | translate | sentenceCase
-          }}<span class="caret"></span
+          }}<span class="caret"></span>
+          <mdb-icon
+            *ngIf="newNotifications"
+            fas
+            icon="exclamation-circle"
+            class="counter"
+          ></mdb-icon
         ></a>
         <div
           *dropdownMenu
@@ -104,7 +110,7 @@
           mdbWavesEffect
           [routerLink]="['/incidents']"
         >
-          <mdb-icon fas icon="exclamation"></mdb-icon>
+          <mdb-icon fas icon="exclamation" class="red-text"></mdb-icon>
         </a>
       </li>
 
@@ -157,7 +163,7 @@
           role="menu"
         >
           <!-- <a [routerLink]="['/notifications']" class="dropdown-item" href="#">
-            {{ "home.main_menu.notifications" | translate }}</a
+            {{ "main_menu.notifications" | translate }}</a
           > -->
           <button [routerLink]="['/profile']" class="dropdown-item">
             {{ "shared.profile" | translate | sentenceCase }}
@@ -185,7 +191,7 @@
 
 <main
   ngClass.gt-xs="container-fluid"
-  style="margin-top: 60px; min-height: calc(100vh - 60px);"
+  style="margin-top: 60px; min-height: calc(100vh - 160px);"
 >
   <router-outlet></router-outlet>
 </main>

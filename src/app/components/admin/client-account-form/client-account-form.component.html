@@ -13,7 +13,9 @@
   <div [hidden]="inReview">
     <!-- email -->
     <div class="form-group">
-      <label for="email">{{ "forms.field_names.email" | translate }}</label>
+      <label for="email">{{
+        "forms.field_names.email" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="clientAccount.email"
         name="email"
@@ -31,7 +33,9 @@
 
     <!-- firstname -->
     <div class="form-group">
-      <label for="firstname">{{ "shared.firstname" | translate }}</label>
+      <label for="firstname">{{
+        "shared.firstname" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="clientAccount.firstname"
         name="firstname"
@@ -51,7 +55,9 @@
 
     <!-- lastname -->
     <div class="form-group">
-      <label for="lastname">{{ "shared.lastname" | translate }}</label>
+      <label for="lastname">{{
+        "shared.lastname" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="clientAccount.lastname"
         name="lastname"
@@ -71,7 +77,9 @@
 
     <!-- lastname2 -->
     <div class="form-group">
-      <label for="lastname2">{{ "shared.lastname2" | translate }}</label>
+      <label for="lastname2">{{
+        "shared.lastname2" | translate | sentenceCase
+      }}</label>
       <input
         [(ngModel)]="clientAccount.lastname2"
         name="lastname2"
@@ -83,7 +91,11 @@
 
     <!-- height_cm -->
     <div class="form-group">
-      <label for="height_cm">{{ "shared.height_cm" | translate }}</label>
+      <label for="height_cm"
+        >{{ "shared.height" | translate | sentenceCase }} ({{
+          "shared.cm" | translate
+        }})</label
+      >
       <input
         [(ngModel)]="clientAccount.height_cm"
         name="height_cm"
@@ -104,7 +116,11 @@
 
     <!-- weight_kg -->
     <div class="form-group">
-      <label for="weight_kg">{{ "shared.weight_kg" | translate }}</label>
+      <label for="weight_kg"
+        >{{ "shared.weight" | translate | sentenceCase }} ({{
+          "shared.kg" | translate
+        }})</label
+      >
       <input
         [(ngModel)]="clientAccount.weight_kg"
         name="weight_kg"
@@ -129,7 +145,7 @@
         <input
           matInput
           [matDatepicker]="birthdate_picker"
-          placeholder="{{ 'shared.birthdate' | translate }}"
+          placeholder="{{ 'shared.birthdate' | translate | sentenceCase }}"
           [(ngModel)]="clientAccount.birthdate"
           #birthdate="ngModel"
           required
@@ -159,13 +175,14 @@
           "forms.client_account.account_type_specific_information"
             | translate
               : { account_type: accountTypes[clientAccount.type_id - 1]?.name }
+            | sentenceCase
         }}
       </h3>
 
       <!-- encoded_id -->
       <div class="form-group" [hidden]="!editForm">
         <label for="encoded_id">{{
-          "forms.field_names.encoded_id" | translate
+          "forms.field_names.encoded_id" | translate | sentenceCase
         }}</label>
         <input
           [(ngModel)]="clientAccount.encoded_id"
@@ -187,7 +204,9 @@
 
       <!-- secret -->
       <div class="form-group">
-        <label for="secret">{{ "forms.field_names.secret" | translate }}</label>
+        <label for="secret">{{
+          "forms.field_names.secret" | translate | sentenceCase
+        }}</label>
         <input
           [(ngModel)]="clientAccount.secret"
           name="secret"
@@ -208,7 +227,7 @@
       <!-- fitbit_app_id -->
       <div class="form-group">
         <label for="fitbit_app_id">{{
-          "forms.field_names.fitbit_app_id" | translate
+          "forms.field_names.fitbit_app_id" | translate | sentenceCase
         }}</label>
         <input
           [(ngModel)]="clientAccount.fitbit_app_id"
@@ -230,7 +249,7 @@
       <!-- access_token -->
       <div class="form-group" [hidden]="!editForm">
         <label for="access_token">{{
-          "forms.field_names.access_token" | translate
+          "forms.field_names.access_token" | translate | sentenceCase
         }}</label>
         <textarea
           [(ngModel)]="clientAccount.access_token"
@@ -258,6 +277,7 @@
           "forms.client_account.account_type_specific_information"
             | translate
               : { account_type: accountTypes[clientAccount.type_id - 1]?.name }
+            | sentenceCase
         }}
       </h3>
 
@@ -285,10 +305,10 @@
       class="btn btn-primary"
       [disabled]="!clientAccountForm.form.valid"
     >
-      {{ "shared.review" | translate }}
+      {{ "shared.review" | translate | sentenceCase }}
     </button>
     <button type="button" [routerLink]="'/admin'" class="btn">
-      {{ "shared.cancel" | translate }}
+      {{ "shared.cancel" | translate | sentenceCase }}
     </button>
   </div>
 
@@ -314,11 +334,15 @@
           <td>{{ clientAccount.lastname2 }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.height_cm" | translate }}</th>
+          <th scope="row">
+            {{ "shared.height" | translate }} ({{ "shared.cm" | translate }})
+          </th>
           <td>{{ clientAccount.height_cm }}</td>
         </tr>
         <tr mdbTableCol>
-          <th scope="row">{{ "shared.weight_kg" | translate }}</th>
+          <th scope="row">
+            {{ "shared.weight" | translate }} ({{ "shared.kg" | translate }})
+          </th>
           <td>{{ clientAccount.weight_kg }}</td>
         </tr>
         <tr mdbTableCol>

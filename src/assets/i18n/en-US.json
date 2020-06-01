@@ -1,16 +1,19 @@
 {
-  "home": {
-    "main_menu": {
-      "home": "home",
-      "dashboard": "dashboard",
-      "administration": "administration",
-      "notifications_dropdown": {
-        "inbox": "inbox",
-        "no_new_notifications": "No new notifications",
-        "mark_read": "Mark read",
-        "mark_unread": "Mark unread"
-      }
+  "main_menu": {
+    "home": "home",
+    "dashboard": "dashboard",
+    "administration": "administration",
+    "notifications_dropdown": {
+      "inbox": "inbox",
+      "no_new_notifications": "No new notifications",
+      "mark_read": "Mark read",
+      "mark_unread": "Mark unread"
     }
+  },
+  "landing-page": {
+    "welcome": "WELCOME TO SENTINEL",
+    "quote": "No company? No problem",
+    "subtitle": "At Sentinel, we have your elders' health and safety in mind, and we let you be near them even when away."
   },
   "admin": {
     "users_panel": {
@@ -47,14 +50,14 @@
       "heading": "Client account",
       "from": "from",
       "to": "to",
+      "no_results_for_selected_interval": "No results for selected interval",
       "interday": {
         "filter": "filtrar",
         "out_of_range": "Out of Range",
         "fat_burn": "Fat Burn",
         "cardio": "cardio",
         "peak": "peak",
-        "no_activity_perceived": "No activity perceived",
-        "no_results_for_selected_interval": "No results for selected interval"
+        "no_activity_perceived": "No activity perceived"
       },
       "intraday": {
         "options": "options",
@@ -66,7 +69,9 @@
           "download_jpeg": "Download JPEG",
           "download_pdf": "Download PDF",
           "download_svg": "Download SVG",
-          "context_menu": "Options"
+          "context_menu": "Options",
+          "loading": "Loading",
+          "no_data": "No data"
         }
       }
     }

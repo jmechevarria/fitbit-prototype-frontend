@@ -17,110 +17,110 @@
       >{{ "shared.loading" | translate | sentenceCase }}...</span
     >
   </div>
-  <div *ngIf="!loading">
-    <div fxLayout fxLayout.lt-lg="column" fxLayoutAlign="center center">
-      <!-- <div> -->
-      <table mdbTable bordered="true" fxFlexAlign="start">
-        <tbody>
-          <tr>
-            <th>
-              {{ "shared.name" | translate | sentenceCase }}
-            </th>
-            <td>
-              {{
-                content.client_account.firstname +
-                  " " +
-                  content.client_account.lastname +
-                  " " +
-                  (content.client_account.lastname2
-                    ? content.client_account.lastname2
-                    : "")
-              }}
-            </td>
-          </tr>
-          <tr>
-            <th>
-              {{ "shared.date" | translate | sentenceCase }} &
-              {{ "incidents_panel.time" | translate }}
-            </th>
-            <td>
-              {{ content.created + "Z" | dynamicMoment: "LLL" | async }}
-            </td>
-          </tr>
-          <tr>
-            <th>
-              {{
-                "incidents_panel.dialog.incident_details.initial_classification"
-                  | translate
-              }}
-            </th>
-            <td>
-              {{
-                "shared." + (content.accident ? "accident" : "incident")
-                  | translate
-                  | sentenceCase
-              }}
-            </td>
-          </tr>
-          <tr>
-            <th>
-              {{
-                "incidents_panel.dialog.incident_details.verified_as"
-                  | translate
-              }}
-            </th>
-            <td>
-              {{
-                (content.processed
-                  ? content.actual_accident
-                    ? "shared.accident"
-                    : "incidents_panel.false_alarm"
-                  : "incidents_panel.dialog.incident_details.not_processed"
-                )
-                  | translate
-                  | sentenceCase
-              }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- </div> -->
+  <div fxLayout fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+    <!-- <div> -->
+    <table mdbTable bordered="true" fxFlexAlign="start">
+      <tbody>
+        <tr>
+          <th>
+            {{ "shared.name" | translate | sentenceCase }}
+          </th>
+          <td>
+            {{
+              content?.client_account?.firstname +
+                " " +
+                content?.client_account?.lastname +
+                " " +
+                (content?.client_account?.lastname2
+                  ? content?.client_account?.lastname2
+                  : "")
+            }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            {{ "shared.date" | translate | sentenceCase }} &
+            {{ "incidents_panel.time" | translate }}
+          </th>
+          <td *ngIf="content?.created">
+            {{ content?.created + "Z" | dynamicMoment: "LLL" | async }}|
+          </td>
+        </tr>
+        <tr>
+          <th>
+            {{
+              "incidents_panel.dialog.incident_details.initial_classification"
+                | translate
+            }}
+          </th>
+          <td>
+            {{
+              "shared." + (content?.accident ? "accident" : "incident")
+                | translate
+                | sentenceCase
+            }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            {{
+              "incidents_panel.dialog.incident_details.verified_as" | translate
+            }}
+          </th>
+          <td>
+            {{
+              (content?.processed
+                ? content?.actual_accident
+                  ? "shared.accident"
+                  : "incidents_panel.false_alarm"
+                : "incidents_panel.dialog.incident_details.not_processed"
+              )
+                | translate
+                | sentenceCase
+            }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div
-        fxLayout="column"
-        fxLayoutAlign="center center"
-        *ngIf="content.wearable_states"
-        id="incident-chart-container"
-        class="mat-elevation-z8"
-      >
-        <div [chart]="chart"></div>
-        <div fxLayout fxLayoutAlign="space-evenly center" fxFill="100%">
-          <div>
-            <mdb-badge color="indigo" pill="true"
-              >{{ "shared.sleep_status" | translate }}:
-              {{ content.sleepStatus | number: ".2-2" }}</mdb-badge
-            >
-          </div>
-          <div>
-            <mdb-badge color="amber darken-2" pill="true"
-              >{{ "shared.steps" | translate | sentenceCase }}:
-              {{ content.steps }}</mdb-badge
-            >
-          </div>
-          <div>
-            <mdb-badge color="purple darken-2" pill="true"
-              >{{ "shared.floors" | translate | sentenceCase }}:
-              {{ content.floors }}</mdb-badge
-            >
-          </div>
+    <!-- </div> -->
+
+    <div
+      fxLayout="column"
+      fxLayoutAlign="center center"
+      id="chart-container"
+      class="mat-elevation-z8"
+      ngClass.xs="mat-caption"
+      [ngClass]="{ hidden: !content?.wearable_states }"
+    >
+      <div id="chart"></div>
+
+      <div fxLayout fxLayoutAlign="space-evenly center" fxFill="100%">
+        <div>
+          <mdb-badge color="indigo" pill="true"
+            >{{ "shared.sleep_status" | translate }}:
+            {{ content?.sleepStatus | number: ".2-2" }}</mdb-badge
+          >
+        </div>
+        <div>
+          <mdb-badge color="amber darken-2" pill="true"
+            >{{ "shared.steps" | translate | sentenceCase }}:
+            {{ content?.steps }}</mdb-badge
+          >
+        </div>
+        <div>
+          <mdb-badge color="purple darken-2" pill="true"
+            >{{ "shared.floors" | translate | sentenceCase }}:
+            {{ content?.floors }}</mdb-badge
+          >
         </div>
       </div>
-      <div *ngIf="content.picture">
-        <img
-          width="100%"
-          src="data:image/jpg;base64,{{ content.picture.data }}"
-        />
-      </div>
+    </div>
+    <div *ngIf="content?.picture">
+      <img
+        width="100%"
+        src="data:image/jpg;base64,{{ content?.picture?.data }}"
+      />
     </div>
   </div>
 </div>

@@ -24,14 +24,6 @@ mdb-navbar ul.navbar-nav li.active {
   color: #616161;
 }
 
-#landing-page {
-  display: none;
-}
-
-#landing-page.show {
-  display: block;
-}
-
 @media (max-width: 990px) {
   notifications-dropdown {
     display: none;

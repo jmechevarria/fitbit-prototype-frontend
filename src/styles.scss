@@ -1,35 +1,4 @@
-// @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500");
-// @import url("https://fonts.googleapis.com/css?family=Chilanka&display=swap");
-// @import url("https://fonts.googleapis.com/css?family=Roboto:400, 100, 500, 300italic, 500italic, 700italic, 900, 300");
-// <link rel="stylesheet" href="https://storage.googleapis.com/non-spec-apps/mio-icons/latest/round.css">
-// <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-//       rel="stylesheet">
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-// @import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
-// @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
-// @import "~@angular/material/prebuilt-themes/purple-green.css";
-
-// xs 	'screen and (max-width: 599px)'
-// sm 	'screen and (min-width: 600px) and (max-width: 959px)'
-// md 	'screen and (min-width: 960px) and (max-width: 1279px)'
-// lg 	'screen and (min-width: 1280px) and (max-width: 1919px)'
-// xl 	'screen and (min-width: 1920px) and (max-width: 5000px)'
-
-// lt-sm 	'screen and (max-width: 599px)'
-// lt-md 	'screen and (max-width: 959px)'
-// lt-lg 	'screen and (max-width: 1279px)'
-// lt-xl 	'screen and (max-width: 1919px)'
-
-// gt-xs 	'screen and (min-width: 600px)'
-// gt-sm 	'screen and (min-width: 960px)'
-// gt-md 	'screen and (min-width: 1280px)'
-// gt-lg 	'screen and (min-width: 1920px)'
-
-body {
-  background-image: url(assets/images/bg.jpg);
-  background-size: auto;
-  background-repeat: repeat-y;
-}
 
 body,
 h1,
@@ -39,10 +8,6 @@ h4,
 h5,
 h6 {
   margin: 0;
-  // font-family: "Roboto", "Helvetica Neue, Helvetica, Arial";
-  // -webkit-font-smoothing: antialiased;
-  // -moz-osx-font-smoothing: grayscale;
-  // text-rendering: optimizeLegibility;
 }
 
 //COUNTERS
@@ -74,6 +39,13 @@ label {
 }
 
 mdb-modal-container .incident-details-dialog {
-  max-width: fit-content;
-  width: fit-content;
+  max-width: 70%;
+  width: 70%;
+}
+
+@media screen and (max-width: 426px) {
+  mdb-modal-container .incident-details-dialog {
+    max-width: 100vw;
+    width: 97vw;
+  }
 }

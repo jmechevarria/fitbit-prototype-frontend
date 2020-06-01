@@ -123,7 +123,7 @@
                 </h5>
                 <h5>
                   <mdb-badge
-                    mdbTooltip="{{ 'shared.steps' | translate }}"
+                    mdbTooltip="{{ 'shared.steps' | translate | sentenceCase }}"
                     placement="top"
                     color="amber"
                   >
@@ -133,7 +133,9 @@
                 </h5>
                 <h5>
                   <mdb-badge
-                    mdbTooltip="{{ 'shared.floors' | translate }}"
+                    mdbTooltip="{{
+                      'shared.floors' | translate | sentenceCase
+                    }}"
                     placement="top"
                     color="purple darken-2"
                   >

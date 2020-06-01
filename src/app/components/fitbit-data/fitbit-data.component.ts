@@ -4,9 +4,15 @@ import * as moment from "moment";
 import "moment-timezone";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 import { MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
-import { Chart } from "angular-highcharts";
 import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
+import * as Highcharts from "highcharts";
+import HC_exporting from "highcharts/modules/exporting";
+HC_exporting(Highcharts);
+import offline from "highcharts/modules/offline-exporting";
+offline(Highcharts);
+// import noData from "highcharts/modules/no-data-to-display";
+// noData(Highcharts);
 
 export interface InterdayDataSource {
   date: string;
@@ -24,6 +30,7 @@ export interface InterdayDataSource {
 })
 export class FitbitDataComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
+  chart: Highcharts.Chart;
 
   //DATE RANGE
   PREDEFINED_RANGE: string = "predefined-range";
@@ -237,22 +244,15 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   selectedRowIndex: number = -1;
 
   //INTRADAY DATA
-  heartRateIntradayLoading: boolean = false;
   heartRateIntradayLoadingError: boolean = false;
 
-  chartTypes = [
-    { id: "line", label: "Línea", icon: "timeline" },
-    { id: "bar", label: "Barra", icon: "bar_chart" },
-  ];
-
-  public chartType = "line";
   showIntradayData = false;
-  chart: Chart;
   CHART_LABELS = {
     X_AXIS: null,
     Y_AXIS: null,
     STEPS: null,
     HEART_RATE: null,
+    // NO_DATA: null,
     MENU: {
       FULL_SCREEN: null,
       PRINT_CHART: null,
@@ -261,11 +261,12 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
       DOWNLOAD_PDF: null,
       DOWNLOAD_SVG: null,
       CONTEXT_MENU: null,
+      LOADING: null,
     },
   };
 
-  initChart(config) {
-    this.chart = new Chart({
+  initChart(config?) {
+    this.chart = Highcharts.chart("chart-container", {
       ...{
         chart: {
           type: "line",
@@ -279,21 +280,17 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
           downloadPDF: this.CHART_LABELS.MENU.DOWNLOAD_PDF,
           downloadSVG: this.CHART_LABELS.MENU.DOWNLOAD_SVG,
           contextButtonTitle: this.CHART_LABELS.MENU.CONTEXT_MENU,
+          loading: this.CHART_LABELS.MENU.LOADING,
+          // noData: this.CHART_LABELS.NO_DATA,
         },
-        xAxis: {
-          title: {
-            text:
-              this.CHART_LABELS.X_AXIS[0].toUpperCase() +
-              this.CHART_LABELS.X_AXIS.substr(1),
-          },
-          type: "datetime",
-          dateTimeLabelFormats: {
-            minute: "%I:%M %p",
-          },
+        series: [],
+        title: {
+          text: "",
         },
         credits: {
           enabled: false,
         },
+
         tooltip: {
           positioner: function () {
             return { x: 0, y: 0 };
@@ -324,11 +321,13 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
   }
 
   getIntraday(day, rowIndex) {
-    if (this.chart) this.chart.removeSeries(0);
-    this.highlightRow();
     this.showIntradayData = true;
-    this.heartRateIntradayLoading = true;
     this.heartRateIntradayLoadingError = false;
+    this.highlightRow(rowIndex);
+    this.initChart();
+    if (this.chart) {
+      this.chart.showLoading();
+    }
 
     const sub = this.fitbitService
       .fetchHeartRateIntraday(
@@ -337,6 +336,8 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
       )
       .subscribe(
         (heartRateIntraday) => {
+          console.log(heartRateIntraday);
+
           if (heartRateIntraday) {
             //since the data comes in the form [seconds_elapsed_from_week_start => heart_beat_value],
             //and day start refers to utc, the client has to counter the time difference by adding/subtracting hours
@@ -349,6 +350,7 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                 .add(moment(day.date).utcOffset(), "m");
 
             let stepCount = 0;
+            let hrPoints = 0;
             for (const data of heartRateIntraday["data"] as Array<Object>) {
               const x = dayMoment
                 .clone()
@@ -359,9 +361,14 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                 stepCount += parseInt(data["steps"]);
               }
 
-              if (data["heart_beat"]) hbpm.push([x, data["heart_beat"]]);
+              if (data["heart_beat"]) {
+              }
+              hbpm.push([x, data["heart_beat"]]);
+              hrPoints++;
               stepsPoints.push([x, data["steps"]]);
             }
+
+            console.log(hrPoints);
 
             this.initChart({
               title: {
@@ -395,6 +402,17 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
                   color: "pink",
                 },
               ],
+              xAxis: {
+                title: {
+                  text:
+                    this.CHART_LABELS.X_AXIS[0].toUpperCase() +
+                    this.CHART_LABELS.X_AXIS.substr(1),
+                },
+                type: "datetime",
+                dateTimeLabelFormats: {
+                  minute: "%I:%M %p",
+                },
+              },
               // plotOptions: {
               //   series: {
               //     pointWidth: 20,
@@ -411,15 +429,12 @@ export class FitbitDataComponent implements OnInit, OnDestroy {
             });
           } else {
             //empty response
-            this.chart = null;
           }
-
-          this.highlightRow(rowIndex);
-          this.heartRateIntradayLoading = false;
+          if (this.chart) this.chart.hideLoading();
         },
         (error) => {
           console.log(error);
-          this.heartRateIntradayLoading = false;
+          if (this.chart) this.chart.hideLoading();
           this.heartRateIntradayLoadingError = true;
         }
       );
