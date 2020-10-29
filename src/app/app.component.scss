@@ -6,6 +6,10 @@ mdb-navbar ul.navbar-nav li.active {
   font-weight: bold;
 }
 
+::ng-deep nav.new-notification button.navbar-toggler {
+  background-color: red;
+}
+
 #notifications-link {
   overflow: visible;
 }

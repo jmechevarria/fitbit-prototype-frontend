@@ -1,11 +1,18 @@
 <!--Navbar-->
-
 <mdb-navbar
   #navbar
-  SideClass="navbar navbar-expand-lg navbar-light blue-grey lighten-5"
+  SideClass="navbar navbar-expand-lg navbar-light blue-grey lighten-5 new-notification"
   mdbStickyHeader
   [containerInside]="true"
+  class=""
+  [ngClass]="{ 'new-notification': newNotifications }"
 >
+  <mdb-icon
+    *ngIf="newNotifications"
+    fas
+    icon="exclamation-circle"
+    class="counter"
+  ></mdb-icon>
   <!-- Collapsible content -->
   <links>
     <!-- Links -->
@@ -60,13 +67,7 @@
         >
           {{ "shared.language" | translate | sentenceCase
           }}<span class="caret"></span>
-          <mdb-icon
-            *ngIf="newNotifications"
-            fas
-            icon="exclamation-circle"
-            class="counter"
-          ></mdb-icon
-        ></a>
+        </a>
         <div
           *dropdownMenu
           class="dropdown-menu dropdown dropdown-primary"
@@ -113,31 +114,6 @@
           <mdb-icon fas icon="exclamation" class="red-text"></mdb-icon>
         </a>
       </li>
-
-      <!-- Notifications Link -->
-      <!-- <li *ngIf="isAuthenticated" class="nav-item" fxShow fxHide.gt-xs>
-        <a
-          id="notifications-link"
-          type="button"
-          class="nav-link waves-light"
-          mdbWavesEffect
-          [routerLink]="['/notifications']"
-        >
-          <mdb-icon
-            *ngIf="newNotifications"
-            fas
-            icon="exclamation-circle"
-            class="counter"
-          ></mdb-icon>
-          <mdb-icon fas icon="bell"></mdb-icon>
-          <span
-            class="counter"
-            *ngIf="newNotifications && notifications$ | async as notifications"
-          >
-            {{ notifications.length ? notifications.length : "" }}
-          </span>
-        </a>
-      </li> -->
 
       <!-- Notifications Dropdown -->
       <notifications-dropdown
